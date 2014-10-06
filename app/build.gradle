@@ -21,4 +21,5 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile files('/Users/jonreynolds/Documents/workspace/Impromptu/Parse-1.7.0/Parse-1.7.0.jar')
 }
