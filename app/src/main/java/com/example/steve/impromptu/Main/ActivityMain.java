@@ -1,4 +1,4 @@
-package com.example.steve.impromptu;
+package com.example.steve.impromptu.Main;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.steve.impromptu.R;
 import com.parse.Parse;
 
 public class ActivityMain extends FragmentActivity {
