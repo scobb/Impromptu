@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 import com.parse.Parse;
 
-public class Impromptu extends FragmentActivity {
+public class ActivityMain extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
