@@ -59,7 +59,27 @@ public class ActivityMain extends FragmentActivity {
         }
     }
 
-    public void test (View view) {
-        Toast.makeText(this, "Test button didn't crash", Toast.LENGTH_SHORT).show();
+    public void stream (View view) {
+        Toast.makeText(this, "show stream", Toast.LENGTH_SHORT).show();
+    }
+
+    public void map (View view) {
+        Toast.makeText(this, "show map", Toast.LENGTH_SHORT).show();
+    }
+
+    public void invites (View view) {
+        Toast.makeText(this, "show invites", Toast.LENGTH_SHORT).show();
+    }
+
+    public void friends (View view) {
+        Toast.makeText(this, "show friends", Toast.LENGTH_SHORT).show();
+    }
+
+    public void profile (View view) {
+        Toast.makeText(this, "show profile", Toast.LENGTH_SHORT).show();
+    }
+
+    public void compose (View view) {
+        Toast.makeText(this, "show compose event", Toast.LENGTH_SHORT).show();
     }
 }
