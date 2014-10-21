@@ -49,10 +49,13 @@
             android:id="@+id/fragLogin_textView_passwordPrompt" />
 
         <EditText
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:ems="10"
             android:id="@+id/fragLogin_editText_password"
             android:layout_weight="1" />
+
     </LinearLayout>
 
     <Button
