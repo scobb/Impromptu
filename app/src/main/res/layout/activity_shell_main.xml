@@ -2,7 +2,6 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     tools:context=".Impromptu"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -22,10 +21,10 @@
             android:onClick="profile" />
 
         <Space
+            android:id="@+id/activityMain_space_extra"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:id="@+id/" />
+            android:layout_weight="1" />
 
         <Button
             android:id="@+id/activityMain_button_compose"
@@ -37,13 +36,13 @@
     </LinearLayout>
 
     <FrameLayout
+        android:id="@+id/activityMain_frameLayout_shell"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:id="@+id/loginShell" />
+        android:layout_alignParentEnd="true" />
 
     <LinearLayout
         android:layout_width="match_parent"
