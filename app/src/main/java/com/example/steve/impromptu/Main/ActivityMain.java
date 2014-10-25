@@ -26,7 +26,8 @@ public class ActivityMain extends FragmentActivity {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        LoginFragment fragment = new LoginFragment();
+//        LoginFragment fragment = new LoginFragment();
+        FragmentStream fragment = new FragmentStream();
         fragmentTransaction.replace(R.id.loginShell, fragment).addToBackStack(null);
         fragmentTransaction.commit();
     }
