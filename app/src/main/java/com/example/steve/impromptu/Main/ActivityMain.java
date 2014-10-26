@@ -12,10 +12,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.steve.impromptu.Login.FragmentLogin;
 import com.example.steve.impromptu.R;
 import com.parse.Parse;
 
 public class ActivityMain extends FragmentActivity {
+
+    public void forwardToProfileFragment() {
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        FragmentProfile fragment = new FragmentProfile();
+        fragmentTransaction.replace(R.id.loginShell, fragment).addToBackStack(null);
+        fragmentTransaction.commit();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +70,8 @@ public class ActivityMain extends FragmentActivity {
     }
 
     public void profile (View view) {
-        Toast.makeText(this, "show profile", Toast.LENGTH_SHORT).show();
+        forwardToProfileFragment();
+        //Toast.makeText(this, "show profile", Toast.LENGTH_SHORT).show();
     }
 
     public void compose (View view) {

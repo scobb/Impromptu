@@ -79,13 +79,13 @@
             android:onClick="newUserOnClick"
             android:id="@+id/fragLogin_button_newUser" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sign in using Facebook"
-            android:onClick="facebookOnClick"
-            android:id="@+id/fragLogin_button_facebook" />
-
     </LinearLayout>
+
+    <com.facebook.widget.LoginButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sign in using Facebook"
+        android:onClick="facebookOnClick"
+        android:id="@+id/fragLogin_button_facebook" />
 
 </LinearLayout>

@@ -15,16 +15,15 @@ import com.parse.ParseUser;
  * Created by scobb on 10/19/14.
  */
 public class ImpromptuUser extends ParseUser{
+    public ImpromptuUser() {
+        super();
+    }
     public ImpromptuUser(String username, String pw, String email) {
         // use parse's interface to set basic info
         super();
         this.setUsername(username);
         this.setPassword(pw);
         this.setEmail(email);
-    }
-
-    public void RegisterUser() {
-
     }
 
 }
