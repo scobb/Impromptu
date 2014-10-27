@@ -26,4 +26,12 @@ public class ImpromptuUser extends ParseUser{
         this.setEmail(email);
     }
 
+    public void setName(String name){
+        this.put("name", name);
+    }
+
+    public String getName(String name) {
+        return this.get("name").toString();
+    }
+
 }

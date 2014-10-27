@@ -107,7 +107,6 @@ public class ActivityLogin extends FragmentActivity {
         String password = passwordEntry.getText().toString();
         Log.w("Impromptu", "password: " + password);
 
-
         // attempt to log in
         ParseUser.logInInBackground(username, password, new LogInCallback() {
             public void done(ParseUser user, ParseException e) {

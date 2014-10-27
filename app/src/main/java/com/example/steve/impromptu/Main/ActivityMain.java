@@ -1,8 +1,10 @@
 package com.example.steve.impromptu.Main;
 
+import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,11 +14,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.steve.impromptu.Login.ActivityLogin;
 import com.example.steve.impromptu.Login.FragmentLogin;
 import com.example.steve.impromptu.R;
 import com.parse.Parse;
+import com.parse.ParseUser;
 
 public class ActivityMain extends FragmentActivity {
+    public Dialog progressDialog;
 
     public void forwardToProfileFragment() {
         FragmentManager fragmentManager = getFragmentManager();
@@ -24,6 +29,25 @@ public class ActivityMain extends FragmentActivity {
         FragmentProfile fragment = new FragmentProfile();
         fragmentTransaction.replace(R.id.loginShell, fragment).addToBackStack(null);
         fragmentTransaction.commit();
+    }
+
+    public void forwardToLoginActivity() {
+        Intent intent = new Intent(ActivityMain.this, ActivityLogin.class);
+        startActivity(intent);
+        finish();
+    }
+
+
+    public void onLogoutClicked(View v) {
+        ParseUser.logOut();
+        com.facebook.Session fbs = com.facebook.Session.getActiveSession();
+        if (fbs == null) {
+            fbs = new com.facebook.Session(ActivityMain.this);
+            com.facebook.Session.setActiveSession(fbs);
+        }
+        fbs.closeAndClearTokenInformation();
+
+        forwardToLoginActivity();
     }
 
     @Override
