@@ -3,8 +3,8 @@ package com.example.steve.impromptu.Main;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,11 +12,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeMain;
+import com.example.steve.impromptu.Main.Compose.FragmentComposeTime;
 import com.example.steve.impromptu.R;
 import com.parse.Parse;
 
-public class ActivityMain extends FragmentActivity {
+public class ActivityMain extends FragmentActivity implements FragmentComposeTime.OnComposeTimeFinishedListener {
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +55,19 @@ public class ActivityMain extends FragmentActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onComposeTimeFinished(Event myEvent) {
+
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        FragmentComposeMain fragment = new FragmentComposeMain();
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.commit();
+
+    }
+
     public static class LoginFragment extends Fragment {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,

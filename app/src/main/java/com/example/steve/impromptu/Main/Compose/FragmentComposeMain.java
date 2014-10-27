@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.R;
 
 /**
@@ -25,12 +26,14 @@ public class FragmentComposeMain extends Fragment {
     LinearLayout vTime;
     LinearLayout vLocation;
     LinearLayout vCreate;
+    Event newEvent;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View fragmentView = inflater.inflate(R.layout.fragment_compose_main, container, false);
+
 
         // get references to all the necessary GUI widgets
         vType = (ImageView) fragmentView.findViewById(R.id.fragComposeMain_imageView_type);

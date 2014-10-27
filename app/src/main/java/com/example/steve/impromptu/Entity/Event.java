@@ -1,8 +1,9 @@
 package com.example.steve.impromptu.Entity;
 
+import android.text.format.Time;
+
 import java.security.acl.Group;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by jonreynolds on 10/26/14.
@@ -16,8 +17,9 @@ public class Event {
     private String description;
     private ArrayList<Group> streamGroups;
     private ArrayList<Group> pushGroups;
-    private Date eventTime;
-    private Date creationTime;
+    private Time eventTime;
+    private Time creationTime;
+    private int duration;
     private String location;
 
     public Event() {
@@ -51,11 +53,11 @@ public class Event {
         this.pushGroups = pushGroups;
     }
 
-    public void setEventTime(Date eventTime) {
+    public void setEventTime(Time eventTime) {
         this.eventTime = eventTime;
     }
 
-    public void setCreationTime(Date creationTime) {
+    public void setCreationTime(Time creationTime) {
         this.creationTime = creationTime;
     }
 
@@ -88,11 +90,11 @@ public class Event {
         return pushGroups;
     }
 
-    public Date getEventTime() {
+    public Time getEventTime() {
         return eventTime;
     }
 
-    public Date getCreationTime() {
+    public Time getCreationTime() {
         return creationTime;
     }
 
