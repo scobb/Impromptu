@@ -90,7 +90,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textSize="36sp"
-            android:text="0.5 hours"/>
+            android:text="0.0 hours"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -122,7 +122,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/fragComposeTime_seekbar_duration"
             android:layout_gravity="center_horizontal"
-            android:max="24"/>
+            android:max="48"/>
 
     </LinearLayout>
 

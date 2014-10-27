@@ -18,9 +18,9 @@ import com.example.steve.impromptu.Main.Compose.FragmentComposeTime;
 import com.example.steve.impromptu.R;
 import com.parse.Parse;
 
-public class ActivityMain extends FragmentActivity implements FragmentComposeTime.OnComposeTimeFinishedListener {
+public class ActivityMain extends FragmentActivity implements FragmentComposeTime.OnComposeTimeFinishedListener, FragmentComposeMain.OnAttributeSelectedListener, FragmentComposeMain.OnComposeMainFinishedListener {
 
-
+    Event newEvent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +34,9 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         FragmentComposeMain fragment = new FragmentComposeMain();
         fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
         fragmentTransaction.commit();
+
+        // TODO: eventually remove (when compose button has correct functionality
+        newEvent = new Event();
     }
 
 
@@ -57,7 +60,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     }
 
     @Override
-    public void onComposeTimeFinished(Event myEvent) {
+    public void onComposeTimeFinished() {
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -66,6 +69,40 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
         fragmentTransaction.commit();
 
+    }
+
+    @Override
+    public void OnAttributeSelected(String attribute) {
+
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        Fragment frag;
+
+        switch (attribute) {
+            case "time":
+                frag = new FragmentComposeTime();
+                break;
+            default:
+                frag = new FragmentComposeMain();
+        }
+
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, frag).addToBackStack(null);
+        fragmentTransaction.commit();
+
+    }
+
+    @Override
+    public void onComposeMainFinished(Boolean create) {
+        if (create) {
+
+            Toast.makeText(this, "create new event", Toast.LENGTH_SHORT).show();
+
+        }
+        else {
+
+            Toast.makeText(this, "cancel new event", Toast.LENGTH_SHORT).show();
+
+        }
     }
 
     public static class LoginFragment extends Fragment {
@@ -98,11 +135,16 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     }
 
     public void compose (View view) {
+        newEvent = new Event();
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         FragmentComposeMain fragment = new FragmentComposeMain();
         fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
         fragmentTransaction.commit();
+    }
+
+    public Event getNewEvent() {
+        return newEvent;
     }
 }

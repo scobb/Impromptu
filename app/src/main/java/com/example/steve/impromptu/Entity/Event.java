@@ -19,7 +19,8 @@ public class Event {
     private ArrayList<Group> pushGroups;
     private Time eventTime;
     private Time creationTime;
-    private int duration;
+    private int durationHour;
+    private int durationMinute;
     private String location;
 
     public Event() {
@@ -70,6 +71,14 @@ public class Event {
         return owner;
     }
 
+    public void setDurationHour(int durationHour) {
+        this.durationHour = durationHour;
+    }
+
+    public void setDurationMinute(int durationMinute) {
+        this.durationMinute = durationMinute;
+    }
+
     public String getType() {
         return type;
     }
@@ -100,5 +109,14 @@ public class Event {
 
     public String getLocation() {
         return location;
+    }
+
+
+    public int getDurationHour() {
+        return durationHour;
+    }
+
+    public int getDurationMinute() {
+        return durationMinute;
     }
 }
