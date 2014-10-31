@@ -118,7 +118,9 @@ public class FragmentComposeMain extends Fragment {
             @Override
             public void onClick(View v) {
 
-                Toast.makeText(getActivity(), "Select location", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), "Select location", Toast.LENGTH_SHORT).show();
+                String attribute = "location";
+                attributeSelectedListenerCallback.OnAttributeSelected(attribute);
 
             }
         });

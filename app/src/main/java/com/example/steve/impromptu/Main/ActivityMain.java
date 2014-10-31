@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
+import com.example.steve.impromptu.Main.Compose.FragmentComposeLocation;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeMain;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeTime;
 import com.example.steve.impromptu.R;
@@ -81,6 +82,9 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         switch (attribute) {
             case "time":
                 frag = new FragmentComposeTime();
+                break;
+            case "location":
+                frag = new FragmentComposeLocation();
                 break;
             default:
                 frag = new FragmentComposeMain();

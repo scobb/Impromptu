@@ -36,6 +36,8 @@ public class FragmentComposeTime extends Fragment {
     Time endTime;
     int durationHour = 0;
     int durationMinute = 0;
+    int absoluteStartHour;
+    boolean morning;
 
     OnComposeTimeFinishedListener mCallback;
 
@@ -50,12 +52,14 @@ public class FragmentComposeTime extends Fragment {
         // Inflate the layout for this fragment
         View fragmentView = inflater.inflate(R.layout.fragment_compose_time, container, false);
 
+        String initialStartTime;
         currentTime = new Time();
         startTime = new Time();
         endTime = new Time();
 
         currentTime.setToNow();
         startTime.hour = currentTime.hour;
+        absoluteStartHour = startTime.hour;
         startTime.minute = currentTime.minute;
 
         vSeekStartTime = (SeekBar) fragmentView.findViewById(R.id.fragComposeTime_seekbar_startTime);
@@ -66,7 +70,27 @@ public class FragmentComposeTime extends Fragment {
         vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposeTime_linearLayout_okay);
         vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposeTime_linearLayout_cancel);
 
-        String initialStartTime = Integer.toString(currentTime.hour) + ":" + Integer.toString(currentTime.minute);
+        if(startTime.hour == 12) {
+            morning = false;
+        }
+        if(startTime.hour > 12) {
+            startTime.hour = startTime.hour -12;
+            morning = false;
+        }
+
+        if(startTime.hour == 0) {
+            startTime.hour = 12;
+            morning = true;
+        }
+        //String correctMin = String.format("%02d", startTime.minute);
+
+        if(morning) {
+            initialStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", startTime.minute) + "am";
+        }
+        else {
+            initialStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", startTime.minute) + "pm";
+        }
+
         vTextStartTime.setText(initialStartTime);
 
         String initialEndTime = getEndTime();
@@ -89,11 +113,39 @@ public class FragmentComposeTime extends Fragment {
                 addTime *= 5;
                 int addHours = addTime / 60;
                 int addMinutes = addTime % 60;
+                boolean morning = true;
+                String newStartTime;
 
                 currentTime.setToNow();
                 startTime.hour = currentTime.hour + addHours;
-                startTime.minute = currentTime.minute + addMinutes;
-                String newStartTime = Integer.toString(startTime.hour) + ":" + Integer.toString(startTime.minute);
+                absoluteStartHour = currentTime.hour + addHours;
+                startTime.minute = (currentTime.minute + addMinutes) % 60;
+
+                if((currentTime.minute + addMinutes) > 60) {
+                    startTime.hour += 1;
+                    absoluteStartHour += 1;
+                }
+
+                if(startTime.hour == 12) {
+                    morning = false;
+                }
+                if(startTime.hour > 12) {
+                    startTime.hour = startTime.hour -12;
+                    morning = false;
+                }
+
+                if(startTime.hour == 0) {
+                    startTime.hour = 12;
+                    morning = true;
+                }
+                //String correctMin = String.format("%02d", startTime.minute);
+
+                if(morning) {
+                    newStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", startTime.minute) + "am";
+                }
+                else {
+                    newStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", startTime.minute) + "pm";
+                }
                 vTextStartTime.setText(newStartTime);
 
                 String newEndTime = getEndTime();
@@ -180,10 +232,42 @@ public class FragmentComposeTime extends Fragment {
     }
 
     public String getEndTime() {
+        boolean endTimeMorning = true;
+        String newEndTime;
+        int absoluteEndHour = absoluteStartHour + durationHour;
+        System.out.println("Absolute end hour is" + Integer.toString(absoluteEndHour));
         endTime.hour = startTime.hour + durationHour;
-        endTime.minute = startTime.minute + durationMinute;
+        endTime.minute = (startTime.minute + durationMinute) % 60;
+        if((startTime.minute + durationMinute) > 60) {
+            absoluteEndHour += 1;
+            endTime.hour += 1;
+        }
 
-        String newEndTime = Integer.toString(endTime.hour) + ":" + Integer.toString(endTime.minute);
+        if(absoluteEndHour == 12 ) {
+            endTimeMorning = false;
+        }
+        if(endTime.hour > 12) {
+            endTime.hour = endTime.hour -12;
+        }
+
+        if(absoluteEndHour > 12) {
+            endTimeMorning = false;
+        }
+        if(absoluteEndHour >= 24 ) {
+            endTimeMorning = true;
+        }
+        if(absoluteEndHour == 0) {
+            endTime.hour = 12;
+            endTimeMorning = true;
+        }
+
+        if(endTimeMorning) {
+            newEndTime = Integer.toString(endTime.hour) + ":" + String.format("%02d", endTime.minute) + "am";
+        }
+        else {
+            newEndTime = Integer.toString(endTime.hour) + ":" + String.format("%02d", endTime.minute) + "pm";
+        }
+
         return newEndTime;
     }
 
