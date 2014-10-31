@@ -1,7 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingRight="16dp"
+    android:paddingLeft="16dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp">
+
+    <LinearLayout
+        android:id="@+id/fragComposeLocation_linearLayout_location"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:background="@drawable/template_rounded_box">
+
+        <TextView
+            android:id="@+id/fragComposeLocation_textView_locationPrompt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Location"
+            android:textSize="24sp"/>
+
+        <EditText
+            android:id="@+id/fragComposeLocation_editText_address"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:maxLength="140"
+            android:hint="@string/fragComposeLocation_hintLocation"/>
+
+        <TextView
+            android:id="@+id/fragComposeLocation_textView_searchPrompt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="Search"
+            android:textSize="24sp"/>
+
+        <fragment
+            android:id="@+id/fragComposeLocation_map"
+            android:name="com.google.android.gms.maps.MapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp" />
+
+    </LinearLayout>
 
 </LinearLayout>

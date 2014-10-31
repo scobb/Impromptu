@@ -46,15 +46,12 @@
             android:text="Description"
             android:textSize="24sp"/>
 
-        <TextView
-            android:id="@+id/fragComposeMain_textView_description"
+        <EditText
+            android:id="@+id/fragComposeMain_editText_description"
             android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:maxHeight="200dp"
-            android:textSize="18sp"
-            android:text="fake description here, will be limited to 180 characters maximum in the edittext widget"
-            android:textColor="#6E6A68"/>
+            android:layout_height="match_parent"
+            android:maxLength="140"
+            android:hint="@string/fragComposeMain_hintDescription"/>
 
     </LinearLayout>
 
@@ -125,6 +122,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Location"
+            android:textSize="24sp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/fragComposeMain_linearLayout_create"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_gravity="right"
+        android:background="@drawable/template_rounded_box">
+
+        <TextView
+            android:id="@+id/fragComposeMain_textView_createPrompt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create"
             android:textSize="24sp"/>
 
     </LinearLayout>

@@ -8,5 +8,7 @@
 
 
     <string name="fragComposeMain_hintTitle">Title</string>
+    <string name="fragComposeMain_hintDescription">Enter description...</string>
+    <string name="fragComposeLocation_hintLocation">Enter address...</string>
 
 </resources>

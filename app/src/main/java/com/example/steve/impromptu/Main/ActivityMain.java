@@ -3,8 +3,8 @@ package com.example.steve.impromptu.Main;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,11 +12,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.steve.impromptu.Entity.Event;
+import com.example.steve.impromptu.Main.Compose.FragmentComposeLocation;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeMain;
+import com.example.steve.impromptu.Main.Compose.FragmentComposeTime;
 import com.example.steve.impromptu.R;
 import com.parse.Parse;
 
-public class ActivityMain extends FragmentActivity {
+public class ActivityMain extends FragmentActivity implements FragmentComposeTime.OnComposeTimeFinishedListener, FragmentComposeMain.OnAttributeSelectedListener, FragmentComposeMain.OnComposeMainFinishedListener {
+
+    Event newEvent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +35,9 @@ public class ActivityMain extends FragmentActivity {
         FragmentComposeMain fragment = new FragmentComposeMain();
         fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
         fragmentTransaction.commit();
+
+        // TODO: eventually remove (when compose button has correct functionality
+        newEvent = new Event();
     }
 
 
@@ -51,6 +59,56 @@ public class ActivityMain extends FragmentActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onComposeTimeFinished() {
+
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        FragmentComposeMain fragment = new FragmentComposeMain();
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.commit();
+
+    }
+
+    @Override
+    public void OnAttributeSelected(String attribute) {
+
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        Fragment frag;
+
+        switch (attribute) {
+            case "time":
+                frag = new FragmentComposeTime();
+                break;
+            case "location":
+                frag = new FragmentComposeLocation();
+                break;
+            default:
+                frag = new FragmentComposeMain();
+        }
+
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, frag).addToBackStack(null);
+        fragmentTransaction.commit();
+
+    }
+
+    @Override
+    public void onComposeMainFinished(Boolean create) {
+        if (create) {
+
+            Toast.makeText(this, "create new event", Toast.LENGTH_SHORT).show();
+
+        }
+        else {
+
+            Toast.makeText(this, "cancel new event", Toast.LENGTH_SHORT).show();
+
+        }
+    }
+
     public static class LoginFragment extends Fragment {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -81,11 +139,16 @@ public class ActivityMain extends FragmentActivity {
     }
 
     public void compose (View view) {
+        newEvent = new Event();
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         FragmentComposeMain fragment = new FragmentComposeMain();
         fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
         fragmentTransaction.commit();
+    }
+
+    public Event getNewEvent() {
+        return newEvent;
     }
 }
