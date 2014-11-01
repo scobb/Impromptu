@@ -1,8 +1,10 @@
 package com.example.steve.impromptu.Main;
 
+import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,23 +14,47 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.steve.impromptu.Login.ActivityLogin;
+import com.example.steve.impromptu.Login.FragmentLogin;
 import com.example.steve.impromptu.R;
 import com.parse.Parse;
+import com.parse.ParseUser;
 
 public class ActivityMain extends FragmentActivity {
+    public Dialog progressDialog;
+
+    public void forwardToProfileFragment() {
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        FragmentProfile fragment = new FragmentProfile();
+        fragmentTransaction.replace(R.id.loginShell, fragment).addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
+    public void forwardToLoginActivity() {
+        Intent intent = new Intent(ActivityMain.this, ActivityLogin.class);
+        startActivity(intent);
+        finish();
+    }
+
+
+    public void onLogoutClicked(View v) {
+        ParseUser.logOut();
+        com.facebook.Session fbs = com.facebook.Session.getActiveSession();
+        if (fbs == null) {
+            fbs = new com.facebook.Session(ActivityMain.this);
+            com.facebook.Session.setActiveSession(fbs);
+        }
+        fbs.closeAndClearTokenInformation();
+
+        forwardToLoginActivity();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_shell_login);
-        Parse.initialize(this, "sP5YdlJxg1WiwfKgSXX4KdrgpZzAV5g69dV8ryY0", "houV8Brg8oIuBKSLheR7qAW4AJfGq1QZmH62Spgk");
+        setContentView(R.layout.activity_shell_main);
 
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        LoginFragment fragment = new LoginFragment();
-        fragmentTransaction.replace(R.id.loginShell, fragment).addToBackStack(null);
-        fragmentTransaction.commit();
     }
 
 
@@ -50,14 +76,6 @@ public class ActivityMain extends FragmentActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-    public static class LoginFragment extends Fragment {
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            // Inflate the layout for this fragment
-            return inflater.inflate(R.layout.fragment_login, container, false);
-        }
-    }
 
     public void stream (View view) {
         Toast.makeText(this, "show stream", Toast.LENGTH_SHORT).show();
@@ -76,7 +94,8 @@ public class ActivityMain extends FragmentActivity {
     }
 
     public void profile (View view) {
-        Toast.makeText(this, "show profile", Toast.LENGTH_SHORT).show();
+        forwardToProfileFragment();
+        //Toast.makeText(this, "show profile", Toast.LENGTH_SHORT).show();
     }
 
     public void compose (View view) {
