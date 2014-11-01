@@ -1,16 +1,14 @@
 package com.example.steve.impromptu.Main;
 
-import android.app.Fragment;
 import android.app.ListFragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.SimpleAdapter;
 
+import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.Entity.StreamPost;
-import com.example.steve.impromptu.Entity.User;
 import com.example.steve.impromptu.R;
 
 import java.util.ArrayList;
@@ -31,15 +29,15 @@ public class FragmentStream extends ListFragment {
     int[] to ={R.id.fragStream_imageView_picture, R.id.fragStream_textView_user,
             R.id.fragStream_textView_content, R.id.fragStream_textView_date};
 
-    User testUser1 = new User("Stevie Wonder");
-    User testUser2 = new User("Nice Guy Thill");
-    User testUser3 = new User("Ben Marsh the Darsh");
-    User testUser4 = new User("Big Dog Billings");
-    User testUser5 = new User("Papa Holley");
-    User testUser6 = new User("Guilty Hilti");
-    User testUser7 = new User("Haydensity");
-    User testUser8 = new User("McCombs O`Neil");
-    User testUser9 = new User("Baylor Taylor");
+    ImpromptuUser testUser1 = new ImpromptuUser("Stevie Wonder");
+    ImpromptuUser testUser2 = new ImpromptuUser("Nice Guy Thill");
+    ImpromptuUser testUser3 = new ImpromptuUser("Ben Marsh the Darsh");
+    ImpromptuUser testUser4 = new ImpromptuUser("Big Dog Billings");
+    ImpromptuUser testUser5 = new ImpromptuUser("Papa Holley");
+    ImpromptuUser testUser6 = new ImpromptuUser("Guilty Hilti");
+    ImpromptuUser testUser7 = new ImpromptuUser("Haydensity");
+    ImpromptuUser testUser8 = new ImpromptuUser("McCombs O`Neil");
+    ImpromptuUser testUser9 = new ImpromptuUser("Baylor Taylor");
 
     Date date = new Date();
 

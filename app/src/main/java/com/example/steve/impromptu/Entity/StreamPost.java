@@ -8,11 +8,11 @@ import java.util.HashMap;
  */
 public class StreamPost {
 
-    User user;
+    ImpromptuUser user;
     Date date;
     String content;     // Might want to use the Text class instead
 
-    public StreamPost(User user, Date date, String content){
+    public StreamPost(ImpromptuUser user, Date date, String content){
         this.user = user;
         this.date = date;
         this.content = content;
@@ -21,7 +21,7 @@ public class StreamPost {
     public HashMap<String, String> getHashMap(){
         HashMap<String, String> map = new HashMap<String, String>();
         map.put("user", user.getName());
-        map.put("picture", Integer.toString(user.getPicture()));
+//        map.put("picture", Integer.toString(user.getPicture()));
         map.put("date", date.toString());
         map.put("content", content);
         return map;
