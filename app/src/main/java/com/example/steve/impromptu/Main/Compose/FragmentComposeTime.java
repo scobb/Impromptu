@@ -85,10 +85,10 @@ public class FragmentComposeTime extends Fragment {
         //String correctMin = String.format("%02d", startTime.minute);
 
         if(morning) {
-            initialStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", startTime.minute) + "am";
+            initialStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", roundUpToNearest5(startTime.minute)) + "am";
         }
         else {
-            initialStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", startTime.minute) + "pm";
+            initialStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", roundUpToNearest5(startTime.minute)) + "pm";
         }
 
         vTextStartTime.setText(initialStartTime);
@@ -141,10 +141,10 @@ public class FragmentComposeTime extends Fragment {
                 //String correctMin = String.format("%02d", startTime.minute);
 
                 if(morning) {
-                    newStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", startTime.minute) + "am";
+                    newStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", roundUpToNearest5(startTime.minute)) + "am";
                 }
                 else {
-                    newStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", startTime.minute) + "pm";
+                    newStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", roundUpToNearest5(startTime.minute)) + "pm";
                 }
                 vTextStartTime.setText(newStartTime);
 
@@ -235,7 +235,6 @@ public class FragmentComposeTime extends Fragment {
         boolean endTimeMorning = true;
         String newEndTime;
         int absoluteEndHour = absoluteStartHour + durationHour;
-        System.out.println("Absolute end hour is" + Integer.toString(absoluteEndHour));
         endTime.hour = startTime.hour + durationHour;
         endTime.minute = (startTime.minute + durationMinute) % 60;
         if((startTime.minute + durationMinute) > 60) {
@@ -262,10 +261,10 @@ public class FragmentComposeTime extends Fragment {
         }
 
         if(endTimeMorning) {
-            newEndTime = Integer.toString(endTime.hour) + ":" + String.format("%02d", endTime.minute) + "am";
+            newEndTime = Integer.toString(endTime.hour) + ":" + String.format("%02d", roundUpToNearest5(endTime.minute)) + "am";
         }
         else {
-            newEndTime = Integer.toString(endTime.hour) + ":" + String.format("%02d", endTime.minute) + "pm";
+            newEndTime = Integer.toString(endTime.hour) + ":" + String.format("%02d", roundUpToNearest5(endTime.minute)) + "pm";
         }
 
         return newEndTime;
