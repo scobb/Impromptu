@@ -141,11 +141,14 @@ public class FragmentComposeTime extends Fragment {
                 //String correctMin = String.format("%02d", startTime.minute);
 
                 if(morning) {
+
                     newStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", roundUpToNearest5(startTime.minute)) + "am";
                 }
                 else {
                     newStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", roundUpToNearest5(startTime.minute)) + "pm";
+
                 }
+
                 vTextStartTime.setText(newStartTime);
 
                 String newEndTime = getEndTime();
@@ -261,10 +264,12 @@ public class FragmentComposeTime extends Fragment {
         }
 
         if(endTimeMorning) {
+
             newEndTime = Integer.toString(endTime.hour) + ":" + String.format("%02d", roundUpToNearest5(endTime.minute)) + "am";
         }
         else {
             newEndTime = Integer.toString(endTime.hour) + ":" + String.format("%02d", roundUpToNearest5(endTime.minute)) + "pm";
+
         }
 
         return newEndTime;

@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-<<<<<<< HEAD
-  <component name="EntryPointsManager">
-    <entry_points version="2.0" />
-  </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" assert-keyword="true" jdk-15="true" project-jdk-name="JDK" project-jdk-type="JavaSDK" />
-=======
   <component name="DaemonCodeAnalyzer">
     <disable_hints />
   </component>
@@ -117,6 +111,5 @@
       <Port>5050</Port>
     </configuration>
   </component>
->>>>>>> 1587f311e0567d4ba320820381d4833638a5d333
 </project>
 
