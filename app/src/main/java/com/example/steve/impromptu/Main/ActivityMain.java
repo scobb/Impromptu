@@ -1,10 +1,12 @@
 package com.example.steve.impromptu.Main;
 
+import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.os.Bundle;
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,12 +18,17 @@ import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeLocation;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeMain;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeTime;
+import com.example.steve.impromptu.Login.ActivityLogin;
+import com.example.steve.impromptu.Login.FragmentLogin;
+>>>>>>> 5930730d8ac3d873a5cc57894e2f97fb0ff5809d
 import com.example.steve.impromptu.R;
 import com.parse.Parse;
+import com.parse.ParseUser;
 
 public class ActivityMain extends FragmentActivity implements FragmentComposeTime.OnComposeTimeFinishedListener, FragmentComposeMain.OnAttributeSelectedListener, FragmentComposeMain.OnComposeMainFinishedListener {
 
     Event newEvent;
+    public Dialog progressDialog
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +41,41 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 
         FragmentComposeMain fragment = new FragmentComposeMain();
         fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        newEvent = new Event();
+    }
+    public void forwardToProfileFragment() {
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        FragmentProfile fragment = new FragmentProfile();
+        fragmentTransaction.replace(R.id.loginShell, fragment).addToBackStack(null);
         fragmentTransaction.commit();
 
-        // TODO: eventually remove (when compose button has correct functionality
-        newEvent = new Event();
+    }
+
+    public void forwardToLoginActivity() {
+        Intent intent = new Intent(ActivityMain.this, ActivityLogin.class);
+        startActivity(intent);
+        finish();
+    }
+
+
+    public void onLogoutClicked(View v) {
+        ParseUser.logOut();
+        com.facebook.Session fbs = com.facebook.Session.getActiveSession();
+        if (fbs == null) {
+            fbs = new com.facebook.Session(ActivityMain.this);
+            com.facebook.Session.setActiveSession(fbs);
+        }
+        fbs.closeAndClearTokenInformation();
+
+        forwardToLoginActivity();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_shell_main);
+
     }
 
 
@@ -135,7 +173,8 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     }
 
     public void profile (View view) {
-        Toast.makeText(this, "show profile", Toast.LENGTH_SHORT).show();
+        forwardToProfileFragment();
+        //Toast.makeText(this, "show profile", Toast.LENGTH_SHORT).show();
     }
 
     public void compose (View view) {
