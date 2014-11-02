@@ -15,6 +15,7 @@ import com.example.steve.impromptu.R;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.model.GraphUser;
+import com.google.android.gms.games.GamesMetadata;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
 
@@ -31,7 +32,7 @@ public class FragmentProfile extends Fragment {
                              Bundle savedInstanceState) {
 
         // get user's name, email, profile pic
-
+        Log.d("Impromptu", "In onCreateView");
         ParseUser currentUser = ParseUser.getCurrentUser();
         if (currentUser == null) {
             //TODO - test this
@@ -52,6 +53,7 @@ public class FragmentProfile extends Fragment {
         final View myInflatedView = inflater.inflate(R.layout.fragment_profile, container, false);
 
         final TextView nameView = (TextView) myInflatedView.findViewById(R.id.fragProfile_textView_name);
+        Log.d("Impromptu", "Looking up facebook");
         if (ParseFacebookUtils.isLinked(currentUser)){
             // display facebook name
             Request req = Request.newMeRequest(ParseFacebookUtils.getSession(),
