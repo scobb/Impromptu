@@ -37,7 +37,7 @@ public class ImpromptuUser extends ParseUser{
     }
 
     public String getName() {
-        return this.get("name").toString();
+        return this.getUsername();
     }
 
     /**
