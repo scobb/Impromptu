@@ -5,6 +5,9 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
@@ -12,9 +15,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
+import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.Login.ActivityLogin;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeLocation;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeMain;
@@ -61,6 +66,17 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         Intent intent = new Intent(ActivityMain.this, ActivityLogin.class);
         startActivity(intent);
         finish();
+    }
+
+    public void onDebugClicked(View v) {
+//        ImpromptuUser currentUser = (ImpromptuUser)ParseUser.getCurrentUser();
+//        Bitmap profilePic = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
+//        currentUser.setPicture(profilePic);
+        ImpromptuUser currentUser = (ImpromptuUser)ParseUser.getCurrentUser();
+        Bitmap profilePic = currentUser.getPicture();
+        ImageView picView = (ImageView)findViewById(R.id.fragProfile_imageView_profilePic);
+        picView.setImageBitmap(profilePic);
+
     }
 
 

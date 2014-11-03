@@ -30,4 +30,11 @@
         android:onClick="onLogoutClicked"
         android:id="@+id/fragProfile_button_logout" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="debug"
+        android:onClick="onDebugClicked"
+        android:id="@+id/fragProfile_button_debugSaveImage" />
+
 </LinearLayout>

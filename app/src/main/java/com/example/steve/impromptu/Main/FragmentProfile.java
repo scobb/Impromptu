@@ -3,13 +3,16 @@ package com.example.steve.impromptu.Main;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.Login.ActivityLogin;
 import com.example.steve.impromptu.R;
 import com.facebook.Request;
@@ -33,7 +36,7 @@ public class FragmentProfile extends Fragment {
 
         // get user's name, email, profile pic
         Log.d("Impromptu", "In onCreateView");
-        ParseUser currentUser = ParseUser.getCurrentUser();
+        ImpromptuUser currentUser = (ImpromptuUser)ParseUser.getCurrentUser();
         if (currentUser == null) {
             //TODO - test this
             Log.e("Impromptu", "Current user is null");
@@ -49,8 +52,17 @@ public class FragmentProfile extends Fragment {
             Log.e("Impromptu", "Current user's email is null");
 
 
+
+
         // Inflate the layout for this fragment
         final View myInflatedView = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        // grab profile pic
+        Bitmap profilePic = currentUser.getPicture();
+        if (profilePic != null) {
+            ImageView picView = (ImageView) myInflatedView.findViewById(R.id.fragProfile_imageView_profilePic);
+            picView.setImageBitmap(profilePic);
+        }
 
         final TextView nameView = (TextView) myInflatedView.findViewById(R.id.fragProfile_textView_name);
         Log.d("Impromptu", "Looking up facebook");
