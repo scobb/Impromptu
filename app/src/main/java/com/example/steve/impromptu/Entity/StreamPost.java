@@ -28,4 +28,8 @@ public class StreamPost {
         map.put("content", content);
         return map;
     }
+
+    public ImpromptuUser getUser(){
+        return user;
+    }
 }
