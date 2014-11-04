@@ -16,17 +16,39 @@ public class Event {
     private String title;
     private String description;
     private ArrayList<Group> streamGroups;
+    private ArrayList<ImpromptuUser> streamFriends;
     private ArrayList<Group> pushGroups;
+    private ArrayList<ImpromptuUser> pushFriends;
     private Time eventTime;
     private Time creationTime;
     private int durationHour;
     private int durationMinute;
     private String location;
 
+    public void setStreamFriends(ArrayList<ImpromptuUser> streamFriends) {
+        this.streamFriends = streamFriends;
+    }
+
+    public void setPushFriends(ArrayList<ImpromptuUser> pushFriends) {
+        this.pushFriends = pushFriends;
+    }
+
+    public ArrayList<ImpromptuUser> getStreamFriends() {
+
+        return streamFriends;
+    }
+
+    public ArrayList<ImpromptuUser> getPushFriends() {
+        return pushFriends;
+    }
+
     public Event() {
+
 
         streamGroups = new ArrayList<Group>();
         pushGroups = new ArrayList<Group>();
+        streamFriends = new ArrayList<ImpromptuUser>();
+        pushFriends = new ArrayList<ImpromptuUser>();
 
     }
 
@@ -110,7 +132,6 @@ public class Event {
     public String getLocation() {
         return location;
     }
-
 
     public int getDurationHour() {
         return durationHour;

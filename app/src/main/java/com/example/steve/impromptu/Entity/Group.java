@@ -8,15 +8,15 @@ import java.util.ArrayList;
 
 public class Group {
 
-    private ArrayList<Friend> friendsInGroup;
+    private ArrayList<ImpromptuUser> friendsInGroup;
     private int size = 0;
     private boolean selected = false;
 
     public Group() {
-        this.friendsInGroup = new ArrayList<Friend>();
+        this.friendsInGroup = new ArrayList<ImpromptuUser>();
     }
 
-    public boolean add(Friend friend) {
+    public boolean add(ImpromptuUser friend) {
 
         if (this.friendsInGroup.add(friend)) {
             this.size ++;
@@ -51,7 +51,7 @@ public class Group {
 
     }
 
-    public ArrayList<Friend> getFriends() {
+    public ArrayList<ImpromptuUser> getFriends() {
 
         return this.friendsInGroup;
 

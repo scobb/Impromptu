@@ -11,7 +11,6 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Main.ActivityMain;
@@ -196,9 +195,7 @@ public class FragmentComposeTime extends Fragment {
             @Override
             public void onClick(View v) {
 
-                // TODO make sure enough info is filled out
-
-                Toast.makeText(getActivity(), "Select cancel", Toast.LENGTH_SHORT).show();
+                mCallback.onComposeTimeFinished();
 
             }
         });

@@ -7,6 +7,9 @@ import com.parse.ParseUser;
  * Created by scobb on 10/19/14.
  */
 public class ImpromptuUser extends ParseUser{
+
+    Boolean isSelected = false;
+
     public ImpromptuUser() {
         super();
     }
@@ -34,6 +37,14 @@ public class ImpromptuUser extends ParseUser{
 
     public Integer getPicture() {
         return null;
+    }
+
+    public Boolean isSelected() {
+        return this.isSelected;
+    }
+
+    public void setSelected(Boolean selected) {
+        this.isSelected = selected;
     }
 
 }
