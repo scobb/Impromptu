@@ -23,7 +23,8 @@ import com.example.steve.impromptu.R;
 import com.parse.Parse;
 import com.parse.ParseUser;
 
-public class ActivityMain extends FragmentActivity implements FragmentComposeTime.OnComposeTimeFinishedListener, FragmentComposeMain.OnAttributeSelectedListener, FragmentComposeMain.OnComposeMainFinishedListener {
+public class ActivityMain extends FragmentActivity implements FragmentComposeTime.OnComposeTimeFinishedListener, FragmentComposeMain.OnAttributeSelectedListener,
+        FragmentComposeMain.OnComposeMainFinishedListener, FragmentComposeLocation.OnComposeLocationFinishedListener {
 
     Event newEvent;
     public Dialog progressDialog;
@@ -98,6 +99,18 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 
     @Override
     public void onComposeTimeFinished() {
+
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        FragmentComposeMain fragment = new FragmentComposeMain();
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.commit();
+
+    }
+
+    @Override
+    public void onComposeLocationFinished() {
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
