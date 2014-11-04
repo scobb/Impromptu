@@ -34,9 +34,14 @@ public class FragmentProfile extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        // Receive the arguments
+        Bundle userData = getArguments();
+
+
         // get user's name, email, profile pic
         Log.d("Impromptu", "In onCreateView");
         ImpromptuUser currentUser = (ImpromptuUser)ParseUser.getCurrentUser();
+
         if (currentUser == null) {
             //TODO - test this
             Log.e("Impromptu", "Current user is null");
@@ -107,7 +112,8 @@ public class FragmentProfile extends Fragment {
         }
         else {
             // display parse username
-            nameView.setText(currentUser.getUsername());
+//            nameView.setText(currentUser.getUsername());
+            nameView.setText(userData.getString("username"));
         }
         TextView emailView = (TextView) myInflatedView.findViewById(R.id.fragProfile_textView_email);
         emailView.setText(currentUser.getEmail());

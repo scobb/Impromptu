@@ -1,7 +1,9 @@
 package com.example.steve.impromptu.Entity;
 
 import android.text.format.Time;
+import android.util.Log;
 
+import com.example.steve.impromptu.R;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
@@ -11,6 +13,7 @@ import java.lang.reflect.Method;
 import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Created by jonreynolds on 10/26/14.
@@ -20,8 +23,8 @@ public class Event extends ParseObject{
 
     public Event() {
         super();
-        this.setStreamGroups(new ArrayList<Group>());
-        this.setPushGroups(new ArrayList<Group>());
+//        this.setStreamGroups(new ArrayList<Group>());
+//        this.setPushGroups(new ArrayList<Group>());
 
     }
 
@@ -45,6 +48,21 @@ public class Event extends ParseObject{
         test = this.getLocation();
         test = this.getTitle();
         test = this.getType();
+    }
+
+    public HashMap<String, String> getHashMap(){
+        HashMap<String, String> map = new HashMap<String, String>();
+        try {
+            ImpromptuUser owner = (ImpromptuUser)this.getOwner().fetchIfNeeded();
+            map.put("user", owner.getName());
+        }
+        catch (Exception exc) {
+            Log.e("Impromptu", "Exception", exc);
+        }
+        map.put("picture", Integer.toString(R.drawable.ic_launcher));
+        map.put("date", this.getEventTime().toString());
+        map.put("content", this.getDescription());
+        return map;
     }
 
 

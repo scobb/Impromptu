@@ -38,6 +38,7 @@ public class ImpromptuUser extends ParseUser{
 
     public String getName() {
         return this.getUsername();
+//        return "Stevie Wonder";
     }
 
     /**

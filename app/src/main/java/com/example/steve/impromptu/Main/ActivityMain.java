@@ -20,12 +20,14 @@ import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
+import com.example.steve.impromptu.Entity.StreamPost;
 import com.example.steve.impromptu.Login.ActivityLogin;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeLocation;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeMain;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeTime;
 import com.example.steve.impromptu.R;
 import com.parse.Parse;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 public class ActivityMain extends FragmentActivity implements FragmentComposeTime.OnComposeTimeFinishedListener, FragmentComposeMain.OnAttributeSelectedListener, FragmentComposeMain.OnComposeMainFinishedListener {
@@ -37,6 +39,9 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shell_main);
+
+        ParseObject.registerSubclass(StreamPost.class);
+        ParseObject.registerSubclass(Event.class);
         Parse.initialize(this, "sP5YdlJxg1WiwfKgSXX4KdrgpZzAV5g69dV8ryY0", "houV8Brg8oIuBKSLheR7qAW4AJfGq1QZmH62Spgk");
 
         //Remove title bar
