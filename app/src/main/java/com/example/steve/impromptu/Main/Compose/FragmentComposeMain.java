@@ -101,7 +101,8 @@ public class FragmentComposeMain extends Fragment {
             @Override
             public void onClick(View v) {
 
-                Toast.makeText(getActivity(), "Select push", Toast.LENGTH_SHORT).show();
+                String attribute = "push";
+                attributeSelectedListenerCallback.OnAttributeSelected(attribute);
 
             }
         });
