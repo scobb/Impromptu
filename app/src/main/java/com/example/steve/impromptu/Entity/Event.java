@@ -8,12 +8,11 @@ import com.parse.ParseClassName;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by jonreynolds on 10/26/14.
@@ -21,42 +20,25 @@ import java.util.HashMap;
 @ParseClassName("Event")
 public class Event extends ParseObject{
 
-    // TODO change to User class
-    private String owner;
-    private String type;
-    private String title;
-    private String description;
-    private ArrayList<Group> streamGroups;
-    private ArrayList<ImpromptuUser> streamFriends;
-    private ArrayList<Group> pushGroups;
-    private ArrayList<ImpromptuUser> pushFriends;
-    private Time eventTime;
-    private Time creationTime;
-    private int durationHour;
-    private int durationMinute;
-    private String location;
-
     public void setStreamFriends(ArrayList<ImpromptuUser> streamFriends) {
-        this.streamFriends = streamFriends;
+            this.put("streamFriends", streamFriends);
     }
 
-    public void setPushFriends(ArrayList<ImpromptuUser> pushFriends) {
-        this.pushFriends = pushFriends;
+    public List<ImpromptuUser> getStreamFriends() {
+
+        return this.getList("streamFriends");
     }
 
-    public ArrayList<ImpromptuUser> getStreamFriends() {
-
-        return streamFriends;
-    }
-
-    public ArrayList<ImpromptuUser> getPushFriends() {
-        return pushFriends;
+    public List<ImpromptuUser> getPushFriends() {
+        return this.getList("pushFriends");
     }
 
     public Event() {
         super();
-//        this.setStreamGroups(new ArrayList<Group>());
-//        this.setPushGroups(new ArrayList<Group>());
+        this.setStreamGroups(new ArrayList<Group>());
+        this.setPushGroups(new ArrayList<Group>());
+        this.setStreamFriends(new ArrayList<ImpromptuUser>());
+        this.setPushFriends(new ArrayList<ImpromptuUser>());
 
     }
 
@@ -70,11 +52,6 @@ public class Event extends ParseObject{
         this.setLocation("here");
         this.setTitle("awesome");
         this.setType("awesomeType");
-
-        streamGroups = new ArrayList<Group>();
-        pushGroups = new ArrayList<Group>();
-        streamFriends = new ArrayList<ImpromptuUser>();
-        pushFriends = new ArrayList<ImpromptuUser>();
 
         ImpromptuUser testUser = this.getOwner();
         Time testCreation = this.getCreationTime();
@@ -130,6 +107,9 @@ public class Event extends ParseObject{
     public void setPushGroups(ArrayList<Group> pushGroups) {
         this.put("pushGroups", pushGroups);
     }
+
+    public void setPushFriends(ArrayList<ImpromptuUser> pushFriends) { this.put("pushFriends", pushFriends); }
+
 
     public void setEventTime(Time eventTime) {
         this.put("eventTime", new Date(eventTime.toMillis(false)));

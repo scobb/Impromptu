@@ -270,13 +270,7 @@ public class FragmentComposeTime extends Fragment {
                 @Override
                 public void onClick(View v) {
 
-<<<<<<< HEAD
-                    // TODO make sure enough info is filled out
-
-                    Toast.makeText(getActivity(), "Select cancel", Toast.LENGTH_SHORT).show();
-=======
                 mCallback.onComposeTimeFinished();
->>>>>>> 5b1c256061e8a5056cfc58a1c3d06c5076d30c91
 
                 }
             });

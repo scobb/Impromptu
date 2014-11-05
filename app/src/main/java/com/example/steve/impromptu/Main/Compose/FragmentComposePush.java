@@ -50,7 +50,7 @@ public class FragmentComposePush extends Fragment {
 
         ActivityMain myActivity = (ActivityMain) getActivity();
         Event myEvent = myActivity.getNewEvent();
-        friendsList = myEvent.getPushFriends();
+        friendsList = (ArrayList<ImpromptuUser>) myEvent.getPushFriends();
 
         if (friendsList.isEmpty()) {
             Group myGroup = createFakeGroup();
