@@ -18,13 +18,15 @@ import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Login.ActivityLogin;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeLocation;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeMain;
+import com.example.steve.impromptu.Main.Compose.FragmentComposePush;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeTime;
 import com.example.steve.impromptu.R;
 import com.parse.Parse;
 import com.parse.ParseUser;
 
 public class ActivityMain extends FragmentActivity implements FragmentComposeTime.OnComposeTimeFinishedListener, FragmentComposeMain.OnAttributeSelectedListener,
-        FragmentComposeMain.OnComposeMainFinishedListener, FragmentComposeLocation.OnComposeLocationFinishedListener {
+        FragmentComposeMain.OnComposeMainFinishedListener, FragmentComposeLocation.OnComposeLocationFinishedListener, FragmentComposePush.OnComposePushFinishedListener {
+
 
     Event newEvent;
     public Dialog progressDialog;
@@ -135,6 +137,9 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
             case "location":
                 frag = new FragmentComposeLocation();
                 break;
+            case "push":
+                frag = new FragmentComposePush();
+                break;
             default:
                 frag = new FragmentComposeMain();
         }
@@ -156,6 +161,18 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
             Toast.makeText(this, "cancel new event", Toast.LENGTH_SHORT).show();
 
         }
+    }
+
+    @Override
+    public void onComposePushFinished() {
+
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        FragmentComposeMain fragment = new FragmentComposeMain();
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.commit();
+
     }
 
     public static class LoginFragment extends Fragment {
