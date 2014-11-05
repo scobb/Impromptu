@@ -21,6 +21,38 @@ import java.util.HashMap;
 @ParseClassName("Event")
 public class Event extends ParseObject{
 
+    // TODO change to User class
+    private String owner;
+    private String type;
+    private String title;
+    private String description;
+    private ArrayList<Group> streamGroups;
+    private ArrayList<ImpromptuUser> streamFriends;
+    private ArrayList<Group> pushGroups;
+    private ArrayList<ImpromptuUser> pushFriends;
+    private Time eventTime;
+    private Time creationTime;
+    private int durationHour;
+    private int durationMinute;
+    private String location;
+
+    public void setStreamFriends(ArrayList<ImpromptuUser> streamFriends) {
+        this.streamFriends = streamFriends;
+    }
+
+    public void setPushFriends(ArrayList<ImpromptuUser> pushFriends) {
+        this.pushFriends = pushFriends;
+    }
+
+    public ArrayList<ImpromptuUser> getStreamFriends() {
+
+        return streamFriends;
+    }
+
+    public ArrayList<ImpromptuUser> getPushFriends() {
+        return pushFriends;
+    }
+
     public Event() {
         super();
 //        this.setStreamGroups(new ArrayList<Group>());
@@ -38,6 +70,11 @@ public class Event extends ParseObject{
         this.setLocation("here");
         this.setTitle("awesome");
         this.setType("awesomeType");
+
+        streamGroups = new ArrayList<Group>();
+        pushGroups = new ArrayList<Group>();
+        streamFriends = new ArrayList<ImpromptuUser>();
+        pushFriends = new ArrayList<ImpromptuUser>();
 
         ImpromptuUser testUser = this.getOwner();
         Time testCreation = this.getCreationTime();
@@ -155,7 +192,6 @@ public class Event extends ParseObject{
     public String getLocation() {
         return (String)this.get("location");
     }
-
 
     public int getDurationHour() {
         return (int)this.get("durationHour");

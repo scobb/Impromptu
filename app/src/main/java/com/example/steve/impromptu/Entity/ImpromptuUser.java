@@ -15,6 +15,9 @@ import java.io.ByteArrayOutputStream;
  * Created by scobb on 10/19/14.
  */
 public class ImpromptuUser extends ParseUser{
+
+    Boolean isSelected = false;
+
     public ImpromptuUser() {
         super();
     }
@@ -75,5 +78,12 @@ public class ImpromptuUser extends ParseUser{
         return BitmapFactory.decodeByteArray(picBlock, 0, picBlock.length);
     }
 
+    public Boolean isSelected() {
+        return this.isSelected;
+    }
+
+    public void setSelected(Boolean selected) {
+        this.isSelected = selected;
+    }
 
 }

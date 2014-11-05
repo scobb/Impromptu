@@ -11,7 +11,6 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Main.ActivityMain;
@@ -37,7 +36,12 @@ public class FragmentComposeTime extends Fragment {
     int durationHour = 0;
     int durationMinute = 0;
     int absoluteStartHour;
-    boolean morning;
+    boolean startMorning;
+    boolean endTimeMorning;
+    int durationSeekBarProgress;
+    int startTimeSeekBarProgress;
+    String newEndTime;
+    String initialStartTime;
 
     OnComposeTimeFinishedListener mCallback;
 
@@ -47,175 +51,252 @@ public class FragmentComposeTime extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current game state
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putInt("starting time hour", startTime.hour);
+        savedInstanceState.putInt("starting time minute", startTime.minute);
+        savedInstanceState.putBoolean("starting time morning", startMorning);
+        savedInstanceState.putBoolean("ending time morning", endTimeMorning);
+        savedInstanceState.putInt("duration hour", durationHour);
+        savedInstanceState.putInt("duration minute", durationMinute);
+        savedInstanceState.putInt("ending time hour", endTime.hour);
+        savedInstanceState.putInt("ending time minute", endTime.minute);
+        savedInstanceState.putInt("duration seek bar progress", durationSeekBarProgress);
+        savedInstanceState.putInt("start time seek bar progress", startTimeSeekBarProgress);
+
+    }
+
+    public void resetState(Bundle savedInstanceState) {
+        // Restore last state for checked position.
+        startMorning = savedInstanceState.getBoolean("starting time morning");
+        startTime.hour = savedInstanceState.getInt("starting time hour");
+        startTime.minute = savedInstanceState.getInt("starting time minute");
+        if (startMorning) {
+            initialStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", roundUpToNearest5(startTime.minute)) + "am";
+        } else {
+            initialStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", roundUpToNearest5(startTime.minute)) + "pm";
+        }
+        vTextStartTime.setText(initialStartTime);
+        endTimeMorning = savedInstanceState.getBoolean("ending time morning");
+        durationHour = savedInstanceState.getInt("duration hour");
+        durationMinute = savedInstanceState.getInt("duration minute");
+        String hourString = "hrs";
+        String minString = "mins";
+
+        if (durationHour == 1) {
+            hourString = "hr";
+        }
+        if (durationMinute == 1) {
+            minString = "min";
+        }
+
+        String newDuration = Integer.toString(durationHour) + " " + hourString + " " + Integer.toString(durationMinute) + " " + minString;
+        vTextDuration.setText(newDuration);
+        endTime.hour = savedInstanceState.getInt("ending time hour");
+        endTime.minute = savedInstanceState.getInt("ending time minute");
+        if (endTimeMorning) {
+
+            newEndTime = Integer.toString(endTime.hour) + ":" + String.format("%02d", roundUpToNearest5(endTime.minute)) + "am";
+        } else {
+            newEndTime = Integer.toString(endTime.hour) + ":" + String.format("%02d", roundUpToNearest5(endTime.minute)) + "pm";
+
+        }
+        vTextEndTime.setText(newEndTime);
+        startTimeSeekBarProgress = savedInstanceState.getInt("start time seek bar progress");
+        durationSeekBarProgress = savedInstanceState.getInt("duration seek bar progress");
+        vSeekStartTime.setProgress(startTimeSeekBarProgress);
+        vSeekDuration.setProgress(durationSeekBarProgress);
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View fragmentView = inflater.inflate(R.layout.fragment_compose_time, container, false);
 
-        String initialStartTime;
-        currentTime = new Time();
-        startTime = new Time();
-        endTime = new Time();
-
-        currentTime.setToNow();
-        startTime.hour = currentTime.hour;
-        absoluteStartHour = startTime.hour;
-        startTime.minute = currentTime.minute;
-
-        vSeekStartTime = (SeekBar) fragmentView.findViewById(R.id.fragComposeTime_seekbar_startTime);
-        vSeekDuration = (SeekBar) fragmentView.findViewById(R.id.fragComposeTime_seekbar_duration);
-        vTextStartTime = (TextView) fragmentView.findViewById(R.id.fragComposeTime_textView_startTime);
-        vTextDuration = (TextView) fragmentView.findViewById(R.id.fragComposeTime_textView_duration);
-        vTextEndTime = (TextView) fragmentView.findViewById(R.id.fragComposeTime_textView_endTime);
-        vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposeTime_linearLayout_okay);
-        vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposeTime_linearLayout_cancel);
-
-        if(startTime.hour == 12) {
-            morning = false;
-        }
-        if(startTime.hour > 12) {
-            startTime.hour = startTime.hour -12;
-            morning = false;
-        }
-
-        if(startTime.hour == 0) {
-            startTime.hour = 12;
-            morning = true;
-        }
-        //String correctMin = String.format("%02d", startTime.minute);
-
-        if(morning) {
-            initialStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", startTime.minute) + " am";
+        if (savedInstanceState != null) {
+            resetState(savedInstanceState);
         }
         else {
-            initialStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", startTime.minute) + " pm";
+
+            currentTime = new Time();
+            startTime = new Time();
+            endTime = new Time();
+
+            currentTime.setToNow();
+            startTime.hour = currentTime.hour;
+            absoluteStartHour = startTime.hour;
+            startTime.minute = currentTime.minute;
+
+            vSeekStartTime = (SeekBar) fragmentView.findViewById(R.id.fragComposeTime_seekbar_startTime);
+            vSeekDuration = (SeekBar) fragmentView.findViewById(R.id.fragComposeTime_seekbar_duration);
+            vTextStartTime = (TextView) fragmentView.findViewById(R.id.fragComposeTime_textView_startTime);
+            vTextDuration = (TextView) fragmentView.findViewById(R.id.fragComposeTime_textView_duration);
+            vTextEndTime = (TextView) fragmentView.findViewById(R.id.fragComposeTime_textView_endTime);
+            vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposeTime_linearLayout_okay);
+            vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposeTime_linearLayout_cancel);
+
+
+            startMorning = true;
+            if (roundUpToNearest5(startTime.minute) >= 60) {
+                startTime.hour += 1;
+                // absoluteStartHour += 1;
+                startTime.minute = 0;
+            }
+            if (startTime.hour == 12) {
+                startMorning = false;
+            }
+            if (startTime.hour > 12) {
+                startTime.hour = startTime.hour - 12;
+                startMorning = false;
+            }
+
+            if (startTime.hour == 0) {
+                startTime.hour = 12;
+                startMorning = true;
+            }
+            //String correctMin = String.format("%02d", startTime.minute);
+
+            if (startMorning) {
+                initialStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", roundUpToNearest5(startTime.minute)) + "am";
+            } else {
+                initialStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", roundUpToNearest5(startTime.minute)) + "pm";
+            }
+
+            vTextStartTime.setText(initialStartTime);
+
+            String initialEndTime = getEndTime();
+            vTextEndTime.setText(initialEndTime);
         }
+            vSeekStartTime.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
-        vTextStartTime.setText(initialStartTime);
-
-        String initialEndTime = getEndTime();
-        vTextEndTime.setText(initialEndTime);
-
-        vSeekStartTime.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
-
-                int addTime = progress;
-                addTime *= 5;
-                int addHours = addTime / 60;
-                int addMinutes = addTime % 60;
-                boolean morning = true;
-                String newStartTime;
-
-                currentTime.setToNow();
-                startTime.hour = currentTime.hour + addHours;
-                absoluteStartHour = currentTime.hour + addHours;
-                startTime.minute = (currentTime.minute + addMinutes) % 60;
-
-                if((currentTime.minute + addMinutes) > 60) {
-                    startTime.hour += 1;
-                    absoluteStartHour += 1;
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
                 }
 
-                if(startTime.hour == 12) {
-                    morning = false;
-                }
-                if(startTime.hour > 12) {
-                    startTime.hour = startTime.hour -12;
-                    morning = false;
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
                 }
 
-                if(startTime.hour == 0) {
-                    startTime.hour = 12;
-                    morning = true;
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    int addTime = progress;
+                    addTime *= 5;
+                    int addHours = addTime / 60;
+                    int addMinutes = addTime % 60;
+                    boolean morning = true;
+                    String newStartTime;
+                    startTimeSeekBarProgress = progress;
+
+                    startTime.hour = currentTime.hour + addHours;
+                    absoluteStartHour = currentTime.hour + addHours;
+                    startTime.minute = (currentTime.minute + addMinutes) % 60;
+
+
+                    if (roundUpToNearest5(startTime.minute) >= 60) {
+                        startTime.hour += 1;
+                       // absoluteStartHour += 1;
+                        startTime.minute = 0;
+                    }
+
+                    if (startTime.hour == 12) {
+                        morning = false;
+                    }
+                    if (startTime.hour > 12) {
+                        startTime.hour = startTime.hour - 12;
+                        morning = false;
+                    }
+
+                    if (startTime.hour == 0) {
+                        startTime.hour = 12;
+                        morning = true;
+                    }
+                    //String correctMin = String.format("%02d", startTime.minute);
+
+                    if (morning) {
+
+                        newStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", roundUpToNearest5(startTime.minute)) + "am";
+                    } else {
+                        newStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", roundUpToNearest5(startTime.minute)) + "pm";
+
+                    }
+
+                    vTextStartTime.setText(newStartTime);
+
+                    String newEndTime = getEndTime();
+                    vTextEndTime.setText(newEndTime);
                 }
-                //String correctMin = String.format("%02d", startTime.minute);
+            });
 
-                if(morning) {
-                    newStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", startTime.minute) + " am";
-                }
-                else {
-                    newStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", startTime.minute) + " pm";
-                }
-                vTextStartTime.setText(newStartTime);
+            vSeekDuration.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
-                String newEndTime = getEndTime();
-                vTextEndTime.setText(newEndTime);
-            }
-        });
-
-        vSeekDuration.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
-
-                int addTime = progress * 15;
-                durationHour = addTime / 60;
-                durationMinute = addTime % 60;
-
-                String hourString = "hrs";
-                String minString = "mins";
-
-                if (durationHour == 1) {
-                    hourString = "hr";
-                }
-                if (durationMinute == 1) {
-                    minString = "min";
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
                 }
 
-                String newDuration = Integer.toString(durationHour) + " " + hourString + " " + Integer.toString(durationMinute) + " " + minString;
-                vTextDuration.setText(newDuration);
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                }
 
-                String newEndTime = getEndTime();
-                vTextEndTime.setText(newEndTime);
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-            }
-        });
+                    int addTime = progress * 15;
+                    durationHour = addTime / 60;
+                    durationMinute = addTime % 60;
+                    durationSeekBarProgress = progress;
+                    String hourString = "hrs";
+                    String minString = "mins";
 
-        vCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                    if (durationHour == 1) {
+                        hourString = "hr";
+                    }
+                    if (durationMinute == 1) {
+                        minString = "min";
+                    }
 
-                // TODO make sure enough info is filled out
+                    String newDuration = Integer.toString(durationHour) + " " + hourString + " " + Integer.toString(durationMinute) + " " + minString;
+                    vTextDuration.setText(newDuration);
 
-                Toast.makeText(getActivity(), "Select cancel", Toast.LENGTH_SHORT).show();
+                    String newEndTime = getEndTime();
+                    vTextEndTime.setText(newEndTime);
 
-            }
-        });
+                }
+            });
 
-        vOkay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            vCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-                ActivityMain myActivity = (ActivityMain) getActivity();
-                Event myEvent = myActivity.getNewEvent();
-                myEvent.setEventTime(startTime);
-                myEvent.setDurationHour(durationHour);
-                myEvent.setDurationMinute(durationMinute);
+<<<<<<< HEAD
+                    // TODO make sure enough info is filled out
 
+                    Toast.makeText(getActivity(), "Select cancel", Toast.LENGTH_SHORT).show();
+=======
                 mCallback.onComposeTimeFinished();
-            }
-        });
+>>>>>>> 5b1c256061e8a5056cfc58a1c3d06c5076d30c91
 
-        return fragmentView;
-    }
+                }
+            });
+
+            vOkay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    ActivityMain myActivity = (ActivityMain) getActivity();
+                    Event myEvent = myActivity.getNewEvent();
+                    myEvent.setEventTime(startTime);
+                    myEvent.setDurationHour(durationHour);
+                    myEvent.setDurationMinute(durationMinute);
+
+                    mCallback.onComposeTimeFinished();
+                }
+            });
+
+            return fragmentView;
+        }
 
     @Override
     public void onAttach(Activity activity) {
@@ -232,15 +313,15 @@ public class FragmentComposeTime extends Fragment {
     }
 
     public String getEndTime() {
-        boolean endTimeMorning = true;
-        String newEndTime;
+
+        endTimeMorning = true;
         int absoluteEndHour = absoluteStartHour + durationHour;
-//        System.out.println("Absolute end hour is" + Integer.toString(absoluteEndHour));
         endTime.hour = startTime.hour + durationHour;
         endTime.minute = (startTime.minute + durationMinute) % 60;
-        if((startTime.minute + durationMinute) > 60) {
+        if(((startTime.minute + durationMinute) >= 60) || ((startTime.minute + roundUpToNearest5(durationMinute)) >= 60)) {
             absoluteEndHour += 1;
             endTime.hour += 1;
+            endTime.minute = 0;
         }
 
         if(absoluteEndHour == 12 ) {
@@ -262,12 +343,18 @@ public class FragmentComposeTime extends Fragment {
         }
 
         if(endTimeMorning) {
-            newEndTime = Integer.toString(endTime.hour) + ":" + String.format("%02d", endTime.minute) + " am";
+
+            newEndTime = Integer.toString(endTime.hour) + ":" + String.format("%02d", roundUpToNearest5(endTime.minute)) + "am";
         }
         else {
-            newEndTime = Integer.toString(endTime.hour) + ":" + String.format("%02d", endTime.minute) + " pm";
+            newEndTime = Integer.toString(endTime.hour) + ":" + String.format("%02d", roundUpToNearest5(endTime.minute)) + "pm";
+
         }
 
         return newEndTime;
+    }
+
+    int roundUpToNearest5(int n) {
+        return (n + 4) / 5 * 5;
     }
 }

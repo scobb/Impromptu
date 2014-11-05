@@ -1,15 +1,18 @@
 package com.example.steve.impromptu.Main.Compose;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,14 +49,38 @@ public class FragmentComposeLocation extends Fragment {
     private TextView vSearchPrompt;
     private GoogleMap vMap;
     public Event myEvent;
+    private LinearLayout vOkay;
+    private LinearLayout vCancel;
     private int mapType;
+    private String postalCodeString = "nothing yet";
+
+    private static View fragmentView;
+
+    OnComposeLocationFinishedListener mCallback;
+
+    // Container Activity must implement this interface
+    public interface OnComposeLocationFinishedListener {
+        public void onComposeLocationFinished();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
+
+        if (fragmentView != null) {
+            ViewGroup parent = (ViewGroup) fragmentView.getParent();
+            if (parent != null)
+                parent.removeView(fragmentView);
+        }
+        try {
+            fragmentView = inflater.inflate(R.layout.fragment_compose_location, container, false);
+        } catch (InflateException e) {
+        /* map is already there, just return view as it is */
+        }
+
         // Inflate the layout for this fragment
-        View fragmentView = inflater.inflate(R.layout.fragment_compose_location, container, false);
+
 
         ActivityMain myActivity = (ActivityMain) getActivity();
         myEvent = myActivity.getNewEvent();
@@ -62,6 +89,8 @@ public class FragmentComposeLocation extends Fragment {
         vLocationPrompt = (TextView) fragmentView.findViewById(R.id.fragComposeLocation_textView_locationPrompt);
         vAddress = (EditText) fragmentView.findViewById(R.id.fragComposeLocation_editText_address);
         vSearchPrompt = (TextView) fragmentView.findViewById(R.id.fragComposeLocation_textView_searchPrompt);
+        vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposeLocation_linearLayout_okay);
+        vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposeLocation_linearLayout_cancel);
 
         //this works just a little differently:
         //vMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.fragComposeLocation_map)).getMap();
@@ -77,6 +106,31 @@ public class FragmentComposeLocation extends Fragment {
 
         });
 
+        vCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // TODO make sure enough info is filled out
+
+                Toast.makeText(getActivity(), "Select cancel", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        vOkay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //TODO actually "return" the location, make sure info is filled out
+
+                myEvent.setLocation(postalCodeString);
+
+                mCallback.onComposeLocationFinished();
+            }
+        });
+
+
+        /*
         int hasGooglePlay = GooglePlayServicesUtil.isGooglePlayServicesAvailable(fragmentView.getContext());
 
         String toastMe = "Google Play Services are available";
@@ -104,9 +158,11 @@ public class FragmentComposeLocation extends Fragment {
         }
 
         Toast.makeText(getActivity(), toastMe, Toast.LENGTH_SHORT).show();
+        */
 
         //some map initializations:
 
+        if(vMap != null) {
 
             LatLng sydney = new LatLng(-33.867, 151.206);
 
@@ -120,10 +176,26 @@ public class FragmentComposeLocation extends Fragment {
 
             mapType = 0;
             toggleMapType();
+        }
+
 
 
 
         return fragmentView;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            mCallback = (OnComposeLocationFinishedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnComposeTimeFinishedListener");
+        }
     }
 
     private void toggleMapType()
@@ -238,6 +310,7 @@ public class FragmentComposeLocation extends Fragment {
                 e.printStackTrace();
 
                 postalCode = "Postal Code: N/A";
+                postalCodeString = postalCode;
             }
 
             vAddress.setText(postalCode);
