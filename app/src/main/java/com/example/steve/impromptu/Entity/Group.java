@@ -49,7 +49,6 @@ public class Group extends ParseObject {
         ArrayList<ImpromptuUser> friends = (ArrayList<ImpromptuUser>) this.getFriendsInGroup();
         if (!friends.contains(friend)) {
             friends.add(friend);
-            this.put(friendsInGroupKey, friends);
         } else {
             Log.d("Impromptu", "friend was already in");
         }
@@ -62,7 +61,6 @@ public class Group extends ParseObject {
         ArrayList<ImpromptuUser> friends = (ArrayList<ImpromptuUser>) this.getFriendsInGroup();
         if (friends.contains(friend)) {
             friends.remove(friend);
-            this.put(friendsInGroupKey, friends);
         } else {
             Log.d("Impromptu", "friend was not in");
         }
