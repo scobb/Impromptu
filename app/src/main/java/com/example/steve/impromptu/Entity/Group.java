@@ -6,7 +6,9 @@ import com.parse.ParseClassName;
 import com.parse.ParseObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.TreeSet;
 
 /**
  * Created by jonreynolds on 10/26/14.
@@ -17,26 +19,43 @@ public class Group extends ParseObject {
 
     private boolean selected = false;
     private String friendsInGroupKey = "friendsInGroup";
+    private String nameKey = "groupName";
 
     public Group() {
         super();
         this.clear();
     }
 
+    public Group(String name) {
+        super();
+        setGroupName(name);
+        clear();
+    }
+
     public void persist() {
         this.saveInBackground();
     }
-    public List<ImpromptuUser> getFriendsInGroup() {
+
+    public void setGroupName(String name) {
+        put(nameKey, name);
+    }
+    public String getGroupName() {
+        return getString(nameKey);
+    }
+
+    public TreeSet<ImpromptuUser> getFriendsInGroup() {
         /**
          * method - returns list of friends in group
          */
-        return this.getList(friendsInGroupKey);
+        List<ImpromptuUser> userList = this.getList(friendsInGroupKey);
+        return new TreeSet<ImpromptuUser>(userList);
     }
 
-    public void setFriendsInGroup(ArrayList<ImpromptuUser> list) {
+    public void setFriendsInGroup(TreeSet<ImpromptuUser> tree) {
         /**
          * method - sets friendsInGroup to arrayList list
          */
+        List<ImpromptuUser> list = new ArrayList<ImpromptuUser>(tree);
         this.put(friendsInGroupKey, list);
     }
 
@@ -46,9 +65,10 @@ public class Group extends ParseObject {
          * method - adds user if they are not already in group
          */
 
-        ArrayList<ImpromptuUser> friends = (ArrayList<ImpromptuUser>) this.getFriendsInGroup();
+        TreeSet<ImpromptuUser> friends = this.getFriendsInGroup();
         if (!friends.contains(friend)) {
             friends.add(friend);
+            setFriendsInGroup(friends);
         } else {
             Log.d("Impromptu", "friend was already in");
         }
@@ -58,9 +78,10 @@ public class Group extends ParseObject {
         /**
          * method - removes user if they are in group
          */
-        ArrayList<ImpromptuUser> friends = (ArrayList<ImpromptuUser>) this.getFriendsInGroup();
+        TreeSet<ImpromptuUser> friends = getFriendsInGroup();
         if (friends.contains(friend)) {
             friends.remove(friend);
+            setFriendsInGroup(friends);
         } else {
             Log.d("Impromptu", "friend was not in");
         }
@@ -70,7 +91,7 @@ public class Group extends ParseObject {
         /**
          * method - clears users from group
          */
-        this.setFriendsInGroup(new ArrayList<ImpromptuUser>());
+        this.setFriendsInGroup(new TreeSet<ImpromptuUser>());
     }
 
     public int getSize() {
