@@ -53,11 +53,14 @@ public class Event extends ParseObject {
 
     public Event() {
         super();
+
+    }
+
+    public void clear() {
         this.setStreamGroups(new ArrayList<Group>());
         this.setPushGroups(new ArrayList<Group>());
         this.setStreamFriends(new ArrayList<ImpromptuUser>());
         this.setPushFriends(new ArrayList<ImpromptuUser>());
-
     }
 
     public void test() {
