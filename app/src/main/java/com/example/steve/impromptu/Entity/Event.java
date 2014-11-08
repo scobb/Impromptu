@@ -18,19 +18,37 @@ import java.util.List;
  * Created by jonreynolds on 10/26/14.
  */
 @ParseClassName("Event")
-public class Event extends ParseObject{
+public class Event extends ParseObject {
+    private String creationTimeKey = "creationTime";
+    private String descriptionKey = "description";
+    private String durationHourKey = "durationHour";
+    private String durationMinuteKey = "durationMinute";
+    private String eventTimeKey = "eventTime";
+    private String locationKey = "location";
+    private String ownerKey = "owner";
+    private String pushGroupsKey = "pushGroups";
+    private String streamGroupsKey = "streamGroups";
+    private String titleKey = "title";
+    private String typeKey = "type";
+    private String createdAtKey = "createdAt";
+    private String updatedAtKey = "updatedAt";
+    private String streamFriendsKey = "streamFriends";
+    private String pushFriendsKey = "pushFriends";
 
     public void setStreamFriends(ArrayList<ImpromptuUser> streamFriends) {
-            this.put("streamFriends", streamFriends);
+        this.put(streamFriendsKey, streamFriends);
     }
 
     public List<ImpromptuUser> getStreamFriends() {
+        //TODO - add verification
 
-        return this.getList("streamFriends");
+        return this.getList(streamFriendsKey);
     }
 
     public List<ImpromptuUser> getPushFriends() {
-        return this.getList("pushFriends");
+
+        //TODO - add verification
+        return this.getList(pushFriendsKey);
     }
 
     public Event() {
@@ -43,7 +61,7 @@ public class Event extends ParseObject{
     }
 
     public void test() {
-        this.setOwner((ImpromptuUser)ParseUser.getCurrentUser());
+        this.setOwner((ImpromptuUser) ParseUser.getCurrentUser());
         this.setCreationTime(new Time());
         this.setDescription("my awesome test event");
         this.setDurationHour(1);
@@ -64,15 +82,14 @@ public class Event extends ParseObject{
         test = this.getType();
     }
 
-    public HashMap<String, String> getHashMap(){
-        HashMap<String, String> map = new HashMap<String, String>();
+    public HashMap<String, String> getHashMap() {
         try {
-            ImpromptuUser owner = (ImpromptuUser)this.getOwner().fetchIfNeeded();
-            map.put("user", owner.getName());
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching Event:", exc);
         }
-        catch (Exception exc) {
-            Log.e("Impromptu", "Exception", exc);
-        }
+        HashMap<String, String> map = new HashMap<String, String>();
+        map.put("user", this.getOwner().getName());
         map.put("picture", Integer.toString(R.drawable.ic_launcher));
         map.put("date", this.getEventTime().toString());
         map.put("content", this.getDescription());
@@ -85,99 +102,168 @@ public class Event extends ParseObject{
     }
 
     public void setOwner(ImpromptuUser owner) {
-        this.put("owner", owner);
+        this.put(ownerKey, owner);
     }
 
     public void setType(String type) {
-        this.put("type", type);
+        this.put(typeKey, type);
     }
 
     public void setTitle(String title) {
-        this.put("title", title);
+        this.put(titleKey, title);
     }
 
     public void setDescription(String description) {
-        this.put("description", description);
+        this.put(descriptionKey, description);
     }
 
     public void setStreamGroups(ArrayList<Group> streamGroups) {
-        this.put("streamGroups", streamGroups);
+        this.put(streamGroupsKey, streamGroups);
     }
 
     public void setPushGroups(ArrayList<Group> pushGroups) {
-        this.put("pushGroups", pushGroups);
+        this.put(pushGroupsKey, pushGroups);
     }
 
-    public void setPushFriends(ArrayList<ImpromptuUser> pushFriends) { this.put("pushFriends", pushFriends); }
+    public void setPushFriends(ArrayList<ImpromptuUser> pushFriends) {
+        this.put(pushFriendsKey, pushFriends);
+    }
 
 
     public void setEventTime(Time eventTime) {
-        this.put("eventTime", new Date(eventTime.toMillis(false)));
+        this.put(eventTimeKey, new Date(eventTime.toMillis(false)));
     }
 
     public void setCreationTime(Time creationTime) {
-        this.put("creationTime", new Date(creationTime.toMillis(false)));
+        this.put(creationTimeKey, new Date(creationTime.toMillis(false)));
     }
 
     public void setLocation(String location) {
-        this.put("location", location);
+        this.put(locationKey, location);
     }
 
     public ImpromptuUser getOwner() {
-
-        return (ImpromptuUser)this.get("owner");
+        //TODO - add verification
+        try {
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching Event:", exc);
+        }
+        return (ImpromptuUser) this.get(ownerKey);
     }
 
     public void setDurationHour(int durationHour) {
-        this.put("durationHour", durationHour);
+        this.put(durationHourKey, durationHour);
     }
 
     public void setDurationMinute(int durationMinute) {
 
-        this.put("durationMinute", durationMinute);
+        this.put(durationMinuteKey, durationMinute);
     }
 
     public String getType() {
-        return (String)this.get("type");
+
+        try {
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching Event:", exc);
+        }
+        return (String) this.get(typeKey);
     }
 
     public String getTitle() {
-        return (String)this.get("title");
+
+        try {
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching Event:", exc);
+        }
+        return (String) this.get(titleKey);
     }
 
     public String getDescription() {
-        return (String)this.get("description");
+
+        try {
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching Event:", exc);
+        }
+        return this.getString(descriptionKey);
     }
 
     public ArrayList<Group> getStreamGroups() {
-        return (ArrayList<Group>)this.get("streamGroups");
+        //TODO - add verification
+
+        try {
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching Event:", exc);
+        }
+
+        return (ArrayList<Group>) this.get(streamGroupsKey);
     }
 
     public ArrayList<Group> getPushGroups() {
-        return (ArrayList<Group>)this.get("pushGroups");
+
+        //TODO - add verification
+
+        try {
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching Event:", exc);
+        }
+        return (ArrayList<Group>) this.get(pushGroupsKey);
     }
 
     public Time getEventTime() {
+        try {
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching Event:", exc);
+        }
         Time eventTime = new Time();
-        eventTime.set(this.getDate("eventTime").getTime());
+        eventTime.set(this.getDate(eventTimeKey).getTime());
         return eventTime;
     }
 
-    public Time getCreationTime(){
+    public Time getCreationTime() {
+        try {
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching Event:", exc);
+        }
         Time creationTime = new Time();
-        creationTime.set(this.getDate("creationTime").getTime());
+        creationTime.set(this.getDate(creationTimeKey).getTime());
         return creationTime;
     }
 
     public String getLocation() {
-        return (String)this.get("location");
+
+        try {
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching Event:", exc);
+        }
+        return this.getString(locationKey);
     }
 
     public int getDurationHour() {
-        return (int)this.get("durationHour");
+
+        try {
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching Event:", exc);
+        }
+        return this.getInt(durationHourKey);
     }
 
     public int getDurationMinute() {
-        return (int)this.get("durationMinute");
+
+        try {
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching Event:", exc);
+        }
+        return this.getInt(durationMinuteKey);
     }
 }
