@@ -17,6 +17,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.steve.impromptu.Entity.Event;
+import com.example.steve.impromptu.Entity.Group;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.Main.ActivityMain;
 import com.example.steve.impromptu.R;
@@ -25,6 +27,7 @@ import com.parse.LogInCallback;
 import com.parse.Parse;
 import com.parse.ParseAnonymousUtils;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.ParseException;
 import com.parse.SignUpCallback;
@@ -69,8 +72,10 @@ public class ActivityLogin extends FragmentActivity {
     }
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Parse.initialize(this, "sP5YdlJxg1WiwfKgSXX4KdrgpZzAV5g69dV8ryY0", "houV8Brg8oIuBKSLheR7qAW4AJfGq1QZmH62Spgk");
         ParseUser.registerSubclass(ImpromptuUser.class);
+        ParseObject.registerSubclass(Event.class);
+        ParseObject.registerSubclass(Group.class);
+        Parse.initialize(this, "sP5YdlJxg1WiwfKgSXX4KdrgpZzAV5g69dV8ryY0", "houV8Brg8oIuBKSLheR7qAW4AJfGq1QZmH62Spgk");
         ParseFacebookUtils.initialize("1512234555691131");
 
         //TODO move this to log out button after testing
@@ -160,7 +165,14 @@ public class ActivityLogin extends FragmentActivity {
                     builder.setMessage("Username is taken. Please try a different one.");
                     builder.setPositiveButton("OK", null);
                     builder.show();
+                } else if (e.getCode() == ParseException.INVALID_EMAIL_ADDRESS) {
+                    // Show an alert that email is invalid
+                    AlertDialog.Builder builder = new AlertDialog.Builder(ActivityLogin.this);
+                    builder.setMessage("Please enter a valid email.");
+                    builder.setPositiveButton("OK", null);
+                    builder.show();
                 }
+
                 else {
                     Toast.makeText(getApplicationContext(),
                             "Sign up Error", Toast.LENGTH_LONG)
