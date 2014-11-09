@@ -194,7 +194,7 @@ public class Event extends ParseObject {
         return this.getString(descriptionKey);
     }
 
-    public ArrayList<Group> getStreamGroups() {
+    public ArrayList<com.example.steve.impromptu.Entity.Group> getStreamGroups() {
         //TODO - add verification
 
         try {
@@ -203,10 +203,10 @@ public class Event extends ParseObject {
             Log.e("Impromptu", "Error fetching Event:", exc);
         }
 
-        return (ArrayList<Group>) this.get(streamGroupsKey);
+        return (ArrayList<com.example.steve.impromptu.Entity.Group>) this.get(streamGroupsKey);
     }
 
-    public ArrayList<Group> getPushGroups() {
+    public ArrayList<com.example.steve.impromptu.Entity.Group> getPushGroups() {
 
         //TODO - add verification
 
@@ -215,7 +215,7 @@ public class Event extends ParseObject {
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching Event:", exc);
         }
-        return (ArrayList<Group>) this.get(pushGroupsKey);
+        return (ArrayList<com.example.steve.impromptu.Entity.Group>) this.get(pushGroupsKey);
     }
 
     public Time getEventTime() {
