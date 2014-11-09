@@ -1,16 +1,16 @@
 package com.example.steve.impromptu.Entity;
 
-import com.parse.ParseException;
 import android.util.Log;
 
-import com.parse.Parse;
 import com.parse.ParseClassName;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.TreeSet;
+
+
 
 /**
  * Created by jonreynolds on 10/26/14.
@@ -41,11 +41,11 @@ public class Group extends ParseObject {
     public void setGroupName(String name) {
         put(nameKey, name);
     }
-    public String getGroupName()  {
+
+    public String getGroupName() {
         try {
             this.fetchIfNeeded();
-        }
-        catch (ParseException exc) {
+        } catch (ParseException exc) {
             Log.e("Impromptu", "Error fetching Group:", exc);
         }
         return getString(nameKey);
@@ -57,8 +57,7 @@ public class Group extends ParseObject {
          */
         try {
             this.fetchIfNeeded();
-        }
-        catch (Exception exc) {
+        } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching Group:", exc);
         }
         List<ImpromptuUser> userList = this.getList(friendsInGroupKey);
