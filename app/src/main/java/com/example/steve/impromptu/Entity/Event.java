@@ -10,6 +10,7 @@ import com.parse.ParseUser;
 
 import java.security.acl.Group;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.List;
  * Created by jonreynolds on 10/26/14.
  */
 @ParseClassName("Event")
-public class Event extends ParseObject {
+public class Event extends ParseObject implements Comparable<Event>{
     private String creationTimeKey = "creationTime";
     private String descriptionKey = "description";
     private String durationHourKey = "durationHour";
@@ -268,5 +269,12 @@ public class Event extends ParseObject {
             Log.e("Impromptu", "Error fetching Event:", exc);
         }
         return this.getInt(durationMinuteKey);
+    }
+
+    @Override
+    public int compareTo(Event other) {
+        Long myMillis = new Long(this.getEventTime().toMillis(true));
+        Long otherMillis = new Long(other.getEventTime().toMillis(true));
+        return myMillis.compareTo(otherMillis);
     }
 }
