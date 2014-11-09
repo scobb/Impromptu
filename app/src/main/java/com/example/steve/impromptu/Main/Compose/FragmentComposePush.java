@@ -18,6 +18,7 @@ import com.example.steve.impromptu.Main.Compose.ArrayAdapters.ArrayAdapterCompos
 import com.example.steve.impromptu.R;
 
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 /**
  * Created by jonreynolds on 10/16/14.
@@ -25,11 +26,12 @@ import java.util.ArrayList;
 public class FragmentComposePush extends Fragment {
 
     ListView vFriendsList;
+    ListView vGroupsList;
     LinearLayout vOkay;
     LinearLayout vCancel;
     ArrayList<ImpromptuUser> friendsList;
 
-            ArrayAdapterComposePush myAdapter = null;
+    ArrayAdapterComposePush myAdapter = null;
 
     OnComposePushFinishedListener mCallback;
 
@@ -44,20 +46,21 @@ public class FragmentComposePush extends Fragment {
         // Inflate the layout for this fragment
         View fragmentView = inflater.inflate(R.layout.fragment_compose_push, container, false);
 
-        vFriendsList = (ListView) fragmentView.findViewById(R.id.fragComposePush_listView_list);
+        vFriendsList = (ListView) fragmentView.findViewById(R.id.fragComposePush_listView_friendsList);
+        vGroupsList = (ListView) fragmentView.findViewById(R.id.fragComposePush_listView_groupsList);
         vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposePush_linearLayout_okay);
         vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposePush_linearLayout_cancel);
 
         ActivityMain myActivity = (ActivityMain) getActivity();
         Event myEvent = myActivity.getNewEvent();
         friendsList = (ArrayList<ImpromptuUser>) myEvent.getPushFriends();
-
+        TreeSet<ImpromptuUser> friendsInGroup = new TreeSet<ImpromptuUser>();
         if (friendsList.isEmpty()) {
             Group myGroup = createFakeGroup();
-            friendsList = myGroup.getFriends();
+            friendsInGroup = myGroup.getFriendsInGroup();
         }
 
-        myAdapter = new ArrayAdapterComposePush(getActivity(), R.layout.template_friend_item, friendsList);
+        myAdapter = new ArrayAdapterComposePush(getActivity(), R.layout.template_friend_item, friendsInGroup);
         vFriendsList.setAdapter(myAdapter);
 
         vOkay.setOnClickListener(new View.OnClickListener() {
@@ -96,7 +99,10 @@ public class FragmentComposePush extends Fragment {
         vCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mCallback.onComposePushFinished();
+
+                friendsList.
+
+//                mCallback.onComposePushFinished();
             }
         });
 
