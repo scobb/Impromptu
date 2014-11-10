@@ -58,7 +58,7 @@ public class Event extends ParseObject {
 
     public void clear() {
         this.setStreamGroups(new ArrayList<Group>());
-        this.setPushGroups(new ArrayList<Group>());
+        this.setPushGroups(new ArrayList<com.example.steve.impromptu.Entity.Group>());
         this.setStreamFriends(new ArrayList<ImpromptuUser>());
         this.setPushFriends(new ArrayList<ImpromptuUser>());
     }
@@ -124,7 +124,7 @@ public class Event extends ParseObject {
         this.put(streamGroupsKey, streamGroups);
     }
 
-    public void setPushGroups(ArrayList<Group> pushGroups) {
+    public void setPushGroups(ArrayList<com.example.steve.impromptu.Entity.Group> pushGroups) {
         this.put(pushGroupsKey, pushGroups);
     }
 

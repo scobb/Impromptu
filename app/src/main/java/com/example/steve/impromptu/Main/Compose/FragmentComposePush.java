@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.Group;
@@ -18,6 +20,7 @@ import com.example.steve.impromptu.Main.Compose.ArrayAdapters.ArrayAdapterCompos
 import com.example.steve.impromptu.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 /**
@@ -25,8 +28,12 @@ import java.util.Iterator;
  */
 public class FragmentComposePush extends Fragment {
 
+    //TODO: remove
+    static Boolean firstTime = true;
+
     ListView vFriendsList;
-    ListView vGroupsList;
+    TextView vGroupsText;
+    LinearLayout vGroups;
     LinearLayout vOkay;
     LinearLayout vCancel;
     ArrayList<ImpromptuUser> eventPushFriendsList;
@@ -42,10 +49,15 @@ public class FragmentComposePush extends Fragment {
     ArrayAdapterComposePushGroups groupsAdapter = null;
 
     OnComposePushFinishedListener mCallback;
+    OnComposePushChooseGroupsListener mGroupsCallback;
 
     // Container Activity must implement this interface
     public interface OnComposePushFinishedListener {
         public void onComposePushFinished();
+    }
+
+    public interface OnComposePushChooseGroupsListener {
+        public void onComposePushChooseGroups();
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,21 +67,19 @@ public class FragmentComposePush extends Fragment {
         View fragmentView = inflater.inflate(R.layout.fragment_compose_push, container, false);
 
         vFriendsList = (ListView) fragmentView.findViewById(R.id.fragComposePush_listView_friendsList);
-        vGroupsList = (ListView) fragmentView.findViewById(R.id.fragComposePush_listView_groupsList);
+        vGroups = (LinearLayout) fragmentView.findViewById(R.id.fragComposePush_linearLayout_groups);
+        vGroupsText = (TextView) fragmentView.findViewById(R.id.fragComposePush_textView_groupsList);
         vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposePush_linearLayout_okay);
         vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposePush_linearLayout_cancel);
 
         ImpromptuUser currentUser = (ImpromptuUser) ImpromptuUser.getCurrentUser();
 
         // TODO: remove when I have actual friends and groups
-        addTestFriends(currentUser);
-        addTestGroups(currentUser);
-
-//        modifiableFriendsList = new ArrayList<ImpromptuUser>();
-//        userFriendsList = new ArrayList<ImpromptuUser>();
-//        userGroupsList = new ArrayList<Group>();
-//        eventPushFriendsList = new ArrayList<ImpromptuUser>();
-//        eventPushGroupsList = new ArrayList<Group>();
+        if (firstTime) {
+            addTestFriends(currentUser);
+            addTestGroups(currentUser);
+            firstTime = false;
+        }
 
         userFriendsList = (ArrayList<ImpromptuUser>) currentUser.getFriends();
         userGroupsList = (ArrayList<Group>) currentUser.getGroups();
@@ -78,8 +88,12 @@ public class FragmentComposePush extends Fragment {
             friend.setSelected(false);
         }
 
+        for (Group group : userGroupsList) {
+            group.setSelected(false);
+        }
+
         ActivityMain myActivity = (ActivityMain) getActivity();
-        Event myEvent = myActivity.getNewEvent();
+        Event myEvent = myActivity.getComposeEvent();
         eventPushFriendsList = (ArrayList<ImpromptuUser>) myEvent.getPushFriends();
         eventPushGroupsList = myEvent.getPushGroups();
 
@@ -92,20 +106,25 @@ public class FragmentComposePush extends Fragment {
             ImpromptuUser userFriend;
             if (iterEventFriends.hasNext() && iterUserFriends.hasNext()) {
 
-                eventFriend = iterEventFriends.next();
-                userFriend = iterUserFriends.next();
+//                eventFriend = iterEventFriends.next();
+//                userFriend = iterUserFriends.next();
 
-                while (iterEventFriends.hasNext()) {
+                while (iterEventFriends.hasNext() && iterUserFriends.hasNext()) {
+
+                    eventFriend = iterEventFriends.next();
+                    userFriend = iterUserFriends.next();
 
                     int comp = eventFriend.compareTo(userFriend);
                     if (comp == 0) {
                         // they are the same
                         userFriend.setSelected(true);
-                        eventFriend = iterEventFriends.next();
-                        userFriend = iterUserFriends.next();
                     }
                     else if (comp > 0) {
-                        userFriend = iterUserFriends.next();
+                        while ( (eventFriend.compareTo(userFriend)) != 0) {
+                            userFriend = iterUserFriends.next();
+                        }
+                        userFriend.setSelected(true);
+
                     }
                     else {
                         // shouldn't get this case
@@ -117,74 +136,118 @@ public class FragmentComposePush extends Fragment {
             }
         }
 
-        if (!eventPushGroupsList.isEmpty()) {
+//        if (!eventPushGroupsList.isEmpty() && !userGroupsList.isEmpty()) {
+//
+//            Iterator<Group> iterEventGroups = eventPushGroupsList.iterator();
+//            Iterator<Group> iterUserGroups = userGroupsList.iterator();
+//
+//            Group eventGroup;
+//            Group userGroup;
+//            if (iterEventGroups.hasNext() && iterUserGroups.hasNext()) {
+//
+////                eventGroup = iterEventGroups.next();
+////                userGroup = iterUserGroups.next();
+//
+//                while (iterEventGroups.hasNext()) {
+//
+//                    eventGroup = iterEventGroups.next();
+//                    userGroup = iterUserGroups.next();
+//
+//                    int comp = eventGroup.compareTo(userGroup);
+//                    if (comp == 0) {
+//                        // they are the same
+//                        userGroup.setSelected(true);
+//                    }
+//                    else if (comp > 0) {
+//                        while ( (eventGroup.compareTo(userGroup)) != 0 )
+//                        {
+//                            userGroup = iterUserGroups.next();
+//                        }
+//                        userGroup.setSelected(true);
+//
+//                    }
+//                    else {
+//                        // shouldn't get this case
+//                    }
+//                }
+//            }
+//            else {
+//                // Uh-oh
+//            }
+//        }
 
-            Iterator<Group> iterEventGroups = eventPushGroupsList.iterator();
-            Iterator<Group> iterUserGroups = userGroupsList.iterator();
-
-            Group eventGroup;
-            Group userGroup;
-            if (iterEventGroups.hasNext() && iterUserGroups.hasNext()) {
-
-                eventGroup = iterEventGroups.next();
-                userGroup = iterUserGroups.next();
-
-                while (iterEventGroups.hasNext()) {
-
-                    int comp = eventGroup.compareTo(userGroup);
-                    if (comp == 0) {
-                        // they are the same
-                        userGroup.setSelected(true);
-                        eventGroup = iterEventGroups.next();
-                        userGroup = iterUserGroups.next();
-                    }
-                    else if (comp > 0) {
-                        userGroup = iterUserGroups.next();
-                    }
-                    else {
-                        // shouldn't get this case
-                    }
-                }
-            }
-            else {
-                // Uh-oh
-            }
+        String groups = "";
+        Group group;
+        int length = eventPushGroupsList.size();
+        for (int i = 0; i < length; i ++) {
+            group = eventPushGroupsList.get(i);
+            groups = groups + group.getGroupName() + ", ";
         }
 
-        friendsAdapter = new ArrayAdapterComposePushFriends(getActivity(), R.layout.template_friend_item, userFriendsList);
+        vGroupsText.setText(groups);
+
+
+        friendsAdapter = new ArrayAdapterComposePushFriends(getActivity(), R.layout.template_friend_item, userFriendsList, eventPushGroupsList);
         vFriendsList.setAdapter(friendsAdapter);
 
-        groupsAdapter = new ArrayAdapterComposePushGroups(getActivity(), R.layout.template_friend_item, userGroupsList);
-        vGroupsList.setAdapter(groupsAdapter);
+        vGroups.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //TODO
+//                for (ImpromptuUser friend : userFriendsList) {
+//
+//                    if (friend.isSelected() && !(eventPushFriendsList.contains(friend))) {
+//                        eventPushFriendsList.add(friend);
+//                    }
+//                }
+//                Collections.sort(eventPushFriendsList);
+//
+//                ActivityMain myActivity = (ActivityMain) getActivity();
+//                Event myEvent = myActivity.getComposeEvent();
+//                myEvent.setPushFriends(eventPushFriendsList);
+//
+                mGroupsCallback.onComposePushChooseGroups();
+
+            }
+        });
 
         vOkay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-//                ArrayList<ImpromptuUser> pushTo = new ArrayList<ImpromptuUser>();
-//
-////                for (ImpromptuUser friend : friendsList) {
-////
-////                    if (friend.isSelected()) {
-////                        pushTo.add(friend);
-////                    }
-////
-////                }
-//                // TODO: decide whether to pass just the selected friends, or the entire list and
-//                // determine later which should be pushed to
-//                pushTo.addAll(friendsList);
-//
-//                String test = "test: ";
-//                for (ImpromptuUser friend : pushTo) {
-//                    if (friend.isSelected())
-//                        test = test + friend.getName() + " ";
-//                }
-//
-//                Toast.makeText(getActivity(), test, Toast.LENGTH_SHORT).show();
-//
-//                ActivityMain myActivity = (ActivityMain) getActivity();
-//                Event myEvent = myActivity.getNewEvent();
-//                myEvent.setPushFriends(pushTo);
+                for (ImpromptuUser friend : userFriendsList) {
+
+                    if (friend.isSelected() && !(eventPushFriendsList.contains(friend))) {
+                        eventPushFriendsList.add(friend);
+                    }
+                }
+                Collections.sort(eventPushFriendsList);
+
+                for (Group group : userGroupsList) {
+
+                    if (group.isSelected() && !(eventPushGroupsList.contains(group))) {
+                        eventPushGroupsList.add(group);
+                    }
+                }
+                Collections.sort(eventPushGroupsList);
+
+                String test = "Friends: ";
+                for (ImpromptuUser friend : eventPushFriendsList) {
+                    if (friend.isSelected())
+                        test = test + friend.getName() + " ";
+                }
+                test = test + "\n Groups: ";
+                for (Group group : eventPushGroupsList) {
+                    if (group.isSelected())
+                        test = test + group.getGroupName();
+                }
+
+                Toast.makeText(getActivity(), test, Toast.LENGTH_SHORT).show();
+
+                ActivityMain myActivity = (ActivityMain) getActivity();
+                Event myEvent = myActivity.getComposeEvent();
+                myEvent.setPushFriends(eventPushFriendsList);
 
                 mCallback.onComposePushFinished();
             }
@@ -194,9 +257,8 @@ public class FragmentComposePush extends Fragment {
             @Override
             public void onClick(View view) {
 
-            // TODO:
+                mCallback.onComposePushFinished();
 
-//                mCallback.onComposePushFinished();
             }
         });
 
@@ -211,6 +273,7 @@ public class FragmentComposePush extends Fragment {
         // the callback interface. If not, it throws an exception
         try {
             mCallback = (OnComposePushFinishedListener) activity;
+            mGroupsCallback = (OnComposePushChooseGroupsListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnComposePushFinishedListener");
@@ -221,6 +284,7 @@ public class FragmentComposePush extends Fragment {
     public void addTestGroups(ImpromptuUser currentUser) {
         Group myGroup = new Group();
         myGroup.clear();
+        myGroup.setGroupName("Composers");
         ImpromptuUser friend1 = new ImpromptuUser("Bob Newman");
         ImpromptuUser friend2 = new ImpromptuUser("Wolfgang Mozart");
         ImpromptuUser friend3 = new ImpromptuUser("John Williams");

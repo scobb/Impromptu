@@ -118,7 +118,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
 
     public void addFriend(ImpromptuUser friend) {
         List<ImpromptuUser> friends = getFriends();
-        if (!friends.contains(friend)) {
+        if (!(friends.contains(friend))) {
             friends.add(friend);
             Collections.sort(friends);
         } else {
@@ -203,6 +203,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         ArrayList<Group> groups = (ArrayList<Group>) getGroups();
         if (!groups.contains(group)) {
             groups.add(group);
+            Collections.sort(groups);
         } else {
             Log.d("Impromptu", group + " was already in groups.");
         }

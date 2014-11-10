@@ -280,7 +280,7 @@ public class FragmentComposeTime extends Fragment {
                 public void onClick(View v) {
 
                     ActivityMain myActivity = (ActivityMain) getActivity();
-                    Event myEvent = myActivity.getNewEvent();
+                    Event myEvent = myActivity.getComposeEvent();
                     myEvent.setEventTime(startTime);
                     myEvent.setDurationHour(durationHour);
                     myEvent.setDurationMinute(durationMinute);

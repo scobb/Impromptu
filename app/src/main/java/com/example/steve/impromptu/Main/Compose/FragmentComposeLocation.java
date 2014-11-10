@@ -2,8 +2,6 @@ package com.example.steve.impromptu.Main.Compose;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,14 +16,12 @@ import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Main.ActivityMain;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.maps.GoogleMap;
 import com.example.steve.impromptu.R;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -83,7 +79,7 @@ public class FragmentComposeLocation extends Fragment {
 
 
         ActivityMain myActivity = (ActivityMain) getActivity();
-        myEvent = myActivity.getNewEvent();
+        myEvent = myActivity.getComposeEvent();
 
         // get references to GUI widgets
         vLocationPrompt = (TextView) fragmentView.findViewById(R.id.fragComposeLocation_textView_locationPrompt);

@@ -10,6 +10,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import com.example.steve.impromptu.Entity.Group;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.R;
 
@@ -21,14 +22,17 @@ import java.util.ArrayList;
 public class ArrayAdapterComposePushFriends extends ArrayAdapter<ImpromptuUser> {
 
     private ArrayList<ImpromptuUser> friendList;
+    private ArrayList<Group> groupsList;
     private Context context;
 
     public ArrayAdapterComposePushFriends(Context context, int textViewResourceId,
-                                          ArrayList<ImpromptuUser> friendList) {
+                                          ArrayList<ImpromptuUser> friendList, ArrayList<Group> groupsList) {
         super(context, textViewResourceId, friendList);
         this.context = context;
         this.friendList = new ArrayList<ImpromptuUser>();
+        this.groupsList = new ArrayList<Group>();
         this.friendList.addAll(friendList);
+        this.groupsList.addAll(groupsList);
     }
 
     static class ViewHolder {
@@ -59,6 +63,15 @@ public class ArrayAdapterComposePushFriends extends ArrayAdapter<ImpromptuUser> 
                             ImpromptuUser friend = (ImpromptuUser) viewHolder.checkbox
                                     .getTag();
                             friend.setSelected(buttonView.isChecked());
+
+                            if (!(viewHolder.checkbox.isSelected())) {
+                                for (Group group : groupsList) {
+                                    ArrayList<ImpromptuUser> friends = (ArrayList<ImpromptuUser>) group.getFriendsInGroup();
+                                    if (friends.contains(friend)) {
+                                        group.setSelected(false);
+                                    }
+                                }
+                            }
 
                         }
                     });

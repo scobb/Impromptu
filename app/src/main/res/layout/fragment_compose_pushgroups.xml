@@ -10,62 +10,29 @@
     android:paddingBottom="4dp">
 
     <LinearLayout
-        android:id="@+id/fragComposePush_linearLayout_groups"
+        android:id="@+id/fragComposePushGroups_linearLayout_groups"
         android:layout_marginTop="8dp"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:gravity="center_vertical"
         android:background="@drawable/template_rounded_box">
 
         <TextView
-            android:id="@+id/fragComposePush_textView_groupsPrompt"
+            android:id="@+id/fragComposePushGroups_textView_groupsPrompt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Groups:"
             android:textColor="#000000"
             android:textSize="24sp"/>
 
-        <TextView
-            android:id="@+id/fragComposePush_textView_groupsList"
-            android:layout_marginLeft="8dp"
-            android:gravity="bottom"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:text="Groups here, here, here, here, and here"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textColor="#AAAAAA"
-            android:textSize="18sp"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/fragComposePush_linearLayout_friends"
-        android:layout_marginTop="8dp"
-        android:orientation="vertical"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:layout_width="match_parent"
-        android:gravity="center_vertical"
-        android:background="@drawable/template_rounded_box">
-
-        <TextView
-            android:id="@+id/fragComposePush_textView_friendsPrompt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Friends:"
-            android:textColor="#000000"
-            android:textSize="24sp"/>
-
         <ListView
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:id="@+id/fragComposePush_listView_friendsList"></ListView>
+            android:layout_height="wrap_content"
+            android:id="@+id/fragComposePushGroups_listView_groupsList"></ListView>
 
     </LinearLayout>
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -74,7 +41,7 @@
         android:layout_marginTop="8dp">
 
         <LinearLayout
-            android:id="@+id/fragComposePush_linearLayout_cancel"
+            android:id="@+id/fragComposePushGroups_linearLayout_cancel"
             android:layout_marginTop="8dp"
             android:orientation="vertical"
             android:layout_height="wrap_content"
@@ -84,7 +51,7 @@
             android:background="@drawable/template_rounded_box">
 
             <TextView
-                android:id="@+id/fragComposePush_textView_cancelPrompt"
+                android:id="@+id/fragComposePushGroups_textView_cancelPrompt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#000000"
@@ -101,7 +68,7 @@
         </Space>
 
         <LinearLayout
-            android:id="@+id/fragComposePush_linearLayout_okay"
+            android:id="@+id/fragComposePushGroups_linearLayout_okay"
             android:layout_marginTop="8dp"
             android:orientation="vertical"
             android:layout_height="wrap_content"
@@ -111,7 +78,7 @@
             android:background="@drawable/template_rounded_box">
 
             <TextView
-                android:id="@+id/fragComposePush_textView_okPrompt"
+                android:id="@+id/fragComposePushGroups_textView_okPrompt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#000000"

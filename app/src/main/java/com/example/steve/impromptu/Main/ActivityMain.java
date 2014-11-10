@@ -23,6 +23,7 @@ import com.example.steve.impromptu.Login.ActivityLogin;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeLocation;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeMain;
 import com.example.steve.impromptu.Main.Compose.FragmentComposePush;
+import com.example.steve.impromptu.Main.Compose.FragmentComposePushGroups;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeTime;
 import com.example.steve.impromptu.R;
 import com.parse.Parse;
@@ -30,10 +31,11 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 public class ActivityMain extends FragmentActivity implements FragmentComposeTime.OnComposeTimeFinishedListener, FragmentComposeMain.OnAttributeSelectedListener,
-        FragmentComposeMain.OnComposeMainFinishedListener, FragmentComposeLocation.OnComposeLocationFinishedListener, FragmentComposePush.OnComposePushFinishedListener {
+        FragmentComposeMain.OnComposeMainFinishedListener, FragmentComposeLocation.OnComposeLocationFinishedListener, FragmentComposePush.OnComposePushFinishedListener, FragmentComposePush.OnComposePushChooseGroupsListener
+        , FragmentComposePushGroups.OnComposePushChooseGroupsFinishedListener {
 
 
-    Event newEvent;
+    Event composeEvent;
     public Dialog progressDialog;
 
     @Override
@@ -193,6 +195,26 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 
     }
 
+    @Override
+    public void onComposePushChooseGroups() {
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        FragmentComposePushGroups fragment = new FragmentComposePushGroups();
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
+    @Override
+    public void onComposePushChooseGroupsFinished() {
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        FragmentComposePush fragment = new FragmentComposePush();
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
     public static class LoginFragment extends Fragment {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -229,8 +251,8 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     }
 
     public void compose (View view) {
-        newEvent = new Event();
-        newEvent.clear();
+        composeEvent = new Event();
+        composeEvent.clear();
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
@@ -239,7 +261,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         fragmentTransaction.commit();
     }
 
-    public Event getNewEvent() {
-        return newEvent;
+    public Event getComposeEvent() {
+        return composeEvent;
     }
 }
