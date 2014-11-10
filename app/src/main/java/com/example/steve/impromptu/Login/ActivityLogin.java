@@ -78,16 +78,6 @@ public class ActivityLogin extends FragmentActivity {
         Parse.initialize(this, "sP5YdlJxg1WiwfKgSXX4KdrgpZzAV5g69dV8ryY0", "houV8Brg8oIuBKSLheR7qAW4AJfGq1QZmH62Spgk");
         ParseFacebookUtils.initialize("1512234555691131");
 
-        //TODO move this to log out button after testing
-        ParseUser.logOut();
-        com.facebook.Session fbs = com.facebook.Session.getActiveSession();
-        if (fbs == null) {
-            fbs = new com.facebook.Session(ActivityLogin.this);
-            com.facebook.Session.setActiveSession(fbs);
-        }
-        fbs.closeAndClearTokenInformation();
-        // TODO end
-
         //If user already logged in, forward them to main activity
         ParseUser currentUser = ParseUser.getCurrentUser();
         if (currentUser != null) {

@@ -14,11 +14,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+
 /**
  * Created by jonreynolds on 10/26/14.
  */
 @ParseClassName("Event")
-public class Event extends ParseObject {
+public class Event extends ParseObject implements Comparable<Event>{
     private String creationTimeKey = "creationTime";
     private String descriptionKey = "description";
     private String durationHourKey = "durationHour";
@@ -85,16 +86,21 @@ public class Event extends ParseObject {
         test = this.getType();
     }
 
-    public HashMap<String, String> getHashMap() {
-        try {
-            this.fetchIfNeeded();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
-        }
+
+    public HashMap<String, String> getHashMap(){
         HashMap<String, String> map = new HashMap<String, String>();
+
         map.put("user", this.getOwner().getName());
         map.put("picture", Integer.toString(R.drawable.ic_launcher));
-        map.put("date", this.getEventTime().toString());
+
+        Time creationTime = new Time();
+        creationTime.set(this.getDate("creationTime").getTime());
+
+        int hour = creationTime.hour;
+        int minute = creationTime.minute;
+
+
+        map.put("date", hour + ":" + minute);
         map.put("content", this.getDescription());
         return map;
     }
@@ -268,5 +274,12 @@ public class Event extends ParseObject {
             Log.e("Impromptu", "Error fetching Event:", exc);
         }
         return this.getInt(durationMinuteKey);
+    }
+
+    @Override
+    public int compareTo(Event other) {
+        Long myMillis = new Long(this.getEventTime().toMillis(true));
+        Long otherMillis = new Long(other.getEventTime().toMillis(true));
+        return myMillis.compareTo(otherMillis);
     }
 }

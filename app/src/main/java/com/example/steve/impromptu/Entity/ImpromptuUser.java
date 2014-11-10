@@ -53,6 +53,57 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         this.setEmail(email);
         this.clearGroups();
         this.clearFriends();
+        this.clearStreamEvents();
+    }
+
+    public void clearStreamEvents() {
+        setStreamEvents(new ArrayList<Event>());
+    }
+
+    public void setStreamEvents(List<Event> events) {
+        this.put(visibleEventsKey, events);
+    }
+
+    /**
+     * will be called by cloud code, postSave from Event
+     * @param event
+     */
+    public void addStreamEvent(Event event) {
+        List<Event> events = getStreamEvents();
+        if (!events.contains(event)) {
+            events.add(event);
+            Collections.sort(events);
+        }
+    }
+
+    public List<Event> getStreamEvents() {
+        try {
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching User:", exc);
+        }
+        List<Event> events = this.getList(visibleEventsKey);
+        verifyEvents(events);
+        return events;
+    }
+
+    /**
+     * NOTE - only verifies existence, not that we're within timing
+     * @param events - list of events to confirm existence on DB
+     */
+    public void verifyEvents(List<Event> events) {
+        Iterator<Event> it = events.iterator();
+        boolean needPersist = false;
+        while (it.hasNext()) {
+            try {
+                it.next().fetchIfNeeded();
+            } catch (ParseException exc) {
+                it.remove();
+                needPersist = true;
+            }
+        }
+        if (needPersist)
+            this.persist();
     }
 
     public static ImpromptuUser getUserById(String id) {
