@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,8 @@ import org.json.JSONObject;
  */
 public class FragmentEventDetail extends Fragment {
 
+    private static View myInflatedView;
+
     private GoogleMap vMap;
 
     @Override
@@ -45,7 +48,17 @@ public class FragmentEventDetail extends Fragment {
         Bundle eventData = getArguments();
 
         // Get Views
-        View myInflatedView = inflater.inflate(R.layout.fragment_event_detail, container, false);
+
+        if (myInflatedView != null) {
+            ViewGroup parent = (ViewGroup) myInflatedView.getParent();
+            if (parent != null)
+                parent.removeView(myInflatedView);
+        }
+        try {
+            myInflatedView = inflater.inflate(R.layout.fragment_event_detail, container, false);
+        } catch (InflateException e) {
+        /* map is already there, just return view as it is */
+        }
 
         TextView titleTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_title);
         TextView ownerTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_owner);
