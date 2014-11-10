@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+
 /**
  * Created by jonreynolds on 10/26/14.
  */
@@ -86,16 +87,21 @@ public class Event extends ParseObject implements Comparable<Event>{
         test = this.getType();
     }
 
-    public HashMap<String, String> getHashMap() {
-        try {
-            this.fetchIfNeeded();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
-        }
+
+    public HashMap<String, String> getHashMap(){
         HashMap<String, String> map = new HashMap<String, String>();
+
         map.put("user", this.getOwner().getName());
         map.put("picture", Integer.toString(R.drawable.ic_launcher));
-        map.put("date", this.getEventTime().toString());
+
+        Time creationTime = new Time();
+        creationTime.set(this.getDate("creationTime").getTime());
+
+        int hour = creationTime.hour;
+        int minute = creationTime.minute;
+
+
+        map.put("date", hour + ":" + minute);
         map.put("content", this.getDescription());
         return map;
     }
