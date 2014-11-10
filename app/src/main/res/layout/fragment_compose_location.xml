@@ -18,12 +18,13 @@
         android:gravity="center_vertical"
         android:background="@drawable/template_rounded_box">
 
+        <!--
         <TextView
             android:id="@+id/fragComposeLocation_textView_locationPrompt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Location"
-            android:textSize="24sp"/>
+            android:textSize="24sp"/> -->
 
         <EditText
             android:id="@+id/fragComposeLocation_editText_address"
@@ -31,6 +32,55 @@
             android:layout_height="match_parent"
             android:maxLength="140"
             android:hint="@string/fragComposeLocation_hintLocation"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <LinearLayout
+                android:id="@+id/fragComposeLocation_linearLayout_searchAddress"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:gravity="center_vertical|right"
+                android:layout_gravity="right"
+                android:background="@drawable/template_rounded_box">
+                <TextView
+                    android:id="@+id/fragComposeLocation_textView_searchAddress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:text="Search Address"
+                    android:textSize="24sp"/>
+                </LinearLayout>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent">
+
+            </Space>
+            <LinearLayout
+                android:id="@+id/fragComposeLocation_linearLayout_searchPlace"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:gravity="center_vertical|right"
+                android:layout_gravity="right"
+                android:background="@drawable/template_rounded_box">
+                <TextView
+                    android:id="@+id/fragComposeLocation_textView_searchPlace"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:text="Search Place"
+                    android:textSize="24sp"/>
+            </LinearLayout>
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -56,21 +106,6 @@
                     android:textSize="24sp"/>
 
             </LinearLayout>
-
-            <Space
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent">
-
-            </Space>
-
-            <TextView
-                android:id="@+id/fragComposeLocation_textView_searchPrompt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:text="Search"
-                android:textSize="24sp"/>
 
             <Space
                 android:layout_width="0dp"

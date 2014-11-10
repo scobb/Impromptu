@@ -8,14 +8,25 @@ import com.google.android.gms.maps.model.LatLng;
 public class ImpromptuLocation {
 
     private String formattedAddress;
+    private String name;
     private LatLng coordinates;
 
     private ImpromptuLocation(){ }
 
-    public ImpromptuLocation(String add, LatLng ll)
+    public ImpromptuLocation(String add, String n, LatLng ll)
     {
         formattedAddress = add;
+        name = n;
         coordinates = ll;
+    }
+
+    public String toString(){
+        String res = name;
+        if(!name.equals("")) {
+            res += "/n";
+        }
+        res += name + "/n" + coordinates;
+        return res;
     }
 
     public String getFormattedAddress() {

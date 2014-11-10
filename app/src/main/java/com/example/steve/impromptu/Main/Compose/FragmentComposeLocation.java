@@ -47,13 +47,15 @@ import java.util.Vector;
  */
 public class FragmentComposeLocation extends Fragment {
 
-    private static final int MAXRESULTNUM = 5;
+    private static final int MAXRESULTNUM = 20;
     private static final int DEFAULTZOOM = 15;
+    private static final int SEARCHRADIUS = 10000;
     private static final LatLng defaultLocation = new LatLng(30.2864802, -97.74116620000001); //UT Austin ^___^
 
-    private TextView vLocationPrompt;
+    //private TextView vLocationPrompt;
     private EditText vAddress;
-    private TextView vSearchPrompt;
+    private TextView vSearchAddress;
+    private TextView vSearchPlace;
     private GoogleMap vMap;
     public Event myEvent;
     private LinearLayout vOkay;
@@ -61,7 +63,6 @@ public class FragmentComposeLocation extends Fragment {
     private int mapType;
     private LatLng myLoc;
     private Vector<Marker> searchResultMarkers;
-    private ImpromptuLocation[] searchResults = new ImpromptuLocation[MAXRESULTNUM];
     private ImpromptuLocation returnVal;
 
     private static View fragmentView;
@@ -100,9 +101,10 @@ public class FragmentComposeLocation extends Fragment {
 
 
         // get references to GUI widgets
-        vLocationPrompt = (TextView) fragmentView.findViewById(R.id.fragComposeLocation_textView_locationPrompt);
+        //vLocationPrompt = (TextView) fragmentView.findViewById(R.id.fragComposeLocation_textView_locationPrompt);
         vAddress = (EditText) fragmentView.findViewById(R.id.fragComposeLocation_editText_address);
-        vSearchPrompt = (TextView) fragmentView.findViewById(R.id.fragComposeLocation_textView_searchPrompt);
+        vSearchAddress = (TextView) fragmentView.findViewById(R.id.fragComposeLocation_textView_searchAddress);
+        vSearchPlace = (TextView) fragmentView.findViewById(R.id.fragComposeLocation_textView_searchPlace);
         vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposeLocation_linearLayout_okay);
         vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposeLocation_linearLayout_cancel);
 
@@ -110,12 +112,19 @@ public class FragmentComposeLocation extends Fragment {
         MapFragment mf = (MapFragment) getFragmentManager().findFragmentById(R.id.fragComposeLocation_map);
         vMap = mf.getMap();
 
-        vSearchPrompt.setOnClickListener(new View.OnClickListener() {
+        vSearchAddress.setOnClickListener(new View.OnClickListener() {
             @Override
         public void onClick(View v){
                 searchAddress();
             }
 
+        });
+
+        vSearchPlace.setOnClickListener(new View.OnClickListener() {
+            @Override
+        public void onClick(View v) {
+                searchPlace();
+            }
         });
 
         vCancel.setOnClickListener(new View.OnClickListener() {
@@ -140,9 +149,9 @@ public class FragmentComposeLocation extends Fragment {
                     return;
                 }
 
-                Toast.makeText(getActivity(), "Selected: " + returnVal.getFormattedAddress() + " , " + returnVal.getCoordinates(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Selected: " + returnVal.toString(), Toast.LENGTH_SHORT).show();
 
-                myEvent.setLocation("lol herp");
+                //myEvent.setLocation("lol herp");
 
                 clearSearchResultMarkers();
                 mCallback.onComposeLocationFinished();
@@ -191,6 +200,18 @@ public class FragmentComposeLocation extends Fragment {
 
         return fragmentView;
     }
+
+
+
+    /*
+    //TODO:
+    -take care of other todos
+    -add map onlcick to "deselect"?
+    -have text string to show current selection??
+    -test location determination on actual phone (not using default location)
+     */
+
+
 
     @Override
     public void onAttach(Activity activity) {
@@ -245,17 +266,65 @@ public class FragmentComposeLocation extends Fragment {
             addressQuery += addressChunks[i];
         }
 
+        /* doesn't seem to help much in searching addresses
+        if(myLoc != null) {
+            addressQuery += "&location=" + myLoc.latitude + "," + myLoc.longitude + "&radius=" + SEARCHRADIUS;
+        }
+        */
+
         //TODO: move this key into strings.xml
-        //TODO: AND ADD "CENTER", change search type?
         addressQuery += "&key=AIzaSyCRP8acNPFERUdMPouoFU_cM0sTfdT6tww";
 
 
-        new HttpAsyncTask().execute(addressQuery);
+        new HttpAddressAsyncTask().execute(addressQuery);
     }
 
-    private class HttpAsyncTask extends AsyncTask<String, Void, String> {
+    private void searchPlace(){
+        String query = vAddress.getText().toString();
+        String[] queryChunks = query.split("[ ]+");
 
-        public HttpAsyncTask() {
+        String httpQuery = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=";
+
+        if (queryChunks.length > 0) {
+            httpQuery += queryChunks[0];
+        }
+
+        for (int i = 1; i < queryChunks.length; i++)
+        {
+            httpQuery += "+" + queryChunks[i];
+        }
+
+        if(myLoc != null) {
+            httpQuery += "&location=" + myLoc.latitude + "," + myLoc.longitude + "&radius=" + SEARCHRADIUS;
+        }
+
+        //TODO: move this key into strings.xml ...
+        httpQuery += "&key=AIzaSyCRP8acNPFERUdMPouoFU_cM0sTfdT6tww";
+
+        Toast.makeText(getActivity(), httpQuery, Toast.LENGTH_SHORT).show();
+        new HttpPlaceAsyncTask().execute(httpQuery);
+    }
+
+    private class HttpPlaceAsyncTask extends AsyncTask<String, Void, String> {
+        public HttpPlaceAsyncTask() {
+
+        }
+
+        @Override
+        protected String doInBackground(String... urls) {
+            return GET(urls[0]);
+        }
+
+        // onPostExecute displays the result of the AsyncTask
+        @Override
+        protected void onPostExecute(String result) {
+            processJSON(result, true);
+        }
+    }
+
+    private class HttpAddressAsyncTask extends AsyncTask<String, Void, String> {
+
+        public HttpAddressAsyncTask() {
         }
 
         @Override
@@ -268,62 +337,74 @@ public class FragmentComposeLocation extends Fragment {
         @Override
         protected void onPostExecute(String result) {
 
-            String errorMsg = "Sorry, an error has occurred.";
-            JSONObject respJSON = null;
+            processJSON(result, false);
+        }
+    }
 
-            int resultSize = 0;
+    private synchronized void processJSON(String result, boolean isPlaceQuery) {
+        String errorMsg = "Sorry, an error has occurred.";
+        JSONObject respJSON = null;
 
+        int resultSize = 0;
+
+        try {
+            respJSON = new JSONObject(result);
+            resultSize = respJSON.getJSONArray("results").length();
+        } catch (JSONException e) {
+            Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(resultSize == 0){
+            Toast.makeText(getActivity(), "No matches found.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(resultSize > MAXRESULTNUM) {
+            resultSize = MAXRESULTNUM;
+        }
+
+        clearSearchResultMarkers();
+
+        JSONObject currResult;
+
+        for(int i = 0; i < resultSize; i++)
+        {
             try {
-                respJSON = new JSONObject(result);
-                resultSize = respJSON.getJSONArray("results").length();
-            } catch (JSONException e) {
-                Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_SHORT).show();
-                return;
-            }
+                currResult = respJSON.getJSONArray("results").getJSONObject(i);
+                double lat = (Double) currResult.getJSONObject("geometry")
+                        .getJSONObject("location").get("lat");
+                double lon = (Double) currResult.getJSONObject("geometry")
+                        .getJSONObject("location").get("lng");
+                String formatAdd = currResult.getString("formatted_address");
 
-            if(resultSize == 0){
-                Toast.makeText(getActivity(), "No matches found.", Toast.LENGTH_SHORT).show();
-                return;
-            }
+                String locationName = "";
+                if(isPlaceQuery) {
+                    locationName = currResult.getString("name");
+                }
 
-            if(resultSize > MAXRESULTNUM) {
-                resultSize = MAXRESULTNUM;
-            }
-
-            clearSearchResultMarkers();
-
-            for(int i = 0; i < resultSize; i++)
-            {
-                try {
-                    double lat = (Double) respJSON.getJSONArray("results")
-                            .getJSONObject(i).getJSONObject("geometry")
-                            .getJSONObject("location").get("lat");
-                    double lon = (Double) respJSON.getJSONArray("results")
-                            .getJSONObject(i).getJSONObject("geometry")
-                            .getJSONObject("location").get("lng");
-                    String formatAdd = respJSON.getJSONArray("results").getJSONObject(i).getString("formatted_address");
-
-                    searchResults[i] = new ImpromptuLocation(formatAdd, new LatLng(lat, lon)); //add Impromptu location to array
-
-                    searchResultMarkers.add(vMap.addMarker(new MarkerOptions() //add marker to vector (and map)
-                        .title("" + i) //hack I'm using: marker's title is its index in the vector
+                searchResultMarkers.add(vMap.addMarker(new MarkerOptions() //add marker to vector (and map)
+                        .title(locationName)
                         .snippet(formatAdd)
                         .position(new LatLng(lat, lon))));
 
-                } catch (JSONException e) {
-                    Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_SHORT).show();
-                    clearSearchResultMarkers();
-                    vMap.setMyLocationEnabled(true);
-                    vMap.animateCamera(CameraUpdateFactory.zoomTo(DEFAULTZOOM));
-                    vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLoc, DEFAULTZOOM));
-                    return;
-                }
+            } catch (JSONException e) {
+                Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_SHORT).show();
+                clearSearchResultMarkers();
+                vMap.setMyLocationEnabled(true);
+                vMap.animateCamera(CameraUpdateFactory.zoomTo(DEFAULTZOOM));
+                vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLoc, DEFAULTZOOM));
+                return;
             }
+        }
 
-            vMap.setMyLocationEnabled(true);
-            vMap.animateCamera(CameraUpdateFactory.zoomTo(DEFAULTZOOM));
-            vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchResults[0].getCoordinates(), DEFAULTZOOM));
-
+        vMap.setMyLocationEnabled(true);
+        vMap.animateCamera(CameraUpdateFactory.zoomTo(DEFAULTZOOM));
+        if(isPlaceQuery) { //zoom out to show multiple results
+            vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchResultMarkers.get(0).getPosition(), DEFAULTZOOM - 3));
+        }
+        else {
+            vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchResultMarkers.get(0).getPosition(), DEFAULTZOOM));
         }
     }
 
@@ -340,17 +421,9 @@ public class FragmentComposeLocation extends Fragment {
         Toast.makeText(getActivity(), il.getFormattedAddress() + " " + il.getCoordinates().toString(), Toast.LENGTH_SHORT).show();
     }
 
-    private void markersAllRed() {
-        //TODO: implement (if I even need to use it ...)
-    }
-
     private void markerClick(Marker m)
     {
-        //markersAllRed(); //change all marker colors to red
-        //make marker blue ??
-
-        //TODO: add proper try/catch here
-        selectLoc(searchResults[Integer.parseInt(m.getTitle().toString())]);
+         selectLoc(new ImpromptuLocation(m.getSnippet(), m.getTitle(), m.getPosition()));
     }
 
     public static String GET(String url) {
