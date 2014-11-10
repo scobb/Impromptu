@@ -61,7 +61,12 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
+        // Bundle up the data getting passed
+        Bundle userData = new Bundle();
+        userData.putBoolean("currentuser", true);
+
         FragmentProfile fragment = new FragmentProfile();
+        fragment.setArguments(userData);
         fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
         fragmentTransaction.commit();
 

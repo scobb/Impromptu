@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+
 /**
  * Created by jonreynolds on 10/26/14.
  */
@@ -28,28 +29,6 @@ public class Event extends ParseObject{
 
     }
 
-    public void test() {
-        this.setOwner((ImpromptuUser)ParseUser.getCurrentUser());
-        this.setCreationTime(new Time());
-        this.setDescription("my awesome test event");
-        this.setDurationHour(1);
-        this.setDurationMinute(27);
-        this.setEventTime(new Time());
-        this.setLocation("here");
-        this.setTitle("awesome");
-        this.setType("awesomeType");
-
-        ImpromptuUser testUser = this.getOwner();
-        Time testCreation = this.getCreationTime();
-        String test = this.getDescription();
-        Integer test_int = this.getDurationHour();
-        test_int = this.getDurationMinute();
-        testCreation = this.getEventTime();
-        test = this.getLocation();
-        test = this.getTitle();
-        test = this.getType();
-    }
-
     public HashMap<String, String> getHashMap(){
         HashMap<String, String> map = new HashMap<String, String>();
         try {
@@ -60,7 +39,15 @@ public class Event extends ParseObject{
             Log.e("Impromptu", "Exception", exc);
         }
         map.put("picture", Integer.toString(R.drawable.ic_launcher));
-        map.put("date", this.getEventTime().toString());
+
+        Time creationTime = new Time();
+        creationTime.set(this.getDate("creationTime").getTime());
+
+        int hour = creationTime.hour;
+        int minute = creationTime.minute;
+
+
+        map.put("date", hour + ":" + minute);
         map.put("content", this.getDescription());
         return map;
     }
