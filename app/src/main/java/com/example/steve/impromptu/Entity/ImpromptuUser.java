@@ -2,23 +2,21 @@ package com.example.steve.impromptu.Entity;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.facebook.Request;
 import com.facebook.Response;
-import com.facebook.model.GraphUser;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,6 +28,8 @@ import java.util.List;
 public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser> {
     Boolean isSelected = false;
     private String groupKey = "groups";
+    private String friendsKey = "friends";
+    private String visibleEventsKey = "events";
 
     public ImpromptuUser() {
         super();
@@ -39,6 +39,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         super();
         this.setName(username);
     }
+
     @Override
     public int compareTo(ImpromptuUser other) {
         return this.getName().compareTo(other.getName());
@@ -50,7 +51,59 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         this.setUsername(username);
         this.setPassword(pw);
         this.setEmail(email);
-        this.setGroups(new ArrayList<Group>());
+        this.clearGroups();
+        this.clearFriends();
+        this.clearStreamEvents();
+    }
+
+    public void clearStreamEvents() {
+        setStreamEvents(new ArrayList<Event>());
+    }
+
+    public void setStreamEvents(List<Event> events) {
+        this.put(visibleEventsKey, events);
+    }
+
+    /**
+     * will be called by cloud code, postSave from Event
+     * @param event
+     */
+    public void addStreamEvent(Event event) {
+        List<Event> events = getStreamEvents();
+        if (!events.contains(event)) {
+            events.add(event);
+            Collections.sort(events);
+        }
+    }
+
+    public List<Event> getStreamEvents() {
+        try {
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching User:", exc);
+        }
+        List<Event> events = this.getList(visibleEventsKey);
+        verifyEvents(events);
+        return events;
+    }
+
+    /**
+     * NOTE - only verifies existence, not that we're within timing
+     * @param events - list of events to confirm existence on DB
+     */
+    public void verifyEvents(List<Event> events) {
+        Iterator<Event> it = events.iterator();
+        boolean needPersist = false;
+        while (it.hasNext()) {
+            try {
+                it.next().fetchIfNeeded();
+            } catch (ParseException exc) {
+                it.remove();
+                needPersist = true;
+            }
+        }
+        if (needPersist)
+            this.persist();
     }
 
     public static ImpromptuUser getUserById(String id) {
@@ -70,24 +123,113 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         return (ImpromptuUser) user;
     }
 
+    public String getEmail() {
+        try {
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching User:", exc);
+        }
+            if (ParseFacebookUtils.isLinked(this)) {
+                // display facebook name
+                Request meReq = Request.newMeRequest(ParseFacebookUtils.getSession(), null);
+                List<Response> responses = null;
+                try {
+                    responses = meReq.executeAsync().get();
+                } catch (Exception exc) {
+                    Log.e("Impromptu", "Error getting async result", exc);
+                }
+                if (responses == null) {
+                    Log.d("Impromptu", "reponses was null");
+                    return null;
+                }
+                for (Response resp : responses) {
+                    try {
+                        JSONObject respJSON = new JSONObject(resp.getRawResponse());
+                        return respJSON.getString("email");
+                    } catch (Exception exc) {
+                        Log.e("Impromptu", "json excpetion: ", exc);
+                        return null;
+                    }
+
+                }
+
+            }
+
+        else return super.getEmail();
+        return null;
+    }
+
     public void persist() {
         this.saveInBackground();
     }
 
-    public void clearGroups() {this.setGroups(new ArrayList<Group>());}
+    public void clearFriends() {
+        this.setFriends(new ArrayList<ImpromptuUser>());
+    }
+
+    public void addFriend(ImpromptuUser friend) {
+        List<ImpromptuUser> friends = getFriends();
+        if (!friends.contains(friend)) {
+            friends.add(friend);
+            Collections.sort(friends);
+        } else {
+            Log.d("Impromptu", "friend was already in friends list");
+        }
+    }
+
+
+    public void clearGroups() {
+        this.setGroups(new ArrayList<Group>());
+    }
 
     public void setGroups(ArrayList<Group> groupList) {
         this.put(groupKey, groupList);
     }
 
+    public void setFriends(ArrayList<ImpromptuUser> friends) {
+        Collections.sort(friends);
+        this.put(friendsKey, friends);
+    }
+
+    public void removeFriend(ImpromptuUser friend) {
+        List<ImpromptuUser> friends = getFriends();
+        friends.remove(friend);
+    }
+
+    public void verifyFriends(List<ImpromptuUser> friends) {
+        Iterator<ImpromptuUser> it = friends.iterator();
+        boolean needPersist = false;
+        while (it.hasNext()) {
+            try {
+                it.next().fetchIfNeeded();
+            } catch (ParseException exc) {
+                it.remove();
+                needPersist = true;
+            }
+        }
+        if (needPersist)
+            this.persist();
+    }
+
+    public List<ImpromptuUser> getFriends() {
+        try {
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching User:", exc);
+        }
+        List<ImpromptuUser> friends = this.getList(friendsKey);
+        this.verifyFriends(friends);
+        return friends;
+    }
+
+
     public void verifyGroups(List<Group> groups) {
         Iterator<Group> it = groups.iterator();
         boolean needPersist = false;
-        while (it.hasNext()){
+        while (it.hasNext()) {
             try {
                 it.next().fetchIfNeeded();
-            }
-            catch (ParseException exc) {
+            } catch (ParseException exc) {
                 it.remove();
                 needPersist = true;
             }
@@ -100,8 +242,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     public List<Group> getGroups() {
         try {
             this.fetchIfNeeded();
-        }
-        catch (Exception exc) {
+        } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching User:", exc);
         }
         List<Group> groups = getList(groupKey);
@@ -110,28 +251,22 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     }
 
     public void addGroup(Group group) {
-        ArrayList<Group> groups = (ArrayList<Group>)getGroups();
+        ArrayList<Group> groups = (ArrayList<Group>) getGroups();
         if (!groups.contains(group)) {
             groups.add(group);
-        }
-        else {
+        } else {
             Log.d("Impromptu", group + " was already in groups.");
         }
     }
 
     public void deleteGroup(Group group) {
-        ArrayList<Group> groups = (ArrayList<Group>)getGroups();
-        if (groups.contains(group)){
-            groups.remove(group);
-        }
-        else {
-            Log.d("Impromptu", group + " was not in the group.");
-        }
+        ArrayList<Group> groups = (ArrayList<Group>) getGroups();
+        groups.remove(group);
     }
 
     public Group getGroup(String groupName) {
-        for (Group group: getGroups()) {
-            if (group.getGroupName() != null && group.getGroupName().equals(groupName)){
+        for (Group group : getGroups()) {
+            if (group.getGroupName() != null && group.getGroupName().equals(groupName)) {
                 return group;
             }
         }
@@ -146,13 +281,10 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     public String getName() {
         try {
             this.fetchIfNeeded();
-        }
-        catch (Exception exc) {
+        } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching User:", exc);
         }
-        final String[] retval = {""};
         if (ParseFacebookUtils.isLinked(this)) {
-            Log.d("Impromptu", "User is linked.");
             // display facebook name
             Request meReq = Request.newMeRequest(ParseFacebookUtils.getSession(), null);
             List<Response> responses = null;
@@ -161,26 +293,23 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
             } catch (Exception exc) {
                 Log.e("Impromptu", "Error getting async result", exc);
             }
-            if (responses == null){
+            if (responses == null) {
                 Log.d("Impromptu", "reponses was null");
                 return "";
             }
-            for (Response resp: responses) {
+            for (Response resp : responses) {
                 try {
                     JSONObject respJSON = new JSONObject(resp.getRawResponse());
                     return respJSON.getString("name");
-                }
-                catch (Exception exc) {
+                } catch (Exception exc) {
                     Log.e("Impromptu", "json excpetion: ", exc);
                 }
 
             }
-
-            return retval[0];
+            return "";
         } else {
             return this.getUsername();
         }
-//        return "Stevie Wonder";
     }
 
     /**
@@ -204,8 +333,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     public Bitmap getPicture() {
         try {
             this.fetchIfNeeded();
-        }
-        catch (Exception exc) {
+        } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching User:", exc);
         }
         ParseFile picFile = (ParseFile) this.get("profilePic");

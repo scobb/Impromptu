@@ -6,8 +6,6 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
@@ -58,13 +56,17 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 
         FragmentComposeMain fragment = new FragmentComposeMain();
         fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
-        newEvent = new Event();
     }
     public void forwardToProfileFragment() {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
+        // Bundle up the data getting passed
+        Bundle userData = new Bundle();
+        userData.putBoolean("currentuser", true);
+
         FragmentProfile fragment = new FragmentProfile();
+        fragment.setArguments(userData);
         fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
         fragmentTransaction.commit();
 
@@ -233,6 +235,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 
     public void compose (View view) {
         newEvent = new Event();
+        newEvent.clear();
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
