@@ -54,7 +54,7 @@ public class FragmentComposeLocation extends Fragment {
 
     //private TextView vLocationPrompt;
     private EditText vAddress;
-    private TextView vSearchAddress;
+    //private TextView vSearchAddress;
     private TextView vSearchPlace;
     private GoogleMap vMap;
     public Event myEvent;
@@ -64,6 +64,7 @@ public class FragmentComposeLocation extends Fragment {
     private LatLng myLoc;
     private Vector<Marker> searchResultMarkers;
     private ImpromptuLocation returnVal;
+    private TextView vSelectedLocation;
 
     private static View fragmentView;
 
@@ -95,30 +96,25 @@ public class FragmentComposeLocation extends Fragment {
 
         ActivityMain myActivity = (ActivityMain) getActivity();
 
-        myEvent = myActivity.getComposeEvent();
-
-        returnVal = null;
-
-
         // get references to GUI widgets
         //vLocationPrompt = (TextView) fragmentView.findViewById(R.id.fragComposeLocation_textView_locationPrompt);
         vAddress = (EditText) fragmentView.findViewById(R.id.fragComposeLocation_editText_address);
-        vSearchAddress = (TextView) fragmentView.findViewById(R.id.fragComposeLocation_textView_searchAddress);
         vSearchPlace = (TextView) fragmentView.findViewById(R.id.fragComposeLocation_textView_searchPlace);
         vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposeLocation_linearLayout_okay);
         vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposeLocation_linearLayout_cancel);
+        vSelectedLocation = (TextView) fragmentView.findViewById(R.id.fragComposeLocation_textView_selectedLocation);
+
+
+        myEvent = myActivity.getComposeEvent();
+
+        vSelectedLocation.setText("");
+
+        //TODO: load returnVal from event (if there already is one assigned?)
+        returnVal = null;
 
         //this works just a little differently:
         MapFragment mf = (MapFragment) getFragmentManager().findFragmentById(R.id.fragComposeLocation_map);
         vMap = mf.getMap();
-
-        vSearchAddress.setOnClickListener(new View.OnClickListener() {
-            @Override
-        public void onClick(View v){
-                searchAddress();
-            }
-
-        });
 
         vSearchPlace.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,6 +151,22 @@ public class FragmentComposeLocation extends Fragment {
 
                 clearSearchResultMarkers();
                 mCallback.onComposeLocationFinished();
+            }
+        });
+
+        vSelectedLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(returnVal != null)
+                {
+                    clearSearchResultMarkers();
+
+                    searchResultMarkers.add(vMap.addMarker(new MarkerOptions().title(returnVal.getName())
+                        .snippet(returnVal.getFormattedAddress())
+                        .position(returnVal.getCoordinates())));
+
+                    vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(returnVal.getCoordinates(), DEFAULTZOOM));
+                }
             }
         });
 
@@ -204,10 +216,8 @@ public class FragmentComposeLocation extends Fragment {
 
 
     /*
-    //TODO:
+    //TODO: master list:
     -take care of other todos
-    -add map onlcick to "deselect"?
-    -have text string to show current selection??
     -test location determination on actual phone (not using default location)
      */
 
@@ -251,6 +261,7 @@ public class FragmentComposeLocation extends Fragment {
 
     }
 
+    /*
     private void searchAddress()
     {
         String address = vAddress.getText().toString();
@@ -266,18 +277,18 @@ public class FragmentComposeLocation extends Fragment {
             addressQuery += addressChunks[i];
         }
 
-        /* doesn't seem to help much in searching addresses
-        if(myLoc != null) {
-            addressQuery += "&location=" + myLoc.latitude + "," + myLoc.longitude + "&radius=" + SEARCHRADIUS;
-        }
-        */
+        // doesn't seem to help much in searching addresses
+        //if(myLoc != null) {
+        //    addressQuery += "&location=" + myLoc.latitude + "," + myLoc.longitude + "&radius=" + SEARCHRADIUS;
+        //}
 
-        //TODO: move this key into strings.xml
+
+        // move this key into strings.xml
         addressQuery += "&key=AIzaSyCRP8acNPFERUdMPouoFU_cM0sTfdT6tww";
 
 
         new HttpAddressAsyncTask().execute(addressQuery);
-    }
+    }*/
 
     private void searchPlace(){
         String query = vAddress.getText().toString();
@@ -301,7 +312,6 @@ public class FragmentComposeLocation extends Fragment {
         //TODO: move this key into strings.xml ...
         httpQuery += "&key=AIzaSyCRP8acNPFERUdMPouoFU_cM0sTfdT6tww";
 
-        Toast.makeText(getActivity(), httpQuery, Toast.LENGTH_SHORT).show();
         new HttpPlaceAsyncTask().execute(httpQuery);
     }
 
@@ -322,6 +332,7 @@ public class FragmentComposeLocation extends Fragment {
         }
     }
 
+    /*
     private class HttpAddressAsyncTask extends AsyncTask<String, Void, String> {
 
         public HttpAddressAsyncTask() {
@@ -339,7 +350,7 @@ public class FragmentComposeLocation extends Fragment {
 
             processJSON(result, false);
         }
-    }
+    } */
 
     private synchronized void processJSON(String result, boolean isPlaceQuery) {
         String errorMsg = "Sorry, an error has occurred.";
@@ -400,7 +411,7 @@ public class FragmentComposeLocation extends Fragment {
 
         vMap.setMyLocationEnabled(true);
         vMap.animateCamera(CameraUpdateFactory.zoomTo(DEFAULTZOOM));
-        if(isPlaceQuery) { //zoom out to show multiple results
+        if(searchResultMarkers.size() > 1) { //zoom out to show multiple results
             vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchResultMarkers.get(0).getPosition(), DEFAULTZOOM - 3));
         }
         else {
@@ -409,7 +420,6 @@ public class FragmentComposeLocation extends Fragment {
     }
 
     private void clearSearchResultMarkers(){
-        //TODO: enable/disable "ok/done/submit/whatever" button? would disable here.
         for(int i = 0; i < searchResultMarkers.size(); i++) {
             searchResultMarkers.get(i).remove(); //remove marker from map
         }
@@ -418,7 +428,9 @@ public class FragmentComposeLocation extends Fragment {
 
     private void selectLoc(ImpromptuLocation il){
         returnVal = il;
-        Toast.makeText(getActivity(), il.getFormattedAddress() + " " + il.getCoordinates().toString(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getActivity(), il.getFormattedAddress() + " " + il.getCoordinates().toString(), Toast.LENGTH_SHORT).show();
+        //TODO: make text wrap nicely
+        vSelectedLocation.setText("   " + il.getName() + "\n   " + il.getFormattedAddress());
     }
 
     private void markerClick(Marker m)
