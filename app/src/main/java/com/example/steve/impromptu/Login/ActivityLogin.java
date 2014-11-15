@@ -178,7 +178,7 @@ public class ActivityLogin extends FragmentActivity {
         // attempt to log in with facebook credentials
         ActivityLogin.this.progressDialog = ProgressDialog.show(
                 ActivityLogin.this, "", "Logging in...", true);
-        List<String> permissions = Arrays.asList("public_profile", "email");
+        List<String> permissions = Arrays.asList("public_profile", "email", "user_friends");
         ParseFacebookUtils.logIn(permissions, this, new LogInCallback() {
             @Override
             public void done(ParseUser user, ParseException err) {
