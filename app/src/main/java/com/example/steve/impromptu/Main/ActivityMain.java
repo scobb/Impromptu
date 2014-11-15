@@ -7,7 +7,9 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,8 +19,9 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
+import com.example.steve.impromptu.Entity.FriendRequest;
+import com.example.steve.impromptu.Entity.Group;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
-import com.example.steve.impromptu.Entity.StreamPost;
 import com.example.steve.impromptu.Login.ActivityLogin;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeLocation;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeMain;
@@ -29,6 +32,9 @@ import com.example.steve.impromptu.R;
 import com.parse.Parse;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ActivityMain extends FragmentActivity implements FragmentComposeTime.OnComposeTimeFinishedListener, FragmentComposeMain.OnAttributeSelectedListener,
         FragmentComposeMain.OnComposeMainFinishedListener, FragmentComposeLocation.OnComposeLocationFinishedListener, FragmentComposePush.OnComposePushFinishedListener, FragmentComposePush.OnComposePushChooseGroupsListener
@@ -41,10 +47,17 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
         setContentView(R.layout.activity_shell_main);
 
-        ParseObject.registerSubclass(StreamPost.class);
+        // this block might be redundant because we do it in ActivityMain. not sure...
+        ParseUser.registerSubclass(ImpromptuUser.class);
         ParseObject.registerSubclass(Event.class);
+        ParseObject.registerSubclass(Group.class);
+        ParseObject.registerSubclass(FriendRequest.class);
         Parse.initialize(this, "sP5YdlJxg1WiwfKgSXX4KdrgpZzAV5g69dV8ryY0", "houV8Brg8oIuBKSLheR7qAW4AJfGq1QZmH62Spgk");
 
         //Remove title bar
@@ -82,15 +95,82 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         finish();
     }
 
-    public void onDebugClicked(View v) {
+    public void debug(View v) {
 //        ImpromptuUser currentUser = (ImpromptuUser)ParseUser.getCurrentUser();
 //        Bitmap profilePic = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
 //        currentUser.setPicture(profilePic);
         ImpromptuUser currentUser = (ImpromptuUser)ParseUser.getCurrentUser();
-        Bitmap profilePic = currentUser.getPicture();
-        ImageView picView = (ImageView)findViewById(R.id.fragProfile_imageView_profilePic);
-        picView.setImageBitmap(profilePic);
+//        currentUser.clearFriends();
 
+//        Bitmap profilePic = currentUser.getPicture();
+//        ImageView picView = (ImageView)findViewById(R.id.fragProfile_imageView_profilePic);
+//        picView.setImageBitmap(profilePic);
+//
+//        ImpromptuUser lala = ImpromptuUser.getUserById("CEEe8UEHBx");
+//        if (lala == null) {
+//            Log.d("Impromptu", "lala is null");
+//        }
+//        else {
+//            Log.d("Impromptu", "lala's username: " + lala.getName());
+//        }
+//        currentUser.addFriend(lala);
+//        List<ImpromptuUser> friends = currentUser.getFriends();
+//        for (ImpromptuUser friend: friends) {
+//            Log.d("Impromptu", "Friend: " + friend.getName());
+//        }
+//        currentUser.persist();
+
+        ArrayList<ImpromptuUser> friends = currentUser.getFacebookFriends();
+        Log.d("Impromptu", "Friends...");
+        for (ImpromptuUser friend: friends) {
+            Log.d("Impromptu", friend.getName());
+        }
+        List<ImpromptuUser> results = ImpromptuUser.getUserByName("bob");
+        Log.d("Impromptu", "num results: " + results.size());
+        for (ImpromptuUser user: results) {
+            Log.d("Impromptu", user.getName());
+        }
+//        Event event = new Event();
+//        event.test();
+//        event.persist();
+//        currentUser.clearStreamEvents();
+//        currentUser.addStreamEvent(event);
+//        currentUser.persist();
+//        ImageView pic = (ImageView)v.findViewById(R.id.fragProfile_imageView_pic);
+//        Bitmap bmp = currentUser.getPicture();
+//        if (bmp != null) {
+//            pic.setImageBitmap(bmp);
+//        }
+
+//        for (Event innerEvent: currentUser.getStreamEvents()){
+//            Log.d("Impromptu", "Event: " + innerEvent.getDescription());
+//        }
+//
+//        Group group = new Group("moreAwesomeGroup");
+//        group.add(lala);
+//        group.add(lala);
+//        group.remove(lala);
+//        group.add(lala);
+//        TreeSet<ImpromptuUser> list = group.getFriendsInGroup();
+//        for (ImpromptuUser friend: list) {
+//            Log.d("Impromptu", "Friend in group: " + friend.getName());
+//        }
+//        group.persist();
+//        currentUser.addGroup(group);
+//        currentUser.persist();
+//        for (Group innerGroup: currentUser.getGroups()) {
+//            Log.d("Impromptu", "Group name: " + innerGroup.getGroupName());
+//
+//            for (ImpromptuUser user: innerGroup.getFriendsInGroup()){
+//                Log.d("Impromptu", "Member in group: " + user.getName());
+//            }
+//        }
+        //ImpromptuUser currentUser = (ImpromptuUser)ParseUser.getCurrentUser();
+//        group = currentUser.getGroup("moreAwesomeGroup");
+//        Log.d("Impromptu", group.getGroupName());
+//        for (ImpromptuUser user: group.getFriendsInGroup()){
+//            Log.d("Impromptu", "user in " + group.getGroupName() +": " + user.getName());
+//        }
     }
 
 

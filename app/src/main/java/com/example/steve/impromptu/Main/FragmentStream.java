@@ -13,7 +13,6 @@ import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
-import com.example.steve.impromptu.Entity.StreamPost;
 import com.example.steve.impromptu.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;

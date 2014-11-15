@@ -5,13 +5,15 @@ import android.util.Log;
 
 import com.example.steve.impromptu.R;
 import com.parse.ParseClassName;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
-import java.security.acl.Group;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -19,7 +21,7 @@ import java.util.List;
  * Created by jonreynolds on 10/26/14.
  */
 @ParseClassName("Event")
-public class Event extends ParseObject implements Comparable<Event>{
+public class Event extends ParseObject implements Comparable<Event> {
     private String creationTimeKey = "creationTime";
     private String descriptionKey = "description";
     private String durationHourKey = "durationHour";
@@ -31,25 +33,38 @@ public class Event extends ParseObject implements Comparable<Event>{
     private String streamGroupsKey = "streamGroups";
     private String titleKey = "title";
     private String typeKey = "type";
-    private String createdAtKey = "createdAt";
-    private String updatedAtKey = "updatedAt";
     private String streamFriendsKey = "streamFriends";
     private String pushFriendsKey = "pushFriends";
+    private String latitudeKey = "latitude";
+    private String longitudeKey = "longitude";
+    private String addressKey = "formattedAddress";
+    private String usersGoingKey = "usersGoing";
 
     public void setStreamFriends(ArrayList<ImpromptuUser> streamFriends) {
         this.put(streamFriendsKey, streamFriends);
     }
 
     public List<ImpromptuUser> getStreamFriends() {
-        //TODO - add verification
+        try {
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching Event:", exc);
+        }
+        List<ImpromptuUser> users = this.getList(streamFriendsKey);
+        verifyUsers(users);
+        return users;
 
-        return this.getList(streamFriendsKey);
     }
 
     public List<ImpromptuUser> getPushFriends() {
-
-        //TODO - add verification
-        return this.getList(pushFriendsKey);
+        try {
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching Event:", exc);
+        }
+        List<ImpromptuUser> users = this.getList(pushFriendsKey);
+        verifyUsers(users);
+        return users;
     }
 
     public Event() {
@@ -62,18 +77,24 @@ public class Event extends ParseObject implements Comparable<Event>{
         this.setPushGroups(new ArrayList<com.example.steve.impromptu.Entity.Group>());
         this.setStreamFriends(new ArrayList<ImpromptuUser>());
         this.setPushFriends(new ArrayList<ImpromptuUser>());
+        this.setUsersGoing(new ArrayList<ImpromptuUser>());
     }
 
     public void test() {
+        this.clear();
         this.setOwner((ImpromptuUser) ParseUser.getCurrentUser());
         this.setCreationTime(new Time());
         this.setDescription("my awesome test event");
         this.setDurationHour(1);
         this.setDurationMinute(27);
         this.setEventTime(new Time());
-        this.setLocation("here");
         this.setTitle("awesome");
         this.setType("awesomeType");
+        this.setLatitude(30.25);
+        this.setLongitude(-97.75);
+        this.setLocationName("Austin");
+        this.addUserGoing((ImpromptuUser)ParseUser.getCurrentUser());
+        this.addUserGoing((ImpromptuUser)ParseUser.getCurrentUser());
 
         ImpromptuUser testUser = this.getOwner();
         Time testCreation = this.getCreationTime();
@@ -81,13 +102,17 @@ public class Event extends ParseObject implements Comparable<Event>{
         Integer test_int = this.getDurationHour();
         test_int = this.getDurationMinute();
         testCreation = this.getEventTime();
-        test = this.getLocation();
+        test = this.getLocationName();
         test = this.getTitle();
         test = this.getType();
+        List<ImpromptuUser> test_list = getUsersGoing();
+
+        removeUserGoing((ImpromptuUser)ParseUser.getCurrentUser());
+        removeUserGoing((ImpromptuUser)ParseUser.getCurrentUser());
     }
 
 
-    public HashMap<String, String> getHashMap(){
+    public HashMap<String, String> getHashMap() {
         HashMap<String, String> map = new HashMap<String, String>();
 
         map.put("user", this.getOwner().getName());
@@ -147,8 +172,24 @@ public class Event extends ParseObject implements Comparable<Event>{
         this.put(creationTimeKey, new Date(creationTime.toMillis(false)));
     }
 
-    public void setLocation(String location) {
+    public void setLocationName(String location) {
         this.put(locationKey, location);
+    }
+
+    public void setLatitude(Double latitude) {
+        this.put(latitudeKey, latitude);
+    }
+
+    public void setLongitude(Double longitude) {
+        this.put(longitudeKey, longitude);
+    }
+
+    public void setFormattedAddress(String address) {
+        this.put(addressKey, address);
+    }
+
+    public void setUsersGoing(ArrayList<ImpromptuUser> users) {
+        this.put(usersGoingKey, users);
     }
 
     public ImpromptuUser getOwner() {
@@ -200,28 +241,43 @@ public class Event extends ParseObject implements Comparable<Event>{
         return this.getString(descriptionKey);
     }
 
-    public ArrayList<com.example.steve.impromptu.Entity.Group> getStreamGroups() {
-        //TODO - add verification
-
-        try {
-            this.fetchIfNeeded();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
+    public void verifyGroups(List<Group> groups) {
+        Iterator<Group> it = groups.iterator();
+        boolean needPersist = false;
+        while (it.hasNext()) {
+            try {
+                it.next().fetchIfNeeded();
+            } catch (ParseException exc) {
+                it.remove();
+                needPersist = true;
+            }
         }
-
-        return (ArrayList<com.example.steve.impromptu.Entity.Group>) this.get(streamGroupsKey);
+        if (needPersist)
+            this.persist();
     }
 
-    public ArrayList<com.example.steve.impromptu.Entity.Group> getPushGroups() {
-
-        //TODO - add verification
+    public List<com.example.steve.impromptu.Entity.Group> getStreamGroups() {
 
         try {
             this.fetchIfNeeded();
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching Event:", exc);
         }
-        return (ArrayList<com.example.steve.impromptu.Entity.Group>) this.get(pushGroupsKey);
+        List<Group> groups = this.getList(streamGroupsKey);
+        verifyGroups(groups);
+        return groups;
+    }
+
+    public List<com.example.steve.impromptu.Entity.Group> getPushGroups() {
+
+        try {
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching Event:", exc);
+        }
+        List<Group> groups = this.getList(pushGroupsKey);
+        verifyGroups(groups);
+        return groups;
     }
 
     public Time getEventTime() {
@@ -246,7 +302,7 @@ public class Event extends ParseObject implements Comparable<Event>{
         return creationTime;
     }
 
-    public String getLocation() {
+    public String getLocationName() {
 
         try {
             this.fetchIfNeeded();
@@ -254,6 +310,36 @@ public class Event extends ParseObject implements Comparable<Event>{
             Log.e("Impromptu", "Error fetching Event:", exc);
         }
         return this.getString(locationKey);
+    }
+
+    public String getFormattedAddress() {
+
+        try {
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching Event:", exc);
+        }
+        return this.getString(addressKey);
+    }
+
+    public Double getLongitude() {
+
+        try {
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching Event:", exc);
+        }
+        return this.getDouble(longitudeKey);
+    }
+
+    public Double getLatitude() {
+
+        try {
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching Event:", exc);
+        }
+        return this.getDouble(latitudeKey);
     }
 
     public int getDurationHour() {
@@ -275,6 +361,48 @@ public class Event extends ParseObject implements Comparable<Event>{
         }
         return this.getInt(durationMinuteKey);
     }
+    public void verifyUsers(List<ImpromptuUser> users) {
+        Iterator<ImpromptuUser> it = users.iterator();
+        boolean needPersist = false;
+        while (it.hasNext()) {
+            try {
+                it.next().fetchIfNeeded();
+            } catch (ParseException exc) {
+                it.remove();
+                needPersist = true;
+            }
+        }
+        if (needPersist)
+            this.persist();
+    }
+
+    public List<ImpromptuUser> getUsersGoing() {
+        try {
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching Event:", exc);
+        }
+        List<ImpromptuUser> users = this.getList(usersGoingKey);
+        verifyUsers(users);
+        return users;
+    }
+
+    public void addUserGoing(ImpromptuUser user) {
+        ArrayList<ImpromptuUser> usersGoing = (ArrayList<ImpromptuUser>)getUsersGoing();
+        if (!usersGoing.contains(user)) {
+            usersGoing.add(user);
+            persist();
+        }
+    }
+
+    public void removeUserGoing(ImpromptuUser user) {
+        ArrayList<ImpromptuUser> usersGoing = (ArrayList<ImpromptuUser>)getUsersGoing();
+        if (usersGoing.contains(user)) {
+            usersGoing.remove(user);
+            persist();
+        }
+    }
+
 
     @Override
     public int compareTo(Event other) {

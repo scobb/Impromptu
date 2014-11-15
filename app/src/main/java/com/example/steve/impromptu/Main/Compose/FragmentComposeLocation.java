@@ -147,7 +147,7 @@ public class FragmentComposeLocation extends Fragment {
 
                 Toast.makeText(getActivity(), "Selected: " + returnVal.toString(), Toast.LENGTH_SHORT).show();
 
-                //myEvent.setLocation("lol herp");
+                //myEvent.setLocationName("lol herp");
 
                 clearSearchResultMarkers();
                 mCallback.onComposeLocationFinished();
