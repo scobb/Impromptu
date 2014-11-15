@@ -56,9 +56,11 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        FragmentComposeMain fragment = new FragmentComposeMain();
+        FragmentStream fragment = new FragmentStream();
         fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.commit();
     }
+
     public void forwardToProfileFragment() {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

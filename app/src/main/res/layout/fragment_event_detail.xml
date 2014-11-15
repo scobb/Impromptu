@@ -24,7 +24,7 @@
     </LinearLayout>
 
     <RelativeLayout
-        android:id="@+id/fragEventDetail_linearLayout_owner"
+        android:id="@+id/fragEventDetail_relativeLayout_owner"
         android:layout_marginTop="8dp"
         android:orientation="horizontal"
         android:layout_height="wrap_content"

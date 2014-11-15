@@ -32,12 +32,15 @@ import org.json.JSONObject;
  */
 public class FragmentProfile extends Fragment {
 
+    private ImpromptuUser user;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         // Receive data passed in
         Bundle userData = getArguments();
+
 
         // Get Views
         final View myInflatedView = inflater.inflate(R.layout.fragment_profile, container, false);
@@ -150,11 +153,16 @@ public class FragmentProfile extends Fragment {
             }
         }
 
+        // If it is not the current user
         else {
+
+            // Get the user
+            user = ImpromptuUser.getUserById(userData.getString("ownerId"));
+
             // display parse username
-//            nameView.setText(currentUser.getUsername());
-            nameView.setText(userData.getString("username"));
-            emailView.setText(userData.getString("email"));
+    //      nameView.setText(currentUser.getUsername());
+            nameView.setText(user.getName());
+            emailView.setText(user.getEmail());
         }
 
         return myInflatedView;

@@ -351,6 +351,11 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         return BitmapFactory.decodeByteArray(picBlock, 0, picBlock.length);
     }
 
+    // Returns the current user key
+    public String getUserKey(){
+        return this.get("objectId").toString();
+    }
+
     public Boolean isSelected() {
         return this.isSelected;
     }

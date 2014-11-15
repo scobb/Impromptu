@@ -1,6 +1,7 @@
 package com.example.steve.impromptu.Main;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +42,8 @@ public class FragmentEventDetail extends Fragment {
 
     private GoogleMap vMap;
 
+    private ImpromptuUser owner;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -60,6 +64,8 @@ public class FragmentEventDetail extends Fragment {
         /* map is already there, just return view as it is */
         }
 
+
+        RelativeLayout ownerLayout = (RelativeLayout) myInflatedView.findViewById(R.id.fragEventDetail_relativeLayout_owner);
         TextView titleTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_title);
         TextView ownerTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_owner);
         ProfilePictureView profilePictureView = (ProfilePictureView) myInflatedView.findViewById(R.id.fragProfile_imageView_profilePic);
@@ -67,13 +73,35 @@ public class FragmentEventDetail extends Fragment {
         MapFragment mf = (MapFragment) getFragmentManager().findFragmentById(R.id.fragEventDetail_location_map);
         vMap = mf.getMap();
 
+        // Get the owner
+        owner = ImpromptuUser.getUserById(eventData.getString("ownerKey"));
+
+
         // not sure what this does yet
         int hasGooglePlay = GooglePlayServicesUtil.isGooglePlayServicesAvailable(myInflatedView.getContext());
 
 
-
+        // Sets the data fields
         titleTextView.setText(eventData.getString("title"));
-        ownerTextView.setText(eventData.getString("owner"));
+        ownerTextView.setText(owner.getName());
+
+        ownerLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // Bundle up the data getting passed
+                Bundle userData = new Bundle();
+                userData.putString("ownerId", owner.getObjectId());
+
+
+                // Set up the fragment transaction
+                FragmentTransaction transaction = getActivity().getFragmentManager().beginTransaction();
+                FragmentProfile fragment = new FragmentProfile();
+                fragment.setArguments(userData);
+                transaction.replace(R.id.activityMain_frameLayout_shell, fragment);
+                transaction.commit();
+            }
+        });
 
 
 
