@@ -127,11 +127,11 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 //        currentUser.clearStreamEvents();
 //        currentUser.addStreamEvent(event);
 //        currentUser.persist();
-        ImageView pic = (ImageView)v.findViewById(R.id.fragProfile_imageView_pic);
-        Bitmap bmp = currentUser.getPicture();
-        if (bmp != null) {
-            pic.setImageBitmap(bmp);
-        }
+//        ImageView pic = (ImageView)v.findViewById(R.id.fragProfile_imageView_pic);
+//        Bitmap bmp = currentUser.getPicture();
+//        if (bmp != null) {
+//            pic.setImageBitmap(bmp);
+//        }
 
 //        for (Event innerEvent: currentUser.getStreamEvents()){
 //            Log.d("Impromptu", "Event: " + innerEvent.getDescription());
