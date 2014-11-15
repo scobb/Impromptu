@@ -17,6 +17,7 @@ import com.example.steve.impromptu.Main.ActivityMain;
 import com.example.steve.impromptu.Main.Compose.ArrayAdapters.ArrayAdapterComposePushGroups;
 import com.example.steve.impromptu.R;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -61,7 +62,7 @@ public class FragmentComposePushGroups extends Fragment {
 
         ActivityMain myActivity = (ActivityMain) getActivity();
         Event myEvent = myActivity.getComposeEvent();
-        eventPushGroupsList = myEvent.getPushGroups();
+        eventPushGroupsList = (ArrayList<Group>)myEvent.getPushGroups();
 
         if (!eventPushGroupsList.isEmpty() && !userGroupsList.isEmpty()) {
 

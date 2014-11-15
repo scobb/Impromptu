@@ -95,7 +95,7 @@ public class FragmentComposePush extends Fragment {
         ActivityMain myActivity = (ActivityMain) getActivity();
         Event myEvent = myActivity.getComposeEvent();
         eventPushFriendsList = (ArrayList<ImpromptuUser>) myEvent.getPushFriends();
-        eventPushGroupsList = myEvent.getPushGroups();
+        eventPushGroupsList = (ArrayList<Group>)myEvent.getPushGroups();
 
         if (!eventPushFriendsList.isEmpty()) {
 
