@@ -7,6 +7,7 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,6 +32,7 @@ import com.parse.Parse;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ActivityMain extends FragmentActivity implements FragmentComposeTime.OnComposeTimeFinishedListener, FragmentComposeMain.OnAttributeSelectedListener,
@@ -44,6 +46,10 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
         setContentView(R.layout.activity_shell_main);
 
         // this block might be redundant because we do it in ActivityMain. not sure...
@@ -85,7 +91,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         finish();
     }
 
-    public void debug() {
+    public void debug(View v) {
 //        ImpromptuUser currentUser = (ImpromptuUser)ParseUser.getCurrentUser();
 //        Bitmap profilePic = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
 //        currentUser.setPicture(profilePic);
@@ -110,16 +116,26 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 //        }
 //        currentUser.persist();
 
-        Event event = new Event();
-        event.test();
-        event.persist();
-        currentUser.clearStreamEvents();
-        currentUser.addStreamEvent(event);
-        currentUser.persist();
-
-        for (Event innerEvent: currentUser.getStreamEvents()){
-            Log.d("Impromptu", "Event: " + innerEvent.getDescription());
+//        ArrayList<ImpromptuUser> friends = currentUser.getFacebookFriends();
+//        Log.d("Impromptu", "Friends...");
+//        for (ImpromptuUser friend: friends) {
+//            Log.d("Impromptu", friend.getName());
+//        }
+//        Event event = new Event();
+//        event.test();
+//        event.persist();
+//        currentUser.clearStreamEvents();
+//        currentUser.addStreamEvent(event);
+//        currentUser.persist();
+        ImageView pic = (ImageView)v.findViewById(R.id.fragProfile_imageView_pic);
+        Bitmap bmp = currentUser.getPicture();
+        if (bmp != null) {
+            pic.setImageBitmap(bmp);
         }
+
+//        for (Event innerEvent: currentUser.getStreamEvents()){
+//            Log.d("Impromptu", "Event: " + innerEvent.getDescription());
+//        }
 //
 //        Group group = new Group("moreAwesomeGroup");
 //        group.add(lala);
@@ -133,13 +149,13 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 //        group.persist();
 //        currentUser.addGroup(group);
 //        currentUser.persist();
-        for (Group innerGroup: currentUser.getGroups()) {
-            Log.d("Impromptu", "Group name: " + innerGroup.getGroupName());
-
-            for (ImpromptuUser user: innerGroup.getFriendsInGroup()){
-                Log.d("Impromptu", "Member in group: " + user.getName());
-            }
-        }
+//        for (Group innerGroup: currentUser.getGroups()) {
+//            Log.d("Impromptu", "Group name: " + innerGroup.getGroupName());
+//
+//            for (ImpromptuUser user: innerGroup.getFriendsInGroup()){
+//                Log.d("Impromptu", "Member in group: " + user.getName());
+//            }
+//        }
         //ImpromptuUser currentUser = (ImpromptuUser)ParseUser.getCurrentUser();
 //        group = currentUser.getGroup("moreAwesomeGroup");
 //        Log.d("Impromptu", group.getGroupName());

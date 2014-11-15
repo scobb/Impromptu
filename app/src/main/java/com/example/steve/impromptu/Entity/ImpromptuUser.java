@@ -2,6 +2,7 @@ package com.example.steve.impromptu.Entity;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.facebook.Request;
@@ -12,9 +13,12 @@ import com.parse.ParseFile;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -30,7 +34,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     private String groupKey = "groups";
     private String friendsKey = "friends";
     private String visibleEventsKey = "events";
-    private String facebookIdKey = "fbid";
+    private static String facebookIdKey = "fbid";
 
     public ImpromptuUser() {
         super();
@@ -339,17 +343,31 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
             Log.e("Impromptu", "Error fetching User:", exc);
         }
         ParseFile picFile = (ParseFile) this.get("profilePic");
-        if (picFile == null) {
-            return null;
-        }
-        byte[] picBlock = null;
-        try {
-            picBlock = picFile.getData();
-        } catch (ParseException exc) {
-            Log.e("Impromptu", "exception in getPicture", exc);
+        if (picFile != null) {
+            try {
+                byte[] picBlock = picFile.getData();
+                Log.d("Impromptu", "picBlock: " + picBlock);
+                return BitmapFactory.decodeByteArray(picBlock, 0, picBlock.length);
+            } catch (ParseException exc) {
+                Log.e("Impromptu", "exception in getPicture", exc);
 
+            }
         }
-        return BitmapFactory.decodeByteArray(picBlock, 0, picBlock.length);
+        else if (ParseFacebookUtils.isLinked(this)) {
+            Log.d("Impromptu", "Getting fb pic");
+            try {
+                URL imageURL = new URL("https://graph.facebook.com/" + getFacebookId() + "/picture?type=large");
+                Bitmap bitmap = BitmapFactory.decodeStream(imageURL.openConnection().getInputStream());
+                if (bitmap == null){
+                    Log.e("Impromptu", "bitmap is null");
+                }
+                return bitmap;
+            }
+            catch (Exception exc) {
+                Log.e("Impromptu", "malformed exception", exc);
+            }
+        }
+        return null;
     }
 
     public Boolean isSelected() {
@@ -367,6 +385,64 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     public String getFacebookId() {
         return this.getString(facebookIdKey);
     }
+
+    public static ImpromptuUser getUserByFacebookId(String fbid) {
+        ParseQuery<ParseUser> query = ParseQuery.getQuery("_User");
+        ParseUser user = null;
+        try {
+            Log.d("Impromptu", "Trying to get user for id " + fbid);
+            query.whereEqualTo(ImpromptuUser.facebookIdKey, fbid);
+            List<ParseUser> users = query.find();
+            if (!users.isEmpty()){
+                return (ImpromptuUser)users.get(0);
+            }
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Exception querying...", exc);
+            return null;
+        }
+        return (ImpromptuUser) user;
+
+    }
+
+    public ArrayList<ImpromptuUser> getFacebookFriends() {
+        ArrayList<ImpromptuUser> result = new ArrayList<>();
+        if (ParseFacebookUtils.isLinked(this)) {
+            Request friendReq = Request.newMyFriendsRequest(ParseFacebookUtils.getSession(), null);
+            List<Response> responses = null;
+            try {
+                responses = friendReq.executeAsync().get();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error getting async result", exc);
+            }
+            if (responses == null) {
+                Log.d("Impromptu", "reponses was null");
+                return result;
+            }
+            for (Response resp : responses) {
+                Log.d("Impromptu", "Response: " + resp);
+
+                try {
+                    JSONObject respJSON = new JSONObject(resp.getRawResponse());
+                    JSONArray data = respJSON.getJSONArray("data");
+                    Log.d("Impromptu", "Number of fb friends also using impromptu: " + data.length());
+                    for (int i = 0; i < data.length(); i++) {
+                        String id = data.getJSONObject(i).getString("id");
+                        ImpromptuUser user = ImpromptuUser.getUserByFacebookId(id);
+                        if ( user != null) {
+                            result.add(user);
+                        }
+                    }
+
+                } catch (Exception exc) {
+                    Log.e("Impromptu", "json excpetion: ", exc);
+                    return result;
+                }
+
+            }
+        }
+        return result;
+    }
+
 
 
 }
