@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
+import com.example.steve.impromptu.Entity.FriendRequest;
 import com.example.steve.impromptu.Entity.Group;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.Main.ActivityMain;
@@ -72,6 +73,7 @@ public class ActivityLogin extends FragmentActivity {
         ParseUser.registerSubclass(ImpromptuUser.class);
         ParseObject.registerSubclass(Event.class);
         ParseObject.registerSubclass(Group.class);
+        ParseObject.registerSubclass(FriendRequest.class);
         Parse.initialize(this, "sP5YdlJxg1WiwfKgSXX4KdrgpZzAV5g69dV8ryY0", "houV8Brg8oIuBKSLheR7qAW4AJfGq1QZmH62Spgk");
         ParseFacebookUtils.initialize("1512234555691131");
 
@@ -194,6 +196,7 @@ public class ActivityLogin extends FragmentActivity {
                                     if (user != null) {
                                         ImpromptuUser currentUser = (ImpromptuUser) ParseUser.getCurrentUser();
                                         currentUser.setFacebookId(user.getId());
+                                        currentUser.setName(user.getName());
                                         currentUser.persist();
                                     }
                                 }
@@ -210,6 +213,7 @@ public class ActivityLogin extends FragmentActivity {
                                     if (user != null) {
                                         ImpromptuUser currentUser = (ImpromptuUser) ParseUser.getCurrentUser();
                                         currentUser.setFacebookId(user.getId());
+                                        currentUser.setName(user.getName());
                                         currentUser.persist();
                                     }
                                 }

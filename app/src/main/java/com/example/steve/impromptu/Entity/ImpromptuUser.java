@@ -20,8 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
+import java.util.Collections;import java.util.Iterator;
 import java.util.List;
 
 
@@ -34,6 +33,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     private String groupKey = "groups";
     private String friendsKey = "friends";
     private String visibleEventsKey = "events";
+    private static String nameKey = "name";
     private static String facebookIdKey = "fbid";
 
     public ImpromptuUser() {
@@ -42,7 +42,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
 
     public ImpromptuUser(String username) {
         super();
-        this.setName(username);
+        this.setUsername(username);
     }
 
     @Override
@@ -54,6 +54,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         // use parse's interface to set basic info
         super();
         this.setUsername(username);
+        this.setName(username);
         this.setPassword(pw);
         this.setEmail(email);
         this.clearGroups();
@@ -127,7 +128,21 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         }
         return (ImpromptuUser) user;
     }
-
+    public static List<ImpromptuUser> getUserByName(String name) {
+        /**
+         * method - gets existing user given their id
+         * Returns null if ID not found
+         */
+        ParseQuery<ImpromptuUser> query = ParseQuery.getQuery("_User");
+        query.whereContains(ImpromptuUser.nameKey, name);
+        try {
+            Log.d("Impromptu", "Trying to get user " + name);
+            return query.find();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Exception querying...", exc);
+            return null;
+        }
+    }
     public String getEmail() {
         try {
             this.fetchIfNeeded();
@@ -280,7 +295,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     }
 
     public void setName(String name) {
-        this.setUsername(name);
+        this.put(this.nameKey, name);
     }
 
 
@@ -289,6 +304,10 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
             this.fetchIfNeeded();
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching User:", exc);
+        }
+        String name = this.getString(this.nameKey);
+        if (name != null) {
+            return name;
         }
         if (ParseFacebookUtils.isLinked(this)) {
             // display facebook name
@@ -306,6 +325,8 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
             for (Response resp : responses) {
                 try {
                     JSONObject respJSON = new JSONObject(resp.getRawResponse());
+                    this.setName(respJSON.getString("name"));
+                    this.persist();
                     return respJSON.getString("name");
                 } catch (Exception exc) {
                     Log.e("Impromptu", "json excpetion: ", exc);
@@ -314,6 +335,8 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
             }
             return "";
         } else {
+            this.setName(this.getUsername());
+            this.persist();
             return this.getUsername();
         }
     }

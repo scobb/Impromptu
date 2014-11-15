@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
+import com.example.steve.impromptu.Entity.FriendRequest;
 import com.example.steve.impromptu.Entity.Group;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.Login.ActivityLogin;
@@ -56,6 +57,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         ParseUser.registerSubclass(ImpromptuUser.class);
         ParseObject.registerSubclass(Event.class);
         ParseObject.registerSubclass(Group.class);
+        ParseObject.registerSubclass(FriendRequest.class);
         Parse.initialize(this, "sP5YdlJxg1WiwfKgSXX4KdrgpZzAV5g69dV8ryY0", "houV8Brg8oIuBKSLheR7qAW4AJfGq1QZmH62Spgk");
 
         //Remove title bar
@@ -116,11 +118,16 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 //        }
 //        currentUser.persist();
 
-//        ArrayList<ImpromptuUser> friends = currentUser.getFacebookFriends();
-//        Log.d("Impromptu", "Friends...");
-//        for (ImpromptuUser friend: friends) {
-//            Log.d("Impromptu", friend.getName());
-//        }
+        ArrayList<ImpromptuUser> friends = currentUser.getFacebookFriends();
+        Log.d("Impromptu", "Friends...");
+        for (ImpromptuUser friend: friends) {
+            Log.d("Impromptu", friend.getName());
+        }
+        List<ImpromptuUser> results = ImpromptuUser.getUserByName("bob");
+        Log.d("Impromptu", "num results: " + results.size());
+        for (ImpromptuUser user: results) {
+            Log.d("Impromptu", user.getName());
+        }
 //        Event event = new Event();
 //        event.test();
 //        event.persist();
