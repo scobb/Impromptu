@@ -3,6 +3,7 @@ package com.example.steve.impromptu.Entity;
 import android.util.Log;
 
 import com.parse.ParseClassName;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -15,7 +16,6 @@ import java.util.List;
  */
 @ParseClassName("FriendRequest")
 public class FriendRequest extends ParseObject {
-    private static String pendingKey = "pending";
     private static String fromKey = "from";
     private static String toKey = "to";
 
@@ -28,27 +28,37 @@ public class FriendRequest extends ParseObject {
     }
 
     public void accept() {
-        setPending(false);
+        // TODO - this needs to be handled by cloud code. Current persist will not work on users not logged in.
         ImpromptuUser from = getFrom();
         ImpromptuUser to = getTo();
+        try {
+            from.fetchIfNeeded();
+            to.fetchIfNeeded();
+            from.addFriend(to);
+            to.addFriend(from);
 
-        from.addFriend(to);
-        to.addFriend(from);
+            from.persist();
+            to.persist();
+            persist();
 
-        from.persist();
-        to.persist();
-        persist();
+            //TODO - add a message to both that they have a new friend? Delete?
 
-        //TODO - add a message to both that they have a new friend?
+        }
+        catch (ParseException exc) {
+            // either from or to no longer exists. we'll delete the request.
+            Log.e("Impromptu", "Error accepting.", exc);
+        }
+        finally {
+            deleteEventually();
+        }
 
     }
 
     public static List<FriendRequest> getPendingRequestFromUser(ImpromptuUser user) {
         ParseQuery<FriendRequest> query = ParseQuery.getQuery("FriendRequest");
         try {
-            Log.d("Impromptu", "Trying to get pending requests for id " + user.getName());
+            Log.d("Impromptu", "Trying to get pending requests for " + user.getName());
             query.whereEqualTo(FriendRequest.fromKey, user);
-            query.whereEqualTo(FriendRequest.pendingKey, true);
             return query.find();
         }
         catch (Exception exc) {
@@ -62,7 +72,6 @@ public class FriendRequest extends ParseObject {
         try {
             Log.d("Impromptu", "Trying to get pending requests for id " + user.getName());
             query.whereEqualTo(FriendRequest.toKey, user);
-            query.whereEqualTo(FriendRequest.pendingKey, true);
             return query.find();
         }
         catch (Exception exc) {
@@ -71,30 +80,37 @@ public class FriendRequest extends ParseObject {
         return null;
     }
 
-    public void decline() {
-        setPending(false);
-        persist();
-    }
-
-    public void setPending(boolean b) {
-        this.put(pendingKey, b);
-    }
-    public void setFrom(ImpromptuUser user) {
-        this.put(fromKey, user);
-    }
-    public void setTo(ImpromptuUser user) {
-        this.put(toKey, user);
-    }
-
-    public boolean getPending() {
+    public static FriendRequest getFriendRequest(ImpromptuUser from, ImpromptuUser to) {
+        ParseQuery<FriendRequest> query = ParseQuery.getQuery("FriendRequest");
         try {
-            fetchIfNeeded();
+            Log.d("Impromptu", "Trying to get pending requests from " + from.getName() + " to " + to.getName());
+            query.whereEqualTo(FriendRequest.fromKey, from);
+            query.whereEqualTo(FriendRequest.toKey, to);
+            List<FriendRequest> result = query.find();
+            if (result.isEmpty()){
+                return null;
+            }
+            return result.get(0);
         }
         catch (Exception exc) {
-            Log.e("Impromptu", "Fetch exception: ", exc);
+            Log.e("Impromptu", "Error getting from requests", exc);
         }
-        return getBoolean(pendingKey);
+        return null;
+
     }
+
+    public void decline() {
+        deleteEventually();
+    }
+
+    public void setFrom(ImpromptuUser user) {
+        this.put(fromKey, createWithoutData(ImpromptuUser.class, user.getObjectId()));
+    }
+    public void setTo(ImpromptuUser user) {
+        this.put(toKey, createWithoutData(ImpromptuUser.class, user.getObjectId()));
+    }
+
+
 
     public ImpromptuUser getTo() {
         try {
