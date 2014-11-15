@@ -6,12 +6,8 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -22,17 +18,17 @@ import com.example.steve.impromptu.Entity.Group;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.Main.ActivityMain;
 import com.example.steve.impromptu.R;
-import com.facebook.LoginActivity;
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.model.GraphUser;
 import com.parse.LogInCallback;
 import com.parse.Parse;
-import com.parse.ParseAnonymousUtils;
+import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
-import com.parse.ParseException;
 import com.parse.SignUpCallback;
 
-import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.List;
 
@@ -70,6 +66,7 @@ public class ActivityLogin extends FragmentActivity {
         fragmentTransaction.replace(R.id.loginShell, fragment).addToBackStack(null);
         fragmentTransaction.commit();
     }
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ParseUser.registerSubclass(ImpromptuUser.class);
@@ -161,9 +158,7 @@ public class ActivityLogin extends FragmentActivity {
                     builder.setMessage("Please enter a valid email.");
                     builder.setPositiveButton("OK", null);
                     builder.show();
-                }
-
-                else {
+                } else {
                     Toast.makeText(getApplicationContext(),
                             "Sign up Error", Toast.LENGTH_LONG)
                             .show();
@@ -192,10 +187,34 @@ public class ActivityLogin extends FragmentActivity {
                     Log.d("Impromptu",
                             "Uh oh. The user cancelled the Facebook login.");
                 } else if (user.isNew()) {
+                    Request req = Request.newMeRequest(ParseFacebookUtils.getSession(),
+                            new Request.GraphUserCallback() {
+                                @Override
+                                public void onCompleted(GraphUser user, Response response) {
+                                    if (user != null) {
+                                        ImpromptuUser currentUser = (ImpromptuUser) ParseUser.getCurrentUser();
+                                        currentUser.setFacebookId(user.getId());
+                                        currentUser.persist();
+                                    }
+                                }
+                            });
+                    req.executeAsync();
                     Log.d("Impromptu",
                             "User signed up and logged in through Facebook!");
                     forwardToMainActivity();
                 } else {
+                    Request req = Request.newMeRequest(ParseFacebookUtils.getSession(),
+                            new Request.GraphUserCallback() {
+                                @Override
+                                public void onCompleted(GraphUser user, Response response) {
+                                    if (user != null) {
+                                        ImpromptuUser currentUser = (ImpromptuUser) ParseUser.getCurrentUser();
+                                        currentUser.setFacebookId(user.getId());
+                                        currentUser.persist();
+                                    }
+                                }
+                            });
+                    req.executeAsync();
                     Log.d("Impromptu",
                             "User logged in through Facebook!");
                     forwardToMainActivity();

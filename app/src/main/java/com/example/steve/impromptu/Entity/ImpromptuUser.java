@@ -30,6 +30,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     private String groupKey = "groups";
     private String friendsKey = "friends";
     private String visibleEventsKey = "events";
+    private String facebookIdKey = "fbid";
 
     public ImpromptuUser() {
         super();
@@ -357,6 +358,14 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
 
     public void setSelected(Boolean selected) {
         this.isSelected = selected;
+    }
+
+    public void setFacebookId(String id) {
+        this.put(facebookIdKey, id);
+    }
+
+    public String getFacebookId() {
+        return this.getString(facebookIdKey);
     }
 
 
