@@ -2,13 +2,16 @@ package com.example.steve.impromptu.Entity;
 
 import android.util.Log;
 
+import com.parse.FunctionCallback;
 import com.parse.ParseClassName;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -31,26 +34,22 @@ public class FriendRequest extends ParseObject {
         // TODO - this needs to be handled by cloud code. Current persist will not work on users not logged in.
         ImpromptuUser from = getFrom();
         ImpromptuUser to = getTo();
-        try {
-            from.fetchIfNeeded();
-            to.fetchIfNeeded();
-            from.addFriend(to);
-            to.addFriend(from);
+        HashMap<String, String> args = new HashMap<>();
+        args.put("fromId", from.getObjectId());
+        args.put("toId", to.getObjectId());
 
-            from.persist();
-            to.persist();
-            persist();
+        ParseCloud.callFunctionInBackground("acceptFriendRequest", args, new FunctionCallback<Object>() {
+            @Override
+            public void done(Object o, ParseException e) {
+                if (e != null) {
+                    Log.e("Impromptu", "error executing cloud code", e);
+                }
+            }
+        });
 
-            //TODO - add a message to both that they have a new friend? Delete?
 
-        }
-        catch (ParseException exc) {
-            // either from or to no longer exists. we'll delete the request.
-            Log.e("Impromptu", "Error accepting.", exc);
-        }
-        finally {
-            deleteEventually();
-        }
+        deleteEventually();
+
 
     }
 

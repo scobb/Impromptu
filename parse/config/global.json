@@ -1,0 +1,14 @@
+{
+    "applications": {
+        "Impromptu": {
+            "applicationId": "sP5YdlJxg1WiwfKgSXX4KdrgpZzAV5g69dV8ryY0", 
+            "masterKey": "BMaWNPzlmMeNYW3ztiOraohrHRAUQr36FMNkz93T"
+        }, 
+        "_default": {
+            "link": "Impromptu"
+        }
+    }, 
+    "global": {
+        "parseVersion": "1.3.1"
+    }
+}
