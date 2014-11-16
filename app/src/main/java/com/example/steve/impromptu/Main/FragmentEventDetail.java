@@ -68,7 +68,9 @@ public class FragmentEventDetail extends Fragment {
         RelativeLayout ownerLayout = (RelativeLayout) myInflatedView.findViewById(R.id.fragEventDetail_relativeLayout_owner);
         TextView titleTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_title);
         TextView ownerTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_owner);
-        ProfilePictureView profilePictureView = (ProfilePictureView) myInflatedView.findViewById(R.id.fragProfile_imageView_profilePic);
+//        ProfilePictureView profilePictureView = (ProfilePictureView) myInflatedView.findViewById(R.id.fragProfile_imageView_profilePic);
+        ImageView profilePictureView = (ImageView) myInflatedView.findViewById(R.id.fragProfile_imageView_profilePic);
+
 
         MapFragment mf = (MapFragment) getFragmentManager().findFragmentById(R.id.fragEventDetail_location_map);
         vMap = mf.getMap();
@@ -81,9 +83,10 @@ public class FragmentEventDetail extends Fragment {
         int hasGooglePlay = GooglePlayServicesUtil.isGooglePlayServicesAvailable(myInflatedView.getContext());
 
 
-        // Sets the data fields
+        // Sets the data fields and picture
         titleTextView.setText(eventData.getString("title"));
         ownerTextView.setText(owner.getName());
+        profilePictureView.setImageBitmap(owner.getPicture());
 
         ownerLayout.setOnClickListener(new View.OnClickListener() {
             @Override

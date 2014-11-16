@@ -32,10 +32,16 @@
         android:gravity="center_vertical"
         android:background="@drawable/template_rounded_box">
 
+        <!--
         <com.facebook.widget.ProfilePictureView
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginTop="20dp"
+            android:id="@+id/fragProfile_imageView_profilePic" /> -->
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:id="@+id/fragProfile_imageView_profilePic" />
 
         <TextView
@@ -43,6 +49,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/fragProfile_imageView_profilePic"
+            android:layout_marginLeft="20dp"
             android:textSize="26sp"  />
 
     </RelativeLayout>
