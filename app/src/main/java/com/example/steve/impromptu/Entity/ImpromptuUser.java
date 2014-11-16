@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.facebook.Request;
 import com.facebook.Response;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseFile;
@@ -149,7 +150,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching User:", exc);
         }
-            if (ParseFacebookUtils.isLinked(this)) {
+            if (getFacebookId() != null) {
                 // display facebook name
                 Request meReq = Request.newMeRequest(ParseFacebookUtils.getSession(), null);
                 List<Response> responses = null;
@@ -309,7 +310,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         if (name != null) {
             return name;
         }
-        if (ParseFacebookUtils.isLinked(this)) {
+        if (getFacebookId() != null) {
             // display facebook name
             Request meReq = Request.newMeRequest(ParseFacebookUtils.getSession(), null);
             List<Response> responses = null;
@@ -376,7 +377,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
 
             }
         }
-        else if (ParseFacebookUtils.isLinked(this)) {
+        else if (getFacebookId() != null) {
             Log.d("Impromptu", "Getting fb pic");
             try {
                 URL imageURL = new URL("https://graph.facebook.com/" + getFacebookId() + "/picture?type=large");
@@ -390,6 +391,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
                 Log.e("Impromptu", "malformed exception", exc);
             }
         }
+        Log.e("Impromptu",  "didn't get in either block.");
         return null;
     }
 
@@ -416,25 +418,26 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
 
     public static ImpromptuUser getUserByFacebookId(String fbid) {
         ParseQuery<ParseUser> query = ParseQuery.getQuery("_User");
-        ParseUser user = null;
         try {
             Log.d("Impromptu", "Trying to get user for id " + fbid);
             query.whereEqualTo(ImpromptuUser.facebookIdKey, fbid);
             List<ParseUser> users = query.find();
             if (!users.isEmpty()){
                 return (ImpromptuUser)users.get(0);
+            } else {
+                Log.d("Impromptu", "Users was empty.");
             }
         } catch (Exception exc) {
             Log.e("Impromptu", "Exception querying...", exc);
             return null;
         }
-        return (ImpromptuUser) user;
+        return null;
 
     }
 
     public ArrayList<ImpromptuUser> getFacebookFriends() {
         ArrayList<ImpromptuUser> result = new ArrayList<>();
-        if (ParseFacebookUtils.isLinked(this)) {
+        if (getFacebookId() != null) {
             Request friendReq = Request.newMyFriendsRequest(ParseFacebookUtils.getSession(), null);
             List<Response> responses = null;
             try {
