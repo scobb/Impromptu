@@ -78,9 +78,12 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
+        ImpromptuUser currentUser = (ImpromptuUser)ParseUser.getCurrentUser();
+
         // Bundle up the data getting passed
         Bundle userData = new Bundle();
         userData.putBoolean("currentuser", true);
+        userData.putString("ownerId", currentUser.getObjectId());
 
         FragmentProfile fragment = new FragmentProfile();
         fragment.setArguments(userData);

@@ -46,18 +46,16 @@ public class FragmentProfile extends Fragment {
         final View myInflatedView = inflater.inflate(R.layout.fragment_profile, container, false);
         final TextView nameView = (TextView) myInflatedView.findViewById(R.id.fragProfile_textView_name);
         final TextView emailView = (TextView) myInflatedView.findViewById(R.id.fragProfile_textView_email);
-        final ProfilePictureView profileView = (ProfilePictureView) myInflatedView.findViewById(R.id.fragProfile_imageView_profilePic);
+        final ImageView profileView = (ImageView) myInflatedView.findViewById(R.id.fragProfile_imageView_profilePic);
+//        final ProfilePictureView profileView = (ProfilePictureView) myInflatedView.findViewById(R.id.fragProfile_imageView_profilePic);
 
 
 
-        // If the user is looking at his own profile
-        if(userData.getBoolean("currentuser")){
-
-            // Get the current user
-            ImpromptuUser currentUser = (ImpromptuUser)ParseUser.getCurrentUser();
+            // Get the user
+            ImpromptuUser targetUser = ImpromptuUser.getUserById(userData.getString("ownerId"));
 //            ParseUser currentUser = ParseUser.getCurrentUser();
 
-            if (currentUser == null) {
+            if (targetUser == null) {
                 //TODO - test this
                 Log.e("Impromptu", "Current user is null");
                 Intent intent = new Intent(getActivity(), ActivityLogin.class);
@@ -65,9 +63,9 @@ public class FragmentProfile extends Fragment {
                 getActivity().finish();
             }
 
-            if (currentUser.getUsername() == null)
+            if (targetUser.getUsername() == null)
                 Log.e("Impromptu", "Current user's username is null");
-            if (currentUser.getEmail() == null)
+            if (targetUser.getEmail() == null)
                 Log.e("Impromptu", "Current user's email is null");
 
             // Get the profile picture
@@ -81,9 +79,9 @@ public class FragmentProfile extends Fragment {
 
 
 
-
+            /*
             Log.d("Impromptu", "Looking up facebook");
-            if (ParseFacebookUtils.isLinked(currentUser)){
+            if (ParseFacebookUtils.isLinked(targetUser)){
 
                 // display facebook name
                 Request req = Request.newMeRequest(ParseFacebookUtils.getSession(),
@@ -109,7 +107,8 @@ public class FragmentProfile extends Fragment {
                                             try {
                                                 if (userProfile.getString("facebookId") != null) {
                                                     String facebookId = userProfile.get("facebookId").toString();
-                                                    profileView.setProfileId(facebookId);
+//                                                    profileView.setProfileId(facebookId);
+                                                    profileView.setImageResource(targetUser.getPicture());
                                                 } else {
                                                     profileView.setProfileId(null);
                                                 }
@@ -151,20 +150,21 @@ public class FragmentProfile extends Fragment {
                 nameView.setText(currentUser2.getName());
                 emailView.setText(currentUser2.getEmail());
             }
-        }
-
-        // If it is not the current user
-        else {
-
-            // Get the user
-            user = ImpromptuUser.getUserById(userData.getString("ownerId"));
+*/
 
             // display parse username
     //      nameView.setText(currentUser.getUsername());
-            nameView.setText(user.getName());
-            emailView.setText(user.getEmail());
-        }
+            nameView.setText(targetUser.getName());
+            emailView.setText(targetUser.getEmail());
+            profileView.setImageBitmap(targetUser.getPicture());
 
+/*
+            if (targetUser.getFacebookId() != null) {
+                profileView.setProfileId(targetUser.getFacebookId());
+            } else {
+                profileView.setProfileId(null);
+            }
+*/
         return myInflatedView;
     }
 
