@@ -113,13 +113,16 @@ public class FragmentComposePushGroups extends Fragment {
 
                 for (Group group : userGroupsList) {
 
-                    if (listContainsGroup(eventPushGroupsList, group)) {
+                    Group grp = listContainsGroup(eventPushGroupsList, group);
+
+                    if (grp != null) {
                         // if this group was in the eventPushGroupsList && is not selected, remove it
                         if (!(group.isSelected())) {
-                            eventPushGroupsList.remove(group);
+                            eventPushGroupsList.remove(grp);
                             // remove friends that belong to group from eventPushFriendsList
                             ArrayList<ImpromptuUser> friends = (ArrayList<ImpromptuUser>)group.getFriendsInGroup();
                             for (ImpromptuUser friend : friends) {
+                                // TODO: potential hazard with remove
                                 eventPushFriendsList.remove(friend);
                             }
                         }
@@ -127,7 +130,7 @@ public class FragmentComposePushGroups extends Fragment {
 
                     if (group.isSelected()) {
                         // if this is one of the selected groups && it was not already in the eventPushGroupsList, add it
-                        if (!(listContainsGroup(eventPushGroupsList, group)))
+                        if (grp == null)
                             eventPushGroupsList.add(group);
                     }
                 }
@@ -139,7 +142,9 @@ public class FragmentComposePushGroups extends Fragment {
 
                     for (ImpromptuUser friend : friendsList) {
 
-                        if (!(listContainsFriend(eventPushFriendsList, friend))) {
+                        ImpromptuUser frd = listContainsFriend(eventPushFriendsList, friend);
+
+                        if (frd == null) {
                             eventPushFriendsList.add(friend);
                         }
 
@@ -187,30 +192,26 @@ public class FragmentComposePushGroups extends Fragment {
         }
     }
 
-    public Boolean listContainsFriend(ArrayList<ImpromptuUser> list, ImpromptuUser friend) {
-        Boolean contains = false;
+    public ImpromptuUser listContainsFriend(ArrayList<ImpromptuUser> list, ImpromptuUser friend) {
 
         for (ImpromptuUser frd : list) {
             if (frd.getName().equals(friend.getName())) {
-                contains = true;
-                break;
+                return frd;
             }
         }
 
-        return contains;
+        return null;
     }
 
-    public Boolean listContainsGroup(ArrayList<Group> list, Group group) {
-        Boolean contains = false;
+    public Group listContainsGroup(ArrayList<Group> list, Group group) {
 
         for (Group grp : list) {
             if (group.getGroupName().equals(grp.getGroupName())) {
-                contains = true;
-                break;
+                return grp;
             }
         }
 
-        return contains;
+        return null;
     }
 
 }

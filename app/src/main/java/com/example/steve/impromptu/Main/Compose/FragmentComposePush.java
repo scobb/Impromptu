@@ -136,6 +136,44 @@ public class FragmentComposePush extends Fragment {
             }
         }
 
+        eventPushGroupsList = (ArrayList<Group>) myEvent.getPushGroups();
+        if (!eventPushGroupsList.isEmpty() && !userGroupsList.isEmpty()) {
+            // there are groups to push to && user has groups
+
+            Iterator<Group> iterEventGroups = eventPushGroupsList.iterator();
+            Iterator<Group> iterUserGroups = userGroupsList.iterator();
+
+            Group eventGroup;
+            Group userGroup;
+
+            while (iterEventGroups.hasNext() && iterUserGroups.hasNext()) {
+                // Note: eventPushGroupsList is a subset of userGroupsList
+
+                eventGroup = iterEventGroups.next();
+                userGroup = iterUserGroups.next();
+
+                int comp = eventGroup.compareTo(userGroup);
+                if (comp == 0) {
+                    // they are the same
+
+                    userGroup.setSelected(true);
+
+                } else if (comp > 0) {
+                    // eventGroup is "greater" than userGroup
+
+                    while (((eventGroup.compareTo(userGroup)) != 0) && iterUserGroups.hasNext()) {
+                        // keep looking for an equivalent group
+                        userGroup = iterUserGroups.next();
+                    }
+                    userGroup.setSelected(true);
+
+                } else {
+                    // shouldn't get this case because both lists of groups are sorted alphabetically
+                    // and eventPushGroupsList is a subset of userGroupsList
+                }
+            }
+        }
+
         // Create list of selected groups
         String groups = "";
         Group group;
@@ -182,16 +220,18 @@ public class FragmentComposePush extends Fragment {
 
                 for (ImpromptuUser friend : userFriendsList) {
 
-                    if (listContainsFriend(eventPushFriendsList, friend)) {
+                    ImpromptuUser frd = listContainsFriend(eventPushFriendsList, friend);
+
+                    if (frd != null) {
                         // if this friend was in the eventPushFriendsList && is not selected, remove it
                         if (!(friend.isSelected())) {
-                            eventPushFriendsList.remove(friend);
+                            eventPushFriendsList.remove(frd);
                         }
                     }
 
                     if (friend.isSelected()) {
                         // if this is one of the selected friends && isn't already in the eventPushFriendsList, add it
-                        if (!listContainsFriend(eventPushFriendsList, friend)) {
+                        if (frd == null) {
                             eventPushFriendsList.add(friend);
                         }
                     }
@@ -200,19 +240,21 @@ public class FragmentComposePush extends Fragment {
                 Collections.sort(eventPushFriendsList); // make sure eventPushFriendsList is sorted alphabetically
                 myEvent.setPushFriends(eventPushFriendsList);
 
-                // TODO: remove this, isn't necessary
+
                 for (Group group : userGroupsList) {
 
-                    if (listContainsGroup(eventPushGroupsList, group)) {
+                    Group grp = listContainsGroup(eventPushGroupsList, group);
+
+                    if (grp != null) {
                         // if this group was in the eventPushGroupsList && is not selected, remove it
-                        if (!(group.isSelected())) {
-                            eventPushGroupsList.remove(group);
+                        if (!(grp.isSelected())) {
+                            eventPushGroupsList.remove(grp);
                         }
                     }
 
                     if (group.isSelected()) {
                         // if this one of the selected groups && isn't already in the eventPushFriendsList, add it
-                        if (!listContainsGroup(eventPushGroupsList, group)) {
+                        if (grp == null) {
                             eventPushGroupsList.add(group);
                         }
                     }
@@ -267,22 +309,28 @@ public class FragmentComposePush extends Fragment {
 
 
     public void addTestGroups(ImpromptuUser currentUser) {
-        Group myGroup = new Group();
-        myGroup.clear();
-        myGroup.setGroupName("Composers");
+        Group myGroup1 = new Group();
+        myGroup1.clear();
+        myGroup1.setGroupName("Composers");
         ImpromptuUser friend1 = new ImpromptuUser("Bob Newman");
         ImpromptuUser friend2 = new ImpromptuUser("Wolfgang Mozart");
         ImpromptuUser friend3 = new ImpromptuUser("John Williams");
-//        ImpromptuUser friend4 = new ImpromptuUser("Alexandre Desplat");
-//        ImpromptuUser friend5 = new ImpromptuUser("Hans Zimmer");
 
-        myGroup.add(friend1);
-        myGroup.add(friend2);
-        myGroup.add(friend3);
+        myGroup1.add(friend1);
+        myGroup1.add(friend2);
+        myGroup1.add(friend3);
 
-        currentUser.addGroup(myGroup);
-//        myGroup.add(friend4);
-//        myGroup.add(friend5);
+        Group myGroup2 = new Group();
+        myGroup2.clear();
+        myGroup2.setGroupName("Small Composers");
+        ImpromptuUser friend4 = new ImpromptuUser("Alexandre Desplat");
+        ImpromptuUser friend5 = new ImpromptuUser("Hans Zimmer");
+
+        myGroup2.add(friend4);
+        myGroup2.add(friend5);
+
+        currentUser.addGroup(myGroup1);
+        currentUser.addGroup(myGroup2);
 
         return;
     }
@@ -303,29 +351,25 @@ public class FragmentComposePush extends Fragment {
         return;
     }
 
-    public Boolean listContainsFriend(ArrayList<ImpromptuUser> list, ImpromptuUser friend) {
-        Boolean contains = false;
+    public ImpromptuUser listContainsFriend(ArrayList<ImpromptuUser> list, ImpromptuUser friend) {
 
         for (ImpromptuUser frd : list) {
             if (frd.getName().equals(friend.getName())) {
-                contains = true;
-                break;
+                return frd;
             }
         }
 
-        return contains;
+        return null;
     }
 
-    public Boolean listContainsGroup(ArrayList<Group> list, Group group) {
-        Boolean contains = false;
+    public Group listContainsGroup(ArrayList<Group> list, Group group) {
 
         for (Group grp : list) {
             if (group.getGroupName().equals(grp.getGroupName())) {
-                contains = true;
-                break;
+                return grp;
             }
         }
 
-        return contains;
+        return null;
     }
 }
