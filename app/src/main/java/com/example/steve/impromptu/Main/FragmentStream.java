@@ -91,6 +91,7 @@ public class FragmentStream extends ListFragment {
         // Bundle up the data getting passed
         Bundle eventData = new Bundle();
 
+        eventData.putString("ownerKey", selectedUser.getObjectId());
         eventData.putString("title", event.getTitle());
         eventData.putString("owner", selectedUser.getName());
         eventData.putString("email", selectedUser.getEmail());
@@ -98,7 +99,6 @@ public class FragmentStream extends ListFragment {
 
         // Set up the fragment transaction
         FragmentTransaction transaction = getActivity().getFragmentManager().beginTransaction();
-//        FragmentProfile fragment = new FragmentProfile();
         FragmentEventDetail fragment = new FragmentEventDetail();
         fragment.setArguments(eventData);
         transaction.replace(R.id.activityMain_frameLayout_shell, fragment);
