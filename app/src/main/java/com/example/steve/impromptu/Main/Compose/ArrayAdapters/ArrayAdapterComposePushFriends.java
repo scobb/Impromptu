@@ -62,17 +62,20 @@ public class ArrayAdapterComposePushFriends extends ArrayAdapter<ImpromptuUser> 
                                                      boolean isChecked) {
                             ImpromptuUser friend = (ImpromptuUser) viewHolder.checkbox
                                     .getTag();
-                            friend.setSelected(buttonView.isChecked());
+                            if (isChecked) {
+                                friend.setSelected(true);
+                            }
 
-                            if (!(viewHolder.checkbox.isSelected())) {
+                            else {
+                                friend.setSelected(false);
+
                                 for (Group group : groupsList) {
                                     ArrayList<ImpromptuUser> friends = (ArrayList<ImpromptuUser>) group.getFriendsInGroup();
-                                    if (friends.contains(friend)) {
+                                    if (listContainsFriend(friends, friend)) {
                                         group.setSelected(false);
                                     }
                                 }
                             }
-
                         }
                     });
             view.setTag(viewHolder);
@@ -85,5 +88,18 @@ public class ArrayAdapterComposePushFriends extends ArrayAdapter<ImpromptuUser> 
         holder.text.setText(friendList.get(position).getName());
         holder.checkbox.setChecked(friendList.get(position).isSelected());
         return view;
+    }
+
+    public Boolean listContainsFriend(ArrayList<ImpromptuUser> list, ImpromptuUser friend) {
+        Boolean contains = false;
+
+        for (ImpromptuUser frd : list) {
+            if (frd.getName().equals(friend.getName())) {
+                contains = true;
+                break;
+            }
+        }
+
+        return contains;
     }
 }

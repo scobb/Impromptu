@@ -24,7 +24,7 @@ public class ArrayAdapterComposePushGroups extends ArrayAdapter<Group> {
     private Context context;
 
     public ArrayAdapterComposePushGroups(Context context, int textViewResourceId,
-                                          ArrayList<Group> groupList) {
+                                         ArrayList<Group> groupList) {
         super(context, textViewResourceId, groupList);
         this.context = context;
         this.groupList = new ArrayList<Group>();
