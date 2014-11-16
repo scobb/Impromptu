@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.Login.ActivityLogin;
@@ -18,6 +19,7 @@ import com.example.steve.impromptu.R;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.model.GraphUser;
+import com.facebook.widget.ProfilePictureView;
 import com.google.android.gms.games.GamesMetadata;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
@@ -30,94 +32,139 @@ import org.json.JSONObject;
  */
 public class FragmentProfile extends Fragment {
 
+    private ImpromptuUser user;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // Receive the arguments
+        // Receive data passed in
         Bundle userData = getArguments();
 
 
-        // get user's name, email, profile pic
-        Log.d("Impromptu", "In onCreateView");
-        ImpromptuUser currentUser = (ImpromptuUser)ParseUser.getCurrentUser();
-
-        if (currentUser == null) {
-            //TODO - test this
-            Log.e("Impromptu", "Current user is null");
-            Intent intent = new Intent(getActivity(), ActivityLogin.class);
-            startActivity(intent);
-            getActivity().finish();
-        }
-
-        if (currentUser.getUsername() == null)
-            Log.e("Impromptu", "Current user's username is null");
-
-        if (currentUser.getEmail() == null)
-            Log.e("Impromptu", "Current user's email is null");
-
-
-
-
-        // Inflate the layout for this fragment
+        // Get Views
         final View myInflatedView = inflater.inflate(R.layout.fragment_profile, container, false);
-
-        // grab profile pic
-        Bitmap profilePic = currentUser.getPicture();
-        if (profilePic != null) {
-            ImageView picView = (ImageView) myInflatedView.findViewById(R.id.fragProfile_imageView_profilePic);
-            picView.setImageBitmap(profilePic);
-        }
-
         final TextView nameView = (TextView) myInflatedView.findViewById(R.id.fragProfile_textView_name);
-        Log.d("Impromptu", "Looking up facebook");
-        if (ParseFacebookUtils.isLinked(currentUser)){
-            // display facebook name
-            Request req = Request.newMeRequest(ParseFacebookUtils.getSession(),
-                    new Request.GraphUserCallback() {
-                        @Override
-                        public void onCompleted(GraphUser user, Response response) {
-                            if (user != null) {
-                                // Create a JSON object to hold the profile info
-                                JSONObject userProfile = new JSONObject();
-                                try {
-                                    // Populate the JSON object
-                                    userProfile.put("facebookId", user.getId());
-                                    userProfile.put("name", user.getName());
-                                    nameView.setText(user.getName());
+        final TextView emailView = (TextView) myInflatedView.findViewById(R.id.fragProfile_textView_email);
+        final ImageView profileView = (ImageView) myInflatedView.findViewById(R.id.fragProfile_imageView_profilePic);
+//        final ProfilePictureView profileView = (ProfilePictureView) myInflatedView.findViewById(R.id.fragProfile_imageView_profilePic);
 
-                                    Log.d("Impromptu", "User's name: "+ userProfile.get("name") );
-                                    myInflatedView.setVisibility(View.VISIBLE);
-                                } catch (JSONException e) {
-                                Log.d("Impromptu",
-                                        "Error parsing returned user data.");
-                                } finally {
 
-                                    ActivityMain actMain = (ActivityMain)getActivity();
-                                    actMain.progressDialog.dismiss();
+
+            // Get the user
+            ImpromptuUser targetUser = ImpromptuUser.getUserById(userData.getString("ownerId"));
+//            ParseUser currentUser = ParseUser.getCurrentUser();
+
+            if (targetUser == null) {
+                //TODO - test this
+                Log.e("Impromptu", "Current user is null");
+                Intent intent = new Intent(getActivity(), ActivityLogin.class);
+                startActivity(intent);
+                getActivity().finish();
+            }
+
+            if (targetUser.getUsername() == null)
+                Log.e("Impromptu", "Current user's username is null");
+            if (targetUser.getEmail() == null)
+                Log.e("Impromptu", "Current user's email is null");
+
+            // Get the profile picture
+            /*
+            Bitmap profilePic = currentUser.getPicture();
+            if (profilePic != null) {
+                ImageView picView = (ImageView) myInflatedView.findViewById(R.id.fragProfile_imageView_profilePic);
+                picView.setImageBitmap(profilePic);
+            }
+            */
+
+
+
+            /*
+            Log.d("Impromptu", "Looking up facebook");
+            if (ParseFacebookUtils.isLinked(targetUser)){
+
+                // display facebook name
+                Request req = Request.newMeRequest(ParseFacebookUtils.getSession(),
+                        new Request.GraphUserCallback() {
+                            @Override
+                            public void onCompleted(GraphUser user, Response response) {
+                                if (user != null) {
+                                    // Create a JSON object to hold the profile info
+                                    JSONObject userProfile = new JSONObject();
+                                    try {
+                                        // Populate the JSON object
+                                        userProfile.put("facebookId", user.getId());
+                                        userProfile.put("name", user.getName());
+                                        nameView.setText(user.getName());
+
+                                        // Save the user profile info in a user property
+                                        ParseUser currentUser = ParseUser
+                                                .getCurrentUser();
+                                        currentUser.put("profile", userProfile);
+
+                                        if(currentUser.get("profile") != null) {
+
+                                            try {
+                                                if (userProfile.getString("facebookId") != null) {
+                                                    String facebookId = userProfile.get("facebookId").toString();
+//                                                    profileView.setProfileId(facebookId);
+                                                    profileView.setImageResource(targetUser.getPicture());
+                                                } else {
+                                                    profileView.setProfileId(null);
+                                                }
+
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+//                                        currentUser.saveInBackground();
+
+                                        Log.d("Impromptu", "User's name: "+ userProfile.get("name") );
+                                        myInflatedView.setVisibility(View.VISIBLE);
+                                    } catch (JSONException e) {
+                                        Log.d("Impromptu",
+                                                "Error parsing returned user data.");
+                                    } finally {
+
+                                        ActivityMain actMain = (ActivityMain)getActivity();
+                                        actMain.progressDialog.dismiss();
+                                    }
+
+                                } else if (response.getError() != null) {
+                                    // handle error
+                                    Log.d("Impromptu", "error getting fb: " + response.getError().toString() );
                                 }
+                            }
+                        });
+                myInflatedView.setVisibility(View.INVISIBLE);
+                ActivityMain actMain = (ActivityMain)getActivity();
+                actMain.progressDialog = ProgressDialog.show(
+                        getActivity(), "", "Populating Profile...", true);
+                req.executeAsync();
 
-                        } else if (response.getError() != null) {
-                            // handle error
-                            Log.d("Impromptu", "error getting fb: " + response.getError().toString() );
-                        }
-                    }
-            });
-            myInflatedView.setVisibility(View.INVISIBLE);
-            ActivityMain actMain = (ActivityMain)getActivity();
-            actMain.progressDialog = ProgressDialog.show(
-                    getActivity(), "", "Populating Profile...", true);
-            req.executeAsync();
+            }
+            // If the account was not linked to Facebook
+            else{
+                ImpromptuUser currentUser2 = (ImpromptuUser)ParseUser.getCurrentUser();
 
-        }
-        else {
+                nameView.setText(currentUser2.getName());
+                emailView.setText(currentUser2.getEmail());
+            }
+*/
+
             // display parse username
-//            nameView.setText(currentUser.getUsername());
-            nameView.setText(userData.getString("username"));
-        }
-        TextView emailView = (TextView) myInflatedView.findViewById(R.id.fragProfile_textView_email);
-        emailView.setText(currentUser.getEmail());
+    //      nameView.setText(currentUser.getUsername());
+            nameView.setText(targetUser.getName());
+            emailView.setText(targetUser.getEmail());
+            profileView.setImageBitmap(targetUser.getPicture());
 
+/*
+            if (targetUser.getFacebookId() != null) {
+                profileView.setProfileId(targetUser.getFacebookId());
+            } else {
+                profileView.setProfileId(null);
+            }
+*/
         return myInflatedView;
     }
 

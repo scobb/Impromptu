@@ -51,7 +51,7 @@ public class FragmentComposeMain extends Fragment {
         View fragmentView = inflater.inflate(R.layout.fragment_compose_main, container, false);
 
         ActivityMain myActivity = (ActivityMain) getActivity();
-        myEvent = myActivity.getNewEvent();
+        myEvent = myActivity.getComposeEvent();
 
         // get references to all the necessary GUI widgets
         vType = (ImageView) fragmentView.findViewById(R.id.fragComposeMain_imageView_type);

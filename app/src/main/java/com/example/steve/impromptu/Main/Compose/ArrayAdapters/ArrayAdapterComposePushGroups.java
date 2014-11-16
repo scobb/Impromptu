@@ -10,7 +10,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import com.example.steve.impromptu.Entity.ImpromptuUser;
+import com.example.steve.impromptu.Entity.Group;
 import com.example.steve.impromptu.R;
 
 import java.util.ArrayList;
@@ -18,17 +18,17 @@ import java.util.ArrayList;
 /**
  * Created by jonreynolds on 10/31/14.
  */
-public class ArrayAdapterComposePush extends ArrayAdapter<ImpromptuUser> {
+public class ArrayAdapterComposePushGroups extends ArrayAdapter<Group> {
 
-    private ArrayList<ImpromptuUser> friendList;
+    private ArrayList<Group> groupList;
     private Context context;
 
-    public ArrayAdapterComposePush(Context context, int textViewResourceId,
-                           ArrayList<ImpromptuUser> friendList) {
-        super(context, textViewResourceId, friendList);
+    public ArrayAdapterComposePushGroups(Context context, int textViewResourceId,
+                                         ArrayList<Group> groupList) {
+        super(context, textViewResourceId, groupList);
         this.context = context;
-        this.friendList = new ArrayList<ImpromptuUser>();
-        this.friendList.addAll(friendList);
+        this.groupList = new ArrayList<Group>();
+        this.groupList.addAll(groupList);
     }
 
     static class ViewHolder {
@@ -56,21 +56,21 @@ public class ArrayAdapterComposePush extends ArrayAdapter<ImpromptuUser> {
                         @Override
                         public void onCheckedChanged(CompoundButton buttonView,
                                                      boolean isChecked) {
-                            ImpromptuUser friend = (ImpromptuUser) viewHolder.checkbox
+                            Group group = (Group) viewHolder.checkbox
                                     .getTag();
-                            friend.setSelected(buttonView.isChecked());
+                            group.setSelected(buttonView.isChecked());
 
                         }
                     });
             view.setTag(viewHolder);
-            viewHolder.checkbox.setTag(friendList.get(position));
+            viewHolder.checkbox.setTag(groupList.get(position));
         } else {
             view = convertView;
-            ((ViewHolder) view.getTag()).checkbox.setTag(friendList.get(position));
+            ((ViewHolder) view.getTag()).checkbox.setTag(groupList.get(position));
         }
         ViewHolder holder = (ViewHolder) view.getTag();
-        holder.text.setText(friendList.get(position).getName());
-        holder.checkbox.setChecked(friendList.get(position).isSelected());
+        holder.text.setText(groupList.get(position).getGroupName());
+        holder.checkbox.setChecked(groupList.get(position).isSelected());
         return view;
     }
 }

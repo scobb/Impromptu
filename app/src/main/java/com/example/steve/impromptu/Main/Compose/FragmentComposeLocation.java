@@ -2,8 +2,9 @@ package com.example.steve.impromptu.Main.Compose;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.content.Context;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,15 +18,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
+import com.example.steve.impromptu.Entity.ImpromptuLocation;
 import com.example.steve.impromptu.Main.ActivityMain;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.maps.GoogleMap;
 import com.example.steve.impromptu.R;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -38,21 +39,32 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Vector;
+
 
 /**
  * Created by jonreynolds on 10/16/14.
  */
 public class FragmentComposeLocation extends Fragment {
 
-    private TextView vLocationPrompt;
+    private static final int MAXRESULTNUM = 20;
+    private static final int DEFAULTZOOM = 15;
+    private static final int SEARCHRADIUS = 10000;
+    private static final LatLng defaultLocation = new LatLng(30.2864802, -97.74116620000001); //UT Austin ^___^
+
+    //private TextView vLocationPrompt;
     private EditText vAddress;
-    private TextView vSearchPrompt;
+    //private TextView vSearchAddress;
+    private TextView vSearchPlace;
     private GoogleMap vMap;
     public Event myEvent;
     private LinearLayout vOkay;
     private LinearLayout vCancel;
     private int mapType;
-    private String postalCodeString = "nothing yet";
+    private LatLng myLoc;
+    private Vector<Marker> searchResultMarkers;
+    private ImpromptuLocation returnVal;
+    private TextView vSelectedLocation;
 
     private static View fragmentView;
 
@@ -83,36 +95,40 @@ public class FragmentComposeLocation extends Fragment {
 
 
         ActivityMain myActivity = (ActivityMain) getActivity();
-        myEvent = myActivity.getNewEvent();
 
         // get references to GUI widgets
-        vLocationPrompt = (TextView) fragmentView.findViewById(R.id.fragComposeLocation_textView_locationPrompt);
+        //vLocationPrompt = (TextView) fragmentView.findViewById(R.id.fragComposeLocation_textView_locationPrompt);
         vAddress = (EditText) fragmentView.findViewById(R.id.fragComposeLocation_editText_address);
-        vSearchPrompt = (TextView) fragmentView.findViewById(R.id.fragComposeLocation_textView_searchPrompt);
+        vSearchPlace = (TextView) fragmentView.findViewById(R.id.fragComposeLocation_textView_searchPlace);
         vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposeLocation_linearLayout_okay);
         vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposeLocation_linearLayout_cancel);
+        vSelectedLocation = (TextView) fragmentView.findViewById(R.id.fragComposeLocation_textView_selectedLocation);
+
+
+        myEvent = myActivity.getComposeEvent();
+
+        vSelectedLocation.setText("");
+
+        //TODO: load returnVal from event (if there already is one assigned?)
+        returnVal = null;
 
         //this works just a little differently:
-        //vMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.fragComposeLocation_map)).getMap();
-        //vMap = ((MapFragment) fragmentView.findViewById(R.id.fragComposeLocation_map)).getMap();
         MapFragment mf = (MapFragment) getFragmentManager().findFragmentById(R.id.fragComposeLocation_map);
         vMap = mf.getMap();
 
-        vSearchPrompt.setOnClickListener(new View.OnClickListener() {
+        vSearchPlace.setOnClickListener(new View.OnClickListener() {
             @Override
-        public void onClick(View v){
-                searchAddress();
+        public void onClick(View v) {
+                searchPlace();
             }
-
         });
 
         vCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                // TODO make sure enough info is filled out
-
-                Toast.makeText(getActivity(), "Select cancel", Toast.LENGTH_SHORT).show();
+                clearSearchResultMarkers();
+                mCallback.onComposeLocationFinished();
 
             }
         });
@@ -121,68 +137,91 @@ public class FragmentComposeLocation extends Fragment {
             @Override
             public void onClick(View v) {
 
-                //TODO actually "return" the location, make sure info is filled out
+                //TODO actually "return" the location
 
-                myEvent.setLocation(postalCodeString);
+                if(returnVal == null)
+                {
+                    Toast.makeText(getActivity(), "No location selected", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
+                Toast.makeText(getActivity(), "Selected: " + returnVal.toString(), Toast.LENGTH_SHORT).show();
+
+                //myEvent.setLocationName("lol herp");
+
+                clearSearchResultMarkers();
                 mCallback.onComposeLocationFinished();
             }
         });
 
+        vSelectedLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(returnVal != null)
+                {
+                    clearSearchResultMarkers();
 
-        /*
-        int hasGooglePlay = GooglePlayServicesUtil.isGooglePlayServicesAvailable(fragmentView.getContext());
+                    searchResultMarkers.add(vMap.addMarker(new MarkerOptions().title(returnVal.getName())
+                        .snippet(returnVal.getFormattedAddress())
+                        .position(returnVal.getCoordinates())));
 
-        String toastMe = "Google Play Services are available";
+                    vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(returnVal.getCoordinates(), DEFAULTZOOM));
+                }
+            }
+        });
 
-        switch(hasGooglePlay)
-        {
-            case ConnectionResult.SUCCESS:
-                toastMe = "Success";
-             break;
-            case ConnectionResult.SERVICE_MISSING:
-                toastMe = "Service Missing";
-                break;
-            case ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED:
-                toastMe = "Service Version Update Required";
-                break;
-            case ConnectionResult.SERVICE_DISABLED:
-                toastMe = "Service Disabled";
-                break;
-            case ConnectionResult.SERVICE_INVALID:
-                toastMe = "Service Invalid";
-                break;
-            default:
-                toastMe = "Well, we at least entered the switch case";
-                break;
-        }
-
-        Toast.makeText(getActivity(), toastMe, Toast.LENGTH_SHORT).show();
-        */
 
         //some map initializations:
+        if(searchResultMarkers == null)
+        {
+            searchResultMarkers = new Vector<Marker>(MAXRESULTNUM);
+        }
+
+        LocationManager locationManager = (LocationManager) this.getActivity().getSystemService(Context.LOCATION_SERVICE);
+        String locationProvider = LocationManager.NETWORK_PROVIDER;
+        //Or use LocationManager.GPS_PROVIDER
+        Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
+
+        if(lastKnownLocation == null)
+        {
+            myLoc = defaultLocation;
+        }
+        else
+        {
+            myLoc = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+        }
 
         if(vMap != null) {
 
-            LatLng sydney = new LatLng(-33.867, 151.206);
-
-            vMap.setMyLocationEnabled(true);
-            vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
-
-            vMap.addMarker(new MarkerOptions()
-                    .title("Sydney")
-                    .snippet("The most populous city in Australia.")
-                    .position(sydney));
+            vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLoc, DEFAULTZOOM));
 
             mapType = 0;
             toggleMapType();
         }
 
+        vMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+
+            @Override
+            public boolean onMarkerClick(Marker marker){
+                markerClick(marker);
+                return false; //false means let the default behavior occur, also
+            }
+        });
 
 
 
         return fragmentView;
     }
+
+
+
+    /*
+    //TODO: master list:
+    -take care of other todos
+    -test location determination on actual phone (not using default location)
+     */
+
+
 
     @Override
     public void onAttach(Activity activity) {
@@ -222,6 +261,7 @@ public class FragmentComposeLocation extends Fragment {
 
     }
 
+    /*
     private void searchAddress()
     {
         String address = vAddress.getText().toString();
@@ -237,16 +277,65 @@ public class FragmentComposeLocation extends Fragment {
             addressQuery += addressChunks[i];
         }
 
-        //TODO: move this key into strings.xml
+        // doesn't seem to help much in searching addresses
+        //if(myLoc != null) {
+        //    addressQuery += "&location=" + myLoc.latitude + "," + myLoc.longitude + "&radius=" + SEARCHRADIUS;
+        //}
+
+
+        // move this key into strings.xml
         addressQuery += "&key=AIzaSyCRP8acNPFERUdMPouoFU_cM0sTfdT6tww";
 
 
-        new HttpAsyncTask().execute(addressQuery);
+        new HttpAddressAsyncTask().execute(addressQuery);
+    }*/
+
+    private void searchPlace(){
+        String query = vAddress.getText().toString();
+        String[] queryChunks = query.split("[ ]+");
+
+        String httpQuery = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=";
+
+        if (queryChunks.length > 0) {
+            httpQuery += queryChunks[0];
+        }
+
+        for (int i = 1; i < queryChunks.length; i++)
+        {
+            httpQuery += "+" + queryChunks[i];
+        }
+
+        if(myLoc != null) {
+            httpQuery += "&location=" + myLoc.latitude + "," + myLoc.longitude + "&radius=" + SEARCHRADIUS;
+        }
+
+        //TODO: move this key into strings.xml ...
+        httpQuery += "&key=AIzaSyCRP8acNPFERUdMPouoFU_cM0sTfdT6tww";
+
+        new HttpPlaceAsyncTask().execute(httpQuery);
     }
 
-    private class HttpAsyncTask extends AsyncTask<String, Void, String> {
+    private class HttpPlaceAsyncTask extends AsyncTask<String, Void, String> {
+        public HttpPlaceAsyncTask() {
 
-        public HttpAsyncTask() {
+        }
+
+        @Override
+        protected String doInBackground(String... urls) {
+            return GET(urls[0]);
+        }
+
+        // onPostExecute displays the result of the AsyncTask
+        @Override
+        protected void onPostExecute(String result) {
+            processJSON(result, true);
+        }
+    }
+
+    /*
+    private class HttpAddressAsyncTask extends AsyncTask<String, Void, String> {
+
+        public HttpAddressAsyncTask() {
         }
 
         @Override
@@ -259,62 +348,94 @@ public class FragmentComposeLocation extends Fragment {
         @Override
         protected void onPostExecute(String result) {
 
-            Double lat = (double) 0;
-            Double lon = (double) 0;
-            JSONObject respJSON = null;
-            try {
-                respJSON = new JSONObject(result);
-            } catch (JSONException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                return;
-            }
-            try {
-                lat = (Double) respJSON.getJSONArray("results")
-                        .getJSONObject(0).getJSONObject("geometry")
-                        .getJSONObject("location").get("lat");
-            } catch (JSONException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                return;
-            }
-            try {
-                lon = (Double) respJSON.getJSONArray("results")
-                        .getJSONObject(0).getJSONObject("geometry")
-                        .getJSONObject("location").get("lng");
-            } catch (JSONException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                return;
-            }
-
-            LatLng destination = new LatLng(lat, lon);
-
-            vMap.setMyLocationEnabled(true);
-            vMap.animateCamera(CameraUpdateFactory.zoomTo(15));
-            vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(destination, 13));
-
-            String address = vAddress.getText().toString();
-
-            vMap.addMarker(new MarkerOptions().title("Query:")
-                    .snippet(address).position(destination));
-
-            String postalCode = "Postal Code: ";
-
-            try {
-                postalCode +=
-                        respJSON.getJSONArray("results").getJSONObject(0)
-                                .getJSONArray("address_components").getJSONObject(7).getString("long_name");
-            } catch (JSONException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-
-                postalCode = "Postal Code: N/A";
-                postalCodeString = postalCode;
-            }
-
-            vAddress.setText(postalCode);
+            processJSON(result, false);
         }
+    } */
+
+    private synchronized void processJSON(String result, boolean isPlaceQuery) {
+        String errorMsg = "Sorry, an error has occurred.";
+        JSONObject respJSON = null;
+
+        int resultSize = 0;
+
+        try {
+            respJSON = new JSONObject(result);
+            resultSize = respJSON.getJSONArray("results").length();
+        } catch (JSONException e) {
+            Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(resultSize == 0){
+            Toast.makeText(getActivity(), "No matches found.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(resultSize > MAXRESULTNUM) {
+            resultSize = MAXRESULTNUM;
+        }
+
+        clearSearchResultMarkers();
+
+        JSONObject currResult;
+
+        for(int i = 0; i < resultSize; i++)
+        {
+            try {
+                currResult = respJSON.getJSONArray("results").getJSONObject(i);
+                double lat = (Double) currResult.getJSONObject("geometry")
+                        .getJSONObject("location").get("lat");
+                double lon = (Double) currResult.getJSONObject("geometry")
+                        .getJSONObject("location").get("lng");
+                String formatAdd = currResult.getString("formatted_address");
+
+                String locationName = "";
+                if(isPlaceQuery) {
+                    locationName = currResult.getString("name");
+                }
+
+                searchResultMarkers.add(vMap.addMarker(new MarkerOptions() //add marker to vector (and map)
+                        .title(locationName)
+                        .snippet(formatAdd)
+                        .position(new LatLng(lat, lon))));
+
+            } catch (JSONException e) {
+                Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_SHORT).show();
+                clearSearchResultMarkers();
+                vMap.setMyLocationEnabled(true);
+                vMap.animateCamera(CameraUpdateFactory.zoomTo(DEFAULTZOOM));
+                vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLoc, DEFAULTZOOM));
+                return;
+            }
+        }
+
+        vMap.setMyLocationEnabled(true);
+        vMap.animateCamera(CameraUpdateFactory.zoomTo(DEFAULTZOOM));
+        if(searchResultMarkers.size() > 1) { //zoom out to show multiple results
+            vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchResultMarkers.get(0).getPosition(), DEFAULTZOOM - 3));
+        }
+        else {
+            vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchResultMarkers.get(0).getPosition(), DEFAULTZOOM));
+        }
+    }
+
+    private void clearSearchResultMarkers(){
+        for(int i = 0; i < searchResultMarkers.size(); i++) {
+            searchResultMarkers.get(i).remove(); //remove marker from map
+        }
+        searchResultMarkers.clear();
+    }
+
+    private void selectLoc(ImpromptuLocation il){
+        returnVal = il;
+        //Toast.makeText(getActivity(), il.getFormattedAddress() + " " + il.getCoordinates().toString(), Toast.LENGTH_SHORT).show();
+        //TODO: make text wrap nicely
+        vSelectedLocation.setText("   " + il.getName() + "\n   " + il.getFormattedAddress());
+    }
+
+    private void markerClick(Marker m)
+    {
+         selectLoc(new ImpromptuLocation(m.getSnippet(), m.getTitle(), m.getPosition()));
     }
 
     public static String GET(String url) {
@@ -371,3 +492,33 @@ public class FragmentComposeLocation extends Fragment {
     }
     */
 }
+
+        /*
+        int hasGooglePlay = GooglePlayServicesUtil.isGooglePlayServicesAvailable(fragmentView.getContext());
+
+        String toastMe = "Google Play Services are available";
+
+        switch(hasGooglePlay)
+        {
+            case ConnectionResult.SUCCESS:
+                toastMe = "Success";
+             break;
+            case ConnectionResult.SERVICE_MISSING:
+                toastMe = "Service Missing";
+                break;
+            case ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED:
+                toastMe = "Service Version Update Required";
+                break;
+            case ConnectionResult.SERVICE_DISABLED:
+                toastMe = "Service Disabled";
+                break;
+            case ConnectionResult.SERVICE_INVALID:
+                toastMe = "Service Invalid";
+                break;
+            default:
+                toastMe = "Well, we at least entered the switch case";
+                break;
+        }
+
+        Toast.makeText(getActivity(), toastMe, Toast.LENGTH_SHORT).show();
+        */

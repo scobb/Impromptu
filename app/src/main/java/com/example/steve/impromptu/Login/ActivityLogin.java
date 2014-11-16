@@ -6,30 +6,30 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.steve.impromptu.Entity.Event;
+import com.example.steve.impromptu.Entity.FriendRequest;
+import com.example.steve.impromptu.Entity.Group;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.Main.ActivityMain;
 import com.example.steve.impromptu.R;
-import com.facebook.LoginActivity;
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.model.GraphUser;
 import com.parse.LogInCallback;
 import com.parse.Parse;
-import com.parse.ParseAnonymousUtils;
-import com.parse.ParseFacebookUtils;
-import com.parse.ParseUser;
 import com.parse.ParseException;
+import com.parse.ParseFacebookUtils;
+import com.parse.ParseObject;
+import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
-import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.List;
 
@@ -67,21 +67,15 @@ public class ActivityLogin extends FragmentActivity {
         fragmentTransaction.replace(R.id.loginShell, fragment).addToBackStack(null);
         fragmentTransaction.commit();
     }
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Parse.initialize(this, "sP5YdlJxg1WiwfKgSXX4KdrgpZzAV5g69dV8ryY0", "houV8Brg8oIuBKSLheR7qAW4AJfGq1QZmH62Spgk");
         ParseUser.registerSubclass(ImpromptuUser.class);
+        ParseObject.registerSubclass(Event.class);
+        ParseObject.registerSubclass(Group.class);
+        ParseObject.registerSubclass(FriendRequest.class);
+        Parse.initialize(this, "sP5YdlJxg1WiwfKgSXX4KdrgpZzAV5g69dV8ryY0", "houV8Brg8oIuBKSLheR7qAW4AJfGq1QZmH62Spgk");
         ParseFacebookUtils.initialize("1512234555691131");
-
-        //TODO move this to log out button after testing
-        ParseUser.logOut();
-        com.facebook.Session fbs = com.facebook.Session.getActiveSession();
-        if (fbs == null) {
-            fbs = new com.facebook.Session(ActivityLogin.this);
-            com.facebook.Session.setActiveSession(fbs);
-        }
-        fbs.closeAndClearTokenInformation();
-        // TODO end
 
         //If user already logged in, forward them to main activity
         ParseUser currentUser = ParseUser.getCurrentUser();
@@ -160,8 +154,13 @@ public class ActivityLogin extends FragmentActivity {
                     builder.setMessage("Username is taken. Please try a different one.");
                     builder.setPositiveButton("OK", null);
                     builder.show();
-                }
-                else {
+                } else if (e.getCode() == ParseException.INVALID_EMAIL_ADDRESS) {
+                    // Show an alert that email is invalid
+                    AlertDialog.Builder builder = new AlertDialog.Builder(ActivityLogin.this);
+                    builder.setMessage("Please enter a valid email.");
+                    builder.setPositiveButton("OK", null);
+                    builder.show();
+                } else {
                     Toast.makeText(getApplicationContext(),
                             "Sign up Error", Toast.LENGTH_LONG)
                             .show();
@@ -181,7 +180,7 @@ public class ActivityLogin extends FragmentActivity {
         // attempt to log in with facebook credentials
         ActivityLogin.this.progressDialog = ProgressDialog.show(
                 ActivityLogin.this, "", "Logging in...", true);
-        List<String> permissions = Arrays.asList("public_profile");
+        List<String> permissions = Arrays.asList("public_profile", "email", "user_friends");
         ParseFacebookUtils.logIn(permissions, this, new LogInCallback() {
             @Override
             public void done(ParseUser user, ParseException err) {
@@ -190,10 +189,36 @@ public class ActivityLogin extends FragmentActivity {
                     Log.d("Impromptu",
                             "Uh oh. The user cancelled the Facebook login.");
                 } else if (user.isNew()) {
+                    Request req = Request.newMeRequest(ParseFacebookUtils.getSession(),
+                            new Request.GraphUserCallback() {
+                                @Override
+                                public void onCompleted(GraphUser user, Response response) {
+                                    if (user != null) {
+                                        ImpromptuUser currentUser = (ImpromptuUser) ParseUser.getCurrentUser();
+                                        currentUser.setFacebookId(user.getId());
+                                        currentUser.setName(user.getName());
+                                        currentUser.persist();
+                                    }
+                                }
+                            });
+                    req.executeAsync();
                     Log.d("Impromptu",
                             "User signed up and logged in through Facebook!");
                     forwardToMainActivity();
                 } else {
+                    Request req = Request.newMeRequest(ParseFacebookUtils.getSession(),
+                            new Request.GraphUserCallback() {
+                                @Override
+                                public void onCompleted(GraphUser user, Response response) {
+                                    if (user != null) {
+                                        ImpromptuUser currentUser = (ImpromptuUser) ParseUser.getCurrentUser();
+                                        currentUser.setFacebookId(user.getId());
+                                        currentUser.setName(user.getName());
+                                        currentUser.persist();
+                                    }
+                                }
+                            });
+                    req.executeAsync();
                     Log.d("Impromptu",
                             "User logged in through Facebook!");
                     forwardToMainActivity();

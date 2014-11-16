@@ -1,0 +1,76 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.steve.impromptu.Main.FragmentEventDetail">
+
+    <LinearLayout
+        android:id="@+id/fragEventDetail_linearLayout_title"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:background="@drawable/template_rounded_box">
+
+
+        <TextView
+            android:id="@+id/fragEventDetail_textView_title"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textSize="26sp" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/fragEventDetail_relativeLayout_owner"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:background="@drawable/template_rounded_box">
+
+        <!--
+        <com.facebook.widget.ProfilePictureView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="20dp"
+            android:id="@+id/fragProfile_imageView_profilePic" /> -->
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/fragProfile_imageView_profilePic" />
+
+        <TextView
+            android:id="@+id/fragEventDetail_textView_owner"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/fragProfile_imageView_profilePic"
+            android:layout_marginLeft="20dp"
+            android:textSize="26sp"  />
+
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:id="@+id/fragEventDetail_linearLayout_location"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:background="@drawable/template_rounded_box">
+
+        <fragment
+            android:id="@+id/fragEventDetail_location_map"
+            android:name="com.google.android.gms.maps.MapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

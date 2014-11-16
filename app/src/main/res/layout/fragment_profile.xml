@@ -4,23 +4,31 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:layout_width="wrap_content"
+<!--
+    <com.facebook.widget.ProfilePictureView
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:id="@+id/fragProfile_imageView_profilePic" /> -->
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:id="@+id/fragProfile_imageView_profilePic" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
+        android:gravity="center"
         android:id="@+id/fragProfile_textView_name" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Small Text"
+        android:gravity="center"
         android:id="@+id/fragProfile_textView_email" />
 
     <Button
@@ -29,12 +37,4 @@
         android:text="Log out"
         android:onClick="onLogoutClicked"
         android:id="@+id/fragProfile_button_logout" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="debug"
-        android:onClick="onDebugClicked"
-        android:id="@+id/fragProfile_button_debugSaveImage" />
-
 </LinearLayout>
