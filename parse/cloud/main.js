@@ -7,28 +7,39 @@ Parse.Cloud.define("hello", function(request, response) {
 
 Parse.Cloud.define("eventCleanup", function(request, response) {
 	Parse.Cloud.useMasterKey();
-	var query = new Parse.Query("Event");
-	var eventId = "5IqisIy6le";
+	var Event = Parse.Object.extend("Event");
+	var query = new Parse.Query(Event);
+	var eventId = request.params.eventId;
 	query.get(eventId, {
-		success: function(group) {
-			console.log("Query successful.");
+		success: function(event) {
 			var innerQuery = new Parse.Query(Parse.User);
+			// users whose events array contain the event in question
+			innerQuery.equalTo("events", event)
 			innerQuery.find({
 				success: function(users) {
-					var toPersist = []
-					for (var user in users) {
+					for (var j = 0; j < users.length; j++) {
+						user = users[j];
 						var events = user.get("events");
 						for (var i = events.length-1; i >= 0; i--) {
-							if (events[i].get("ObjectId") == eventId) {
-								// remove the event
+							if (event.id == eventId) {
+								// remove the event from their array
 								events.splice(i, 1);
-								toPersist.push(user);
 							}
 						}
 					}
-    				Parse.Object.saveAll(toPersist, {
+					// persist updated users
+    				Parse.Object.saveAll(users, {
     					success: function(list) {
-    				    	response.success("Yay.");
+    						// destroy the event
+    						event.destroy({
+    							success: function() {
+    	    				    	response.success("Yay.");
+    								
+    							},
+    							error: function(error) {
+    								response.error(error);
+    							}
+    						})
     						
     					},
 	    				error: function(error) { 
@@ -43,7 +54,6 @@ Parse.Cloud.define("eventCleanup", function(request, response) {
 					reseponse.error(error)
 				}
 			})
-			response.success("Yay");
 		},
 		error: function(object, error) {
 			console.log("Query unsuccessful.");
