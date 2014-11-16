@@ -5,18 +5,49 @@ Parse.Cloud.define("hello", function(request, response) {
   response.success("Hello world!");
 });
 
-Parse.Cloud.define("simpleQuery", function(request, response) {
+Parse.Cloud.define("eventCleanup", function(request, response) {
 	Parse.Cloud.useMasterKey();
-	var Group = Parse.Object.extend("Group");
-	var query = new Parse.Query(Group);
-	query.get("i8UbLj0cuo", {
+	var query = new Parse.Query("Event");
+	var eventId = "5IqisIy6le";
+	query.get(eventId, {
 		success: function(group) {
 			console.log("Query successful.");
+			var innerQuery = new Parse.Query(Parse.User);
+			innerQuery.find({
+				success: function(users) {
+					var toPersist = []
+					for (var user in users) {
+						var events = user.get("events");
+						for (var i = events.length-1; i >= 0; i--) {
+							if (events[i].get("ObjectId") == eventId) {
+								// remove the event
+								events.splice(i, 1);
+								toPersist.push(user);
+							}
+						}
+					}
+    				Parse.Object.saveAll(toPersist, {
+    					success: function(list) {
+    				    	response.success("Yay.");
+    						
+    					},
+	    				error: function(error) { 
+	    			    	response.error(error);
+	    					
+	    				},
+    			
+    				});
+					
+				},
+				error: function(error) {
+					reseponse.error(error)
+				}
+			})
 			response.success("Yay");
 		},
 		error: function(object, error) {
 			console.log("Query unsuccessful.");
-			response.error("Yay");
+			response.error(error);
 		}
 	});
 });
