@@ -34,6 +34,7 @@ public class Event extends ParseObject{
     private Time creationTime;
     private int durationHour;
     private int durationMinute;
+    private Boolean eventTimeMorning;
     private String location;
 
     public void setStreamFriends(ArrayList<ImpromptuUser> streamFriends) {
@@ -135,6 +136,10 @@ public class Event extends ParseObject{
         this.put("eventTime", new Date(eventTime.toMillis(false)));
     }
 
+    public void setEventTimeMorning(Boolean morning) {
+        this.put("eventTimeMorning", morning);
+    }
+
     public void setCreationTime(Time creationTime) {
         this.put("creationTime", new Date(creationTime.toMillis(false)));
     }
@@ -187,6 +192,10 @@ public class Event extends ParseObject{
         Time creationTime = new Time();
         creationTime.set(this.getDate("creationTime").getTime());
         return creationTime;
+    }
+
+    public Boolean getEventTimeMorning() {
+        return (Boolean) this.get("eventTimeMorning");
     }
 
     public String getLocation() {

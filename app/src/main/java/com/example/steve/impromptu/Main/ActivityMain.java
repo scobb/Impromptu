@@ -26,13 +26,15 @@ import com.example.steve.impromptu.Main.Compose.FragmentComposeLocation;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeMain;
 import com.example.steve.impromptu.Main.Compose.FragmentComposePush;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeTime;
+import com.example.steve.impromptu.Main.Compose.FragmentComposeType;
 import com.example.steve.impromptu.R;
 import com.parse.Parse;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 public class ActivityMain extends FragmentActivity implements FragmentComposeTime.OnComposeTimeFinishedListener, FragmentComposeMain.OnAttributeSelectedListener,
-        FragmentComposeMain.OnComposeMainFinishedListener, FragmentComposeLocation.OnComposeLocationFinishedListener, FragmentComposePush.OnComposePushFinishedListener {
+        FragmentComposeMain.OnComposeMainFinishedListener, FragmentComposeLocation.OnComposeLocationFinishedListener, FragmentComposePush.OnComposePushFinishedListener,
+        FragmentComposeType.OnComposeTypeFinishedListener {
 
 
     Event newEvent;
@@ -121,6 +123,17 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     }
 
     @Override
+    public void onComposeTypeFinished() {
+
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        FragmentComposeMain fragment = new FragmentComposeMain();
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
+    @Override
     public void onComposeTimeFinished() {
 
         FragmentManager fragmentManager = getFragmentManager();
@@ -160,6 +173,9 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
                 break;
             case "push":
                 frag = new FragmentComposePush();
+                break;
+            case "type":
+                frag = new FragmentComposeType();
                 break;
             default:
                 frag = new FragmentComposeMain();

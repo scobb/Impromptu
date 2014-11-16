@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Main.ActivityMain;
@@ -30,6 +31,7 @@ public class FragmentComposeTime extends Fragment {
     LinearLayout vOkay;
     LinearLayout vCancel;
 
+    public Event myEvent;
     Time currentTime;
     Time startTime;
     Time endTime;
@@ -50,65 +52,6 @@ public class FragmentComposeTime extends Fragment {
         public void onComposeTimeFinished();
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        // Save the user's current game state
-        super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putInt("starting time hour", startTime.hour);
-        savedInstanceState.putInt("starting time minute", startTime.minute);
-        savedInstanceState.putBoolean("starting time morning", startMorning);
-        savedInstanceState.putBoolean("ending time morning", endTimeMorning);
-        savedInstanceState.putInt("duration hour", durationHour);
-        savedInstanceState.putInt("duration minute", durationMinute);
-        savedInstanceState.putInt("ending time hour", endTime.hour);
-        savedInstanceState.putInt("ending time minute", endTime.minute);
-        savedInstanceState.putInt("duration seek bar progress", durationSeekBarProgress);
-        savedInstanceState.putInt("start time seek bar progress", startTimeSeekBarProgress);
-
-    }
-
-    public void resetState(Bundle savedInstanceState) {
-        // Restore last state for checked position.
-        startMorning = savedInstanceState.getBoolean("starting time morning");
-        startTime.hour = savedInstanceState.getInt("starting time hour");
-        startTime.minute = savedInstanceState.getInt("starting time minute");
-        if (startMorning) {
-            initialStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", roundUpToNearest5(startTime.minute)) + "am";
-        } else {
-            initialStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", roundUpToNearest5(startTime.minute)) + "pm";
-        }
-        vTextStartTime.setText(initialStartTime);
-        endTimeMorning = savedInstanceState.getBoolean("ending time morning");
-        durationHour = savedInstanceState.getInt("duration hour");
-        durationMinute = savedInstanceState.getInt("duration minute");
-        String hourString = "hrs";
-        String minString = "mins";
-
-        if (durationHour == 1) {
-            hourString = "hr";
-        }
-        if (durationMinute == 1) {
-            minString = "min";
-        }
-
-        String newDuration = Integer.toString(durationHour) + " " + hourString + " " + Integer.toString(durationMinute) + " " + minString;
-        vTextDuration.setText(newDuration);
-        endTime.hour = savedInstanceState.getInt("ending time hour");
-        endTime.minute = savedInstanceState.getInt("ending time minute");
-        if (endTimeMorning) {
-
-            newEndTime = Integer.toString(endTime.hour) + ":" + String.format("%02d", roundUpToNearest5(endTime.minute)) + "am";
-        } else {
-            newEndTime = Integer.toString(endTime.hour) + ":" + String.format("%02d", roundUpToNearest5(endTime.minute)) + "pm";
-
-        }
-        vTextEndTime.setText(newEndTime);
-        startTimeSeekBarProgress = savedInstanceState.getInt("start time seek bar progress");
-        durationSeekBarProgress = savedInstanceState.getInt("duration seek bar progress");
-        vSeekStartTime.setProgress(startTimeSeekBarProgress);
-        vSeekDuration.setProgress(durationSeekBarProgress);
-
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -116,10 +59,59 @@ public class FragmentComposeTime extends Fragment {
         // Inflate the layout for this fragment
         View fragmentView = inflater.inflate(R.layout.fragment_compose_time, container, false);
 
-        if (savedInstanceState != null) {
-            resetState(savedInstanceState);
-        }
-        else {
+        ActivityMain myActivity = (ActivityMain) getActivity();
+        myEvent = myActivity.getNewEvent();
+
+        vSeekStartTime = (SeekBar) fragmentView.findViewById(R.id.fragComposeTime_seekbar_startTime);
+        vSeekDuration = (SeekBar) fragmentView.findViewById(R.id.fragComposeTime_seekbar_duration);
+        vTextStartTime = (TextView) fragmentView.findViewById(R.id.fragComposeTime_textView_startTime);
+        vTextDuration = (TextView) fragmentView.findViewById(R.id.fragComposeTime_textView_duration);
+        vTextEndTime = (TextView) fragmentView.findViewById(R.id.fragComposeTime_textView_endTime);
+        vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposeTime_linearLayout_okay);
+        vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposeTime_linearLayout_cancel);
+
+        if (myEvent != null) {
+            currentTime = new Time();
+            currentTime.setToNow();
+            myEvent.setEventTimeMorning(false);
+            myEvent.setEventTime(currentTime);
+            myEvent.setDurationHour(0);
+            myEvent.setDurationMinute(0);
+
+            startMorning = myEvent.getEventTimeMorning();
+            startTime = myEvent.getEventTime();
+            durationHour = myEvent.getDurationHour();
+            durationMinute = myEvent.getDurationMinute();
+
+            if (startTime != null) {
+                if (startMorning) {
+                    initialStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", roundUpToNearest5(startTime.minute)) + "am";
+                } else {
+                    initialStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", roundUpToNearest5(startTime.minute)) + "pm";
+                }
+
+                //  vSeekStartTime.setProgress();
+                vTextStartTime.setText(initialStartTime);
+            }
+            if (durationHour != 0 || durationMinute != 0) {
+                String hourString = "hrs";
+                String minString = "mins";
+
+                if (durationHour == 1) {
+                    hourString = "hr";
+                }
+                if (durationMinute == 1) {
+                    minString = "min";
+                }
+
+                String newDuration = Integer.toString(durationHour) + " " + hourString + " " + Integer.toString(durationMinute) + " " + minString;
+                vTextDuration.setText(newDuration);
+            }
+            //need to find workaround for absolute start time
+            String newEndTime = getEndTime();
+            vTextEndTime.setText(newEndTime);
+
+        } else {
 
             currentTime = new Time();
             startTime = new Time();
@@ -129,14 +121,7 @@ public class FragmentComposeTime extends Fragment {
             startTime.hour = currentTime.hour;
             absoluteStartHour = startTime.hour;
             startTime.minute = currentTime.minute;
-
-            vSeekStartTime = (SeekBar) fragmentView.findViewById(R.id.fragComposeTime_seekbar_startTime);
-            vSeekDuration = (SeekBar) fragmentView.findViewById(R.id.fragComposeTime_seekbar_duration);
-            vTextStartTime = (TextView) fragmentView.findViewById(R.id.fragComposeTime_textView_startTime);
-            vTextDuration = (TextView) fragmentView.findViewById(R.id.fragComposeTime_textView_duration);
-            vTextEndTime = (TextView) fragmentView.findViewById(R.id.fragComposeTime_textView_endTime);
-            vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposeTime_linearLayout_okay);
-            vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposeTime_linearLayout_cancel);
+//used to have find views by ids
 
 
             startMorning = true;
@@ -169,7 +154,9 @@ public class FragmentComposeTime extends Fragment {
 
             String initialEndTime = getEndTime();
             vTextEndTime.setText(initialEndTime);
-        }
+
+            }
+
             vSeekStartTime.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
                 @Override
@@ -197,7 +184,7 @@ public class FragmentComposeTime extends Fragment {
 
                     if (roundUpToNearest5(startTime.minute) >= 60) {
                         startTime.hour += 1;
-                       // absoluteStartHour += 1;
+                        // absoluteStartHour += 1;
                         startTime.minute = 0;
                     }
 
@@ -213,7 +200,7 @@ public class FragmentComposeTime extends Fragment {
                         startTime.hour = 12;
                         morning = true;
                     }
-                    //String correctMin = String.format("%02d", startTime.minute);
+
 
                     if (morning) {
 
@@ -270,13 +257,11 @@ public class FragmentComposeTime extends Fragment {
                 @Override
                 public void onClick(View v) {
 
-<<<<<<< HEAD
                     // TODO make sure enough info is filled out
 
                     Toast.makeText(getActivity(), "Select cancel", Toast.LENGTH_SHORT).show();
-=======
-                mCallback.onComposeTimeFinished();
->>>>>>> 5b1c256061e8a5056cfc58a1c3d06c5076d30c91
+
+                    mCallback.onComposeTimeFinished();
 
                 }
             });
@@ -286,8 +271,9 @@ public class FragmentComposeTime extends Fragment {
                 public void onClick(View v) {
 
                     ActivityMain myActivity = (ActivityMain) getActivity();
-                    Event myEvent = myActivity.getNewEvent();
+                    myEvent = myActivity.getNewEvent();
                     myEvent.setEventTime(startTime);
+                    myEvent.setEventTimeMorning(startMorning);
                     myEvent.setDurationHour(durationHour);
                     myEvent.setDurationMinute(durationMinute);
 
@@ -297,6 +283,7 @@ public class FragmentComposeTime extends Fragment {
 
             return fragmentView;
         }
+
 
     @Override
     public void onAttach(Activity activity) {

@@ -69,7 +69,28 @@ public class FragmentComposeMain extends Fragment {
             String eventDescription = myEvent.getDescription();
 
             if (eventType != null) {
-                // vType.setImageResource(blah);
+                switch (eventType) {
+                    case "sports":
+                        vType.setImageResource(R.drawable.sport_icon);
+                        break;
+                    case "drinking":
+                        vType.setImageResource(R.drawable.drinking);
+                        break;
+                    case "eating":
+                        vType.setImageResource(R.drawable.food);
+                        break;
+                    case "tv":
+                        vType.setImageResource(R.drawable.tv);
+                        break;
+                    case "studying":
+                        vType.setImageResource(R.drawable.studying);
+                        break;
+                    case "working out":
+                        vType.setImageResource(R.drawable.working_out);
+                        break;
+                    default:
+                        vType.setImageResource(R.drawable.ic_launcher);
+                }
             }
             if (eventTitle != null) {
                 vTitle.setText(eventTitle);
@@ -78,12 +99,14 @@ public class FragmentComposeMain extends Fragment {
                 vDescription.setText(eventDescription);
             }
         }
-
+//how do I get it to go to the select type page?
         vType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 Toast.makeText(getActivity(), "Select type", Toast.LENGTH_SHORT).show();
+                String attribute = "type";
+                attributeSelectedListenerCallback.OnAttributeSelected(attribute);
 
             }
         });
