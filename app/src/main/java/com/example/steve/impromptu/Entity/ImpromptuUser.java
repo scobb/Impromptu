@@ -2,12 +2,10 @@ package com.example.steve.impromptu.Entity;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Bundle;
 import android.util.Log;
 
 import com.facebook.Request;
 import com.facebook.Response;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseFile;
@@ -18,10 +16,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;import java.util.Iterator;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -73,6 +71,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
 
     /**
      * will be called by cloud code, postSave from Event
+     *
      * @param event
      */
     public void addStreamEvent(Event event) {
@@ -96,6 +95,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
 
     /**
      * NOTE - only verifies existence, not that we're within timing
+     *
      * @param events - list of events to confirm existence on DB
      */
     public void verifyEvents(List<Event> events) {
@@ -129,6 +129,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         }
         return (ImpromptuUser) user;
     }
+
     public static List<ImpromptuUser> getUserByName(String name) {
         /**
          * method - gets existing user given their id
@@ -144,39 +145,40 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
             return null;
         }
     }
+
     public String getEmail() {
         try {
             this.fetchIfNeeded();
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching User:", exc);
         }
-            if (getFacebookId() != null) {
-                // display facebook name
-                Request meReq = Request.newMeRequest(ParseFacebookUtils.getSession(), null);
-                List<Response> responses = null;
+        if (ParseFacebookUtils.isLinked(this)) {
+            // display facebook name
+            Request meReq = Request.newMeRequest(ParseFacebookUtils.getSession(), null);
+            List<Response> responses = null;
+            try {
+                responses = meReq.executeAsync().get();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error getting async result", exc);
+            }
+            if (responses == null) {
+                Log.d("Impromptu", "reponses was null");
+                return null;
+            }
+            for (Response resp : responses) {
                 try {
-                    responses = meReq.executeAsync().get();
+                    JSONObject respJSON = new JSONObject(resp.getRawResponse());
+                    String email = respJSON.getString("email");
+                    setEmail(email);
+                    return email;
                 } catch (Exception exc) {
-                    Log.e("Impromptu", "Error getting async result", exc);
-                }
-                if (responses == null) {
-                    Log.d("Impromptu", "reponses was null");
+                    Log.e("Impromptu", "json exception: ", exc);
                     return null;
-                }
-                for (Response resp : responses) {
-                    try {
-                        JSONObject respJSON = new JSONObject(resp.getRawResponse());
-                        return respJSON.getString("email");
-                    } catch (Exception exc) {
-                        Log.e("Impromptu", "json excpetion: ", exc);
-                        return null;
-                    }
-
                 }
 
             }
 
-        else return super.getEmail();
+        } else return super.getEmail();
         return null;
     }
 
@@ -310,7 +312,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         if (name != null) {
             return name;
         }
-        if (getFacebookId() != null) {
+        if (ParseFacebookUtils.isLinked(this)) {
             // display facebook name
             Request meReq = Request.newMeRequest(ParseFacebookUtils.getSession(), null);
             List<Response> responses = null;
@@ -376,27 +378,25 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
                 Log.e("Impromptu", "exception in getPicture", exc);
 
             }
-        }
-        else if (getFacebookId() != null) {
+        } else if (getFacebookId() != null) {
             Log.d("Impromptu", "Getting fb pic");
             try {
                 URL imageURL = new URL("https://graph.facebook.com/" + getFacebookId() + "/picture?type=large");
                 Bitmap bitmap = BitmapFactory.decodeStream(imageURL.openConnection().getInputStream());
-                if (bitmap == null){
+                if (bitmap == null) {
                     Log.e("Impromptu", "bitmap is null");
                 }
                 return bitmap;
-            }
-            catch (Exception exc) {
+            } catch (Exception exc) {
                 Log.e("Impromptu", "malformed exception", exc);
             }
         }
-        Log.e("Impromptu",  "didn't get in either block.");
+        Log.e("Impromptu", "didn't get in either block.");
         return null;
     }
 
     // Returns the current user key
-    public String getUserKey(){
+    public String getUserKey() {
         return this.get("objectId").toString();
     }
 
@@ -422,8 +422,8 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
             Log.d("Impromptu", "Trying to get user for id " + fbid);
             query.whereEqualTo(ImpromptuUser.facebookIdKey, fbid);
             List<ParseUser> users = query.find();
-            if (!users.isEmpty()){
-                return (ImpromptuUser)users.get(0);
+            if (!users.isEmpty()) {
+                return (ImpromptuUser) users.get(0);
             } else {
                 Log.d("Impromptu", "Users was empty.");
             }
@@ -459,7 +459,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
                     for (int i = 0; i < data.length(); i++) {
                         String id = data.getJSONObject(i).getString("id");
                         ImpromptuUser user = ImpromptuUser.getUserByFacebookId(id);
-                        if ( user != null) {
+                        if (user != null) {
                             result.add(user);
                         }
                     }
@@ -473,7 +473,6 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         }
         return result;
     }
-
 
 
 }
