@@ -34,6 +34,8 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 
 public class ActivityMain extends FragmentActivity implements FragmentComposeTime.OnComposeTimeFinishedListener, FragmentComposeMain.OnAttributeSelectedListener,
@@ -45,6 +47,10 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     Event composeEvent;
     public Dialog progressDialog;
 
+
+    // Filters
+    private Hashtable<String, Boolean> filters;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +59,9 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         StrictMode.setThreadPolicy(policy);
 
         setContentView(R.layout.activity_shell_main);
+
+        // Default filters
+        filters = new Hashtable<String, Boolean>();
 
         // this block might be redundant because we do it in ActivityMain. not sure...
         ParseUser.registerSubclass(ImpromptuUser.class);
