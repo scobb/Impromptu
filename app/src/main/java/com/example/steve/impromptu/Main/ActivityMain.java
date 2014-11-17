@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.FragmentActivity;
@@ -15,7 +14,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
@@ -27,6 +25,8 @@ import com.example.steve.impromptu.Main.Compose.FragmentComposeLocation;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeMain;
 import com.example.steve.impromptu.Main.Compose.FragmentComposePush;
 import com.example.steve.impromptu.Main.Compose.FragmentComposePushGroups;
+import com.example.steve.impromptu.Main.Compose.FragmentComposeStream;
+import com.example.steve.impromptu.Main.Compose.FragmentComposeStreamGroups;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeTime;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeType;
 import com.example.steve.impromptu.R;
@@ -38,11 +38,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ActivityMain extends FragmentActivity implements FragmentComposeTime.OnComposeTimeFinishedListener, FragmentComposeMain.OnAttributeSelectedListener,
-
         FragmentComposeMain.OnComposeMainFinishedListener, FragmentComposeLocation.OnComposeLocationFinishedListener, FragmentComposePush.OnComposePushFinishedListener, FragmentComposePush.OnComposePushChooseGroupsListener
-        , FragmentComposePushGroups.OnComposePushChooseGroupsFinishedListener, FragmentComposeType.OnComposeTypeFinishedListener {
+        , FragmentComposePushGroups.OnComposePushChooseGroupsFinishedListener, FragmentComposeStream.OnComposeStreamChooseGroupsListener, FragmentComposeStream.OnComposeStreamFinishedListener, FragmentComposeStreamGroups.OnComposeStreamChooseGroupsFinishedListener, FragmentComposeType.OnComposeTypeFinishedListener {
 
 
+    //TODO: remove
+    static public Boolean firstTime = true;
     Event composeEvent;
     public Dialog progressDialog;
 
@@ -80,7 +81,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        ImpromptuUser currentUser = (ImpromptuUser)ParseUser.getCurrentUser();
+        ImpromptuUser currentUser = (ImpromptuUser) ParseUser.getCurrentUser();
 
         // Bundle up the data getting passed
         Bundle userData = new Bundle();
@@ -104,7 +105,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 //        ImpromptuUser currentUser = (ImpromptuUser)ParseUser.getCurrentUser();
 //        Bitmap profilePic = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
 //        currentUser.setPicture(profilePic);
-        ImpromptuUser currentUser = (ImpromptuUser)ParseUser.getCurrentUser();
+        ImpromptuUser currentUser = (ImpromptuUser) ParseUser.getCurrentUser();
 //        currentUser.clearFriends();
 
 //        Bitmap profilePic = currentUser.getPicture();
@@ -127,12 +128,12 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 
         ArrayList<ImpromptuUser> friends = currentUser.getFacebookFriends();
         Log.d("Impromptu", "Friends...");
-        for (ImpromptuUser friend: friends) {
+        for (ImpromptuUser friend : friends) {
             Log.d("Impromptu", friend.getName());
         }
         List<ImpromptuUser> results = ImpromptuUser.getUserByName("bob");
         Log.d("Impromptu", "num results: " + results.size());
-        for (ImpromptuUser user: results) {
+        for (ImpromptuUser user : results) {
             Log.d("Impromptu", user.getName());
         }
 //        Event event = new Event();
@@ -266,6 +267,9 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
             case "type":
                 frag = new FragmentComposeType();
                 break;
+            case "stream":
+                frag = new FragmentComposeStream();
+                break;
             default:
                 frag = new FragmentComposeMain();
         }
@@ -281,8 +285,10 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 
             Toast.makeText(this, "create new event", Toast.LENGTH_SHORT).show();
 
-        }
-        else {
+            Event myEvent = getComposeEvent();
+            myEvent.persist();
+
+        } else {
 
             Toast.makeText(this, "cancel new event", Toast.LENGTH_SHORT).show();
 
@@ -321,6 +327,36 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         fragmentTransaction.commit();
     }
 
+    @Override
+    public void onComposeStreamChooseGroupsFinished() {
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        FragmentComposeStream fragment = new FragmentComposeStream();
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
+    @Override
+    public void onComposeStreamChooseGroups() {
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        FragmentComposeStreamGroups fragment = new FragmentComposeStreamGroups();
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
+    @Override
+    public void onComposeStreamFinished() {
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        FragmentComposeMain fragment = new FragmentComposeMain();
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
     public static class LoginFragment extends Fragment {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -330,7 +366,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         }
     }
 
-    public void stream (View view) {
+    public void stream(View view) {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
@@ -339,24 +375,24 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         fragmentTransaction.commit();
     }
 
-    public void map (View view) {
+    public void map(View view) {
         Toast.makeText(this, "show map", Toast.LENGTH_SHORT).show();
     }
 
-    public void invites (View view) {
+    public void invites(View view) {
         Toast.makeText(this, "show invites", Toast.LENGTH_SHORT).show();
     }
 
-    public void friends (View view) {
+    public void friends(View view) {
         Toast.makeText(this, "show friends", Toast.LENGTH_SHORT).show();
     }
 
-    public void profile (View view) {
+    public void profile(View view) {
         forwardToProfileFragment();
         //Toast.makeText(this, "show profile", Toast.LENGTH_SHORT).show();
     }
 
-    public void compose (View view) {
+    public void compose(View view) {
         composeEvent = new Event();
         composeEvent.clear();
         FragmentManager fragmentManager = getFragmentManager();

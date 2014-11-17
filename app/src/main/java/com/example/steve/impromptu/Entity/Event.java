@@ -7,6 +7,7 @@ import com.example.steve.impromptu.R;
 import com.parse.ParseClassName;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.lang.reflect.Array;
@@ -132,6 +133,23 @@ public class Event extends ParseObject implements Comparable<Event> {
         map.put("date", hour + ":" + minute);
         map.put("content", this.getDescription());
         return map;
+    }
+
+    public static Event getEventById(String id) {
+        /**
+         * method - gets existing user given their id
+         * Returns null if ID not found
+         */
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+        ParseObject event = null;
+        try {
+            Log.d("Impromptu", "Trying to get event for id " + id);
+            event = query.get(id);
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Exception querying...", exc);
+            return null;
+        }
+        return (Event) event;
     }
 
 

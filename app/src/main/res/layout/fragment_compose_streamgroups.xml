@@ -10,7 +10,7 @@
     android:paddingBottom="4dp">
 
     <LinearLayout
-        android:id="@+id/fragComposePushGroups_linearLayout_groups"
+        android:id="@+id/fragComposeStreamGroups_linearLayout_groups"
         android:layout_marginTop="8dp"
         android:orientation="vertical"
         android:layout_height="0dp"
@@ -19,7 +19,7 @@
         android:background="@drawable/template_rounded_box">
 
         <TextView
-            android:id="@+id/fragComposePushGroups_textView_groupsPrompt"
+            android:id="@+id/fragComposeStreamGroups_textView_groupsPrompt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Groups:"
@@ -29,7 +29,7 @@
         <ListView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/fragComposePushGroups_listView_groupsList"></ListView>
+            android:id="@+id/fragComposeStreamGroups_listView_groupsList"></ListView>
 
     </LinearLayout>
 
@@ -42,7 +42,7 @@
         android:layout_marginTop="8dp">
 
         <LinearLayout
-            android:id="@+id/fragComposePushGroups_linearLayout_cancel"
+            android:id="@+id/fragComposeStreamGroups_linearLayout_cancel"
             android:layout_marginTop="8dp"
             android:orientation="vertical"
             android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
             android:background="@drawable/template_rounded_box">
 
             <TextView
-                android:id="@+id/fragComposePushGroups_textView_cancelPrompt"
+                android:id="@+id/fragComposeStreamGroups_textView_cancelPrompt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#000000"
@@ -69,7 +69,7 @@
         </Space>
 
         <LinearLayout
-            android:id="@+id/fragComposePushGroups_linearLayout_okay"
+            android:id="@+id/fragComposeStreamGroups_linearLayout_okay"
             android:layout_marginTop="8dp"
             android:orientation="vertical"
             android:layout_height="wrap_content"
@@ -79,7 +79,7 @@
             android:background="@drawable/template_rounded_box">
 
             <TextView
-                android:id="@+id/fragComposePushGroups_textView_okPrompt"
+                android:id="@+id/fragComposeStreamGroups_textView_okPrompt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#000000"

@@ -11,7 +11,7 @@ public class ImpromptuLocation {
     private String name;
     private LatLng coordinates;
 
-    private ImpromptuLocation(){ }
+    public ImpromptuLocation(){ }
 
     public ImpromptuLocation(String add, String n, LatLng ll)
     {

@@ -92,10 +92,7 @@ public class FragmentStream extends ListFragment {
         Bundle eventData = new Bundle();
 
         eventData.putString("ownerKey", selectedUser.getObjectId());
-        eventData.putString("title", event.getTitle());
-        eventData.putString("owner", selectedUser.getName());
-        eventData.putString("email", selectedUser.getEmail());
-        eventData.putBoolean("currentuser", false);
+        eventData.putString("eventKey", event.getObjectId());
 
         // Set up the fragment transaction
         FragmentTransaction transaction = getActivity().getFragmentManager().beginTransaction();

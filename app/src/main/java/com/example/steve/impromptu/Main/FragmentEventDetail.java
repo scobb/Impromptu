@@ -1,11 +1,13 @@
 package com.example.steve.impromptu.Main;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
@@ -13,20 +15,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.Login.ActivityLogin;
 import com.example.steve.impromptu.R;
+import com.example.steve.impromptu.UI.ScrollableMapFragment;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.ProfilePictureView;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.games.GamesMetadata;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
 
@@ -39,10 +47,13 @@ import org.json.JSONObject;
 public class FragmentEventDetail extends Fragment {
 
     private static View myInflatedView;
+    private ScrollView scrollView;
+    private FragmentActivity myContext;
 
     private GoogleMap vMap;
 
     private ImpromptuUser owner;
+    private Event event;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,7 +63,6 @@ public class FragmentEventDetail extends Fragment {
         Bundle eventData = getArguments();
 
         // Get Views
-
         if (myInflatedView != null) {
             ViewGroup parent = (ViewGroup) myInflatedView.getParent();
             if (parent != null)
@@ -68,25 +78,45 @@ public class FragmentEventDetail extends Fragment {
         RelativeLayout ownerLayout = (RelativeLayout) myInflatedView.findViewById(R.id.fragEventDetail_relativeLayout_owner);
         TextView titleTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_title);
         TextView ownerTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_owner);
-//        ProfilePictureView profilePictureView = (ProfilePictureView) myInflatedView.findViewById(R.id.fragProfile_imageView_profilePic);
-        ImageView profilePictureView = (ImageView) myInflatedView.findViewById(R.id.fragProfile_imageView_profilePic);
+        TextView descriptionTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_description);
+        ImageView profilePictureView = (ImageView) myInflatedView.findViewById(R.id.fragEventDetail_imageView_profilePic);
+        scrollView = (ScrollView) myInflatedView.findViewById(R.id.fragEventDetail_scrollView);
 
+        //MapFragment mf = (MapFragment) getFragmentManager().findFragmentById(R.id.fragEventDetail_location_map);
 
-        MapFragment mf = (MapFragment) getFragmentManager().findFragmentById(R.id.fragEventDetail_location_map);
+        // Replace map
+        ScrollableMapFragment mf = (ScrollableMapFragment) myContext.getSupportFragmentManager().findFragmentById(R.id.fragEventDetail_location_map);
         vMap = mf.getMap();
 
-        // Get the owner
-        owner = ImpromptuUser.getUserById(eventData.getString("ownerKey"));
+        ((ScrollableMapFragment) myContext.getSupportFragmentManager().findFragmentById(R.id.fragEventDetail_location_map))
+                .setListener(new ScrollableMapFragment.OnTouchListener() {
 
+            @Override
+            public void onTouch() {
+                scrollView.requestDisallowInterceptTouchEvent(true);
+            }
+        });
+
+        // Get the owner and event
+        owner = ImpromptuUser.getUserById(eventData.getString("ownerKey"));
+        event = Event.getEventById(eventData.getString("eventKey"));
 
         // not sure what this does yet
         int hasGooglePlay = GooglePlayServicesUtil.isGooglePlayServicesAvailable(myInflatedView.getContext());
 
 
         // Sets the data fields and picture
-        titleTextView.setText(eventData.getString("title"));
+        titleTextView.setText(event.getTitle());
         ownerTextView.setText(owner.getName());
+        descriptionTextView.setText(event.getDescription());
         profilePictureView.setImageBitmap(owner.getPicture());
+
+        // Sets the map location
+        vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(event.getLatitude(), event.getLongitude()), 16.0f));
+
+        // Places marker
+        vMap.addMarker(new MarkerOptions().position(new LatLng(event.getLatitude(), event.getLongitude()))
+            .title(event.getTitle()));
 
         ownerLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,4 +142,9 @@ public class FragmentEventDetail extends Fragment {
 
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        myContext=(FragmentActivity) activity;
+        super.onAttach(activity);
+    }
 }

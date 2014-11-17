@@ -109,8 +109,26 @@ public class FragmentComposeLocation extends Fragment {
 
         vSelectedLocation.setText("");
 
-        //TODO: load returnVal from event (if there already is one assigned?)
-        returnVal = null;
+        if (returnVal == null) {
+            returnVal = new ImpromptuLocation();
+        }
+
+        String formattedAdr = myEvent.getFormattedAddress();
+        if (!(formattedAdr == null)) {
+            returnVal.setFormattedAddress(formattedAdr);
+        }
+
+        String name = myEvent.getLocationName();
+        if (!(name ==null)) {
+            returnVal.setName(name);
+        }
+
+        Double lat = myEvent.getLatitude();
+        Double lng = myEvent.getLongitude();
+        if (!(lat == null) && !(lng == null)) {
+            LatLng coord = new LatLng(lat, lng);
+            returnVal.setCoordinates(coord);
+        }
 
         //this works just a little differently:
         MapFragment mf = (MapFragment) getFragmentManager().findFragmentById(R.id.fragComposeLocation_map);
@@ -137,8 +155,6 @@ public class FragmentComposeLocation extends Fragment {
             @Override
             public void onClick(View v) {
 
-                //TODO actually "return" the location
-
                 if(returnVal == null)
                 {
                     Toast.makeText(getActivity(), "No location selected", Toast.LENGTH_SHORT).show();
@@ -147,7 +163,10 @@ public class FragmentComposeLocation extends Fragment {
 
                 Toast.makeText(getActivity(), "Selected: " + returnVal.toString(), Toast.LENGTH_SHORT).show();
 
-                //myEvent.setLocationName("lol herp");
+                myEvent.setLocationName(returnVal.getName());
+                myEvent.setFormattedAddress(returnVal.getFormattedAddress());
+                myEvent.setLatitude(returnVal.getCoordinates().latitude);
+                myEvent.setLongitude(returnVal.getCoordinates().longitude);
 
                 clearSearchResultMarkers();
                 mCallback.onComposeLocationFinished();

@@ -14,7 +14,7 @@ import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.Group;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.Main.ActivityMain;
-import com.example.steve.impromptu.Main.Compose.ArrayAdapters.ArrayAdapterComposePushGroups;
+import com.example.steve.impromptu.Main.Compose.ArrayAdapters.ArrayAdapterComposeStreamGroups;
 import com.example.steve.impromptu.R;
 
 import java.util.ArrayList;
@@ -24,32 +24,32 @@ import java.util.Iterator;
 /**
  * Created by jonreynolds on 11/9/14.
  */
-public class FragmentComposePushGroups extends Fragment {
+public class FragmentComposeStreamGroups extends Fragment {
 
 
     ListView vGroupsList;
     LinearLayout vOkay;
     LinearLayout vCancel;
-    ArrayList<Group> eventPushGroupsList;
+    ArrayList<Group> eventStreamGroupsList;
     ArrayList<Group> userGroupsList;
 
-    ArrayAdapterComposePushGroups groupsAdapter = null;
+    ArrayAdapterComposeStreamGroups groupsAdapter = null;
 
-    OnComposePushChooseGroupsFinishedListener mCallback;
+    OnComposeStreamChooseGroupsFinishedListener mCallback;
 
     // Container Activity must implement this interface
-    public interface OnComposePushChooseGroupsFinishedListener {
-        public void onComposePushChooseGroupsFinished();
+    public interface OnComposeStreamChooseGroupsFinishedListener {
+        public void onComposeStreamChooseGroupsFinished();
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View fragmentView = inflater.inflate(R.layout.fragment_compose_pushgroups, container, false);
-        vGroupsList = (ListView) fragmentView.findViewById(R.id.fragComposePushGroups_listView_groupsList);
-        vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposePushGroups_linearLayout_okay);
-        vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposePushGroups_linearLayout_cancel);
+        View fragmentView = inflater.inflate(R.layout.fragment_compose_streamgroups, container, false);
+        vGroupsList = (ListView) fragmentView.findViewById(R.id.fragComposeStreamGroups_listView_groupsList);
+        vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposeStreamGroups_linearLayout_okay);
+        vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposeStreamGroups_linearLayout_cancel);
 
         ImpromptuUser currentUser = (ImpromptuUser) ImpromptuUser.getCurrentUser();
         userGroupsList = (ArrayList<Group>) currentUser.getGroups();
@@ -62,18 +62,18 @@ public class FragmentComposePushGroups extends Fragment {
             group.setSelected(false);
         }
 
-        eventPushGroupsList = (ArrayList<Group>) myEvent.getPushGroups();
-        if (!eventPushGroupsList.isEmpty() && !userGroupsList.isEmpty()) {
-            // there are groups to push to && user has groups
+        eventStreamGroupsList = (ArrayList<Group>) myEvent.getStreamGroups();
+        if (!eventStreamGroupsList.isEmpty() && !userGroupsList.isEmpty()) {
+            // there are groups to stream to && user has groups
 
-            Iterator<Group> iterEventGroups = eventPushGroupsList.iterator();
+            Iterator<Group> iterEventGroups = eventStreamGroupsList.iterator();
             Iterator<Group> iterUserGroups = userGroupsList.iterator();
 
             Group eventGroup;
             Group userGroup;
 
             while (iterEventGroups.hasNext() && iterUserGroups.hasNext()) {
-                // Note: eventPushGroupsList is a subset of userGroupsList
+                // Note: eventStreamGroupsList is a subset of userGroupsList
 
                 eventGroup = iterEventGroups.next();
                 userGroup = iterUserGroups.next();
@@ -95,12 +95,12 @@ public class FragmentComposePushGroups extends Fragment {
 
                 } else {
                     // shouldn't get this case because both lists of groups are sorted alphabetically
-                    // and eventPushGroupsList is a subset of userGroupsList
+                    // and eventStreamGroupsList is a subset of userGroupsList
                 }
             }
         }
 
-        groupsAdapter = new ArrayAdapterComposePushGroups(getActivity(), R.layout.template_friend_item, userGroupsList);
+        groupsAdapter = new ArrayAdapterComposeStreamGroups(getActivity(), R.layout.template_friend_item, userGroupsList);
         vGroupsList.setAdapter(groupsAdapter);
 
         vOkay.setOnClickListener(new View.OnClickListener() {
@@ -109,53 +109,53 @@ public class FragmentComposePushGroups extends Fragment {
 
                 ActivityMain myActivity = (ActivityMain) getActivity();
                 Event myEvent = myActivity.getComposeEvent();
-                ArrayList<ImpromptuUser> eventPushFriendsList = (ArrayList<ImpromptuUser>) myEvent.getPushFriends();
+                ArrayList<ImpromptuUser> eventStreamFriendsList = (ArrayList<ImpromptuUser>) myEvent.getStreamFriends();
 
                 for (Group group : userGroupsList) {
 
-                    Group grp = listContainsGroup(eventPushGroupsList, group);
+                    Group grp = listContainsGroup(eventStreamGroupsList, group);
 
                     if (grp != null) {
-                        // if this group was in the eventPushGroupsList && is not selected, remove it
+                        // if this group was in the eventStreamGroupsList && is not selected, remove it
                         if (!(group.isSelected())) {
-                            eventPushGroupsList.remove(grp);
-                            // remove friends that belong to group from eventPushFriendsList
+                            eventStreamGroupsList.remove(grp);
+                            // remove friends that belong to group from eventStreamFriendsList
                             ArrayList<ImpromptuUser> friends = (ArrayList<ImpromptuUser>)group.getFriendsInGroup();
                             for (ImpromptuUser friend : friends) {
                                 // TODO: potential hazard with remove
-                                eventPushFriendsList.remove(friend);
+                                eventStreamFriendsList.remove(friend);
                             }
                         }
                     }
 
                     if (group.isSelected()) {
-                        // if this is one of the selected groups && it was not already in the eventPushGroupsList, add it
+                        // if this is one of the selected groups && it was not already in the eventStreamGroupsList, add it
                         if (grp == null)
-                            eventPushGroupsList.add(group);
+                            eventStreamGroupsList.add(group);
                     }
                 }
-                Collections.sort(eventPushGroupsList); // make sure eventPushGroupsList is sorted alphabetically
-                myEvent.setPushGroups(eventPushGroupsList);
+                Collections.sort(eventStreamGroupsList); // make sure eventStreamGroupsList is sorted alphabetically
+                myEvent.setStreamGroups(eventStreamGroupsList);
 
-                for (Group group : eventPushGroupsList) {
+                for (Group group : eventStreamGroupsList) {
                     ArrayList<ImpromptuUser> friendsList = (ArrayList<ImpromptuUser>) group.getFriendsInGroup();
 
                     for (ImpromptuUser friend : friendsList) {
 
-                        ImpromptuUser frd = listContainsFriend(eventPushFriendsList, friend);
+                        ImpromptuUser frd = listContainsFriend(eventStreamFriendsList, friend);
 
                         if (frd == null) {
-                            eventPushFriendsList.add(friend);
+                            eventStreamFriendsList.add(friend);
                         }
 
                     }
                 }
-                Collections.sort(eventPushFriendsList);
-                myEvent.setPushFriends(eventPushFriendsList);
+                Collections.sort(eventStreamFriendsList);
+                myEvent.setStreamFriends(eventStreamFriendsList);
 
                 String test = "";
                 test = test + "Groups: ";
-                for (Group group : eventPushGroupsList) {
+                for (Group group : eventStreamGroupsList) {
                     if (group.isSelected())
                         test = test + group.getGroupName();
                 }
@@ -163,7 +163,7 @@ public class FragmentComposePushGroups extends Fragment {
                 Toast.makeText(getActivity(), test, Toast.LENGTH_SHORT).show();
 
 
-                mCallback.onComposePushChooseGroupsFinished();
+                mCallback.onComposeStreamChooseGroupsFinished();
             }
         });
 
@@ -171,7 +171,7 @@ public class FragmentComposePushGroups extends Fragment {
             @Override
             public void onClick(View view) {
 
-                mCallback.onComposePushChooseGroupsFinished();
+                mCallback.onComposeStreamChooseGroupsFinished();
             }
         });
 
@@ -185,10 +185,10 @@ public class FragmentComposePushGroups extends Fragment {
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            mCallback = (OnComposePushChooseGroupsFinishedListener) activity;
+            mCallback = (OnComposeStreamChooseGroupsFinishedListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnComposePushFinishedListener");
+                    + " must implement OnComposeStreamFinishedListener");
         }
     }
 
