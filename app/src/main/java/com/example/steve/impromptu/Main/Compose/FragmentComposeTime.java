@@ -32,9 +32,9 @@ public class FragmentComposeTime extends Fragment {
     LinearLayout vCancel;
 
     public Event myEvent;
-    Time currentTime;
-    Time startTime;
-    Time endTime;
+    Time currentTime = new Time();
+    Time startTime = new Time();
+    Time endTime = new Time();
     int durationHour = 0;
     int durationMinute = 0;
     int absoluteStartHour;
@@ -70,18 +70,15 @@ public class FragmentComposeTime extends Fragment {
         vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposeTime_linearLayout_okay);
         vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposeTime_linearLayout_cancel);
 
-        if (myEvent != null) {
-            currentTime = new Time();
-            currentTime.setToNow();
-            myEvent.setEventTimeMorning(false);
-            myEvent.setEventTime(currentTime);
-            myEvent.setDurationHour(0);
-            myEvent.setDurationMinute(0);
+        int durationTest = myEvent.getDurationHour();
 
+        if (durationTest != -1) {
             startMorning = myEvent.getEventTimeMorning();
             startTime = myEvent.getEventTime();
             durationHour = myEvent.getDurationHour();
             durationMinute = myEvent.getDurationMinute();
+            startTimeSeekBarProgress = myEvent.getSeekStart();
+            durationSeekBarProgress = myEvent.getSeekDuration();
 
             if (startTime != null) {
                 if (startMorning) {
@@ -89,9 +86,8 @@ public class FragmentComposeTime extends Fragment {
                 } else {
                     initialStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", roundUpToNearest5(startTime.minute)) + "pm";
                 }
-
-                //  vSeekStartTime.setProgress();
                 vTextStartTime.setText(initialStartTime);
+                vSeekStartTime.setProgress(startTimeSeekBarProgress);
             }
             if (durationHour != 0 || durationMinute != 0) {
                 String hourString = "hrs";
@@ -106,13 +102,13 @@ public class FragmentComposeTime extends Fragment {
 
                 String newDuration = Integer.toString(durationHour) + " " + hourString + " " + Integer.toString(durationMinute) + " " + minString;
                 vTextDuration.setText(newDuration);
+                vSeekDuration.setProgress(durationSeekBarProgress);
             }
             //need to find workaround for absolute start time
             String newEndTime = getEndTime();
             vTextEndTime.setText(newEndTime);
 
         } else {
-
             currentTime = new Time();
             startTime = new Time();
             endTime = new Time();
@@ -155,8 +151,7 @@ public class FragmentComposeTime extends Fragment {
             String initialEndTime = getEndTime();
             vTextEndTime.setText(initialEndTime);
 
-            }
-
+        }
             vSeekStartTime.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
                 @Override
@@ -277,7 +272,8 @@ public class FragmentComposeTime extends Fragment {
                     myEvent.setEventTimeMorning(startMorning);
                     myEvent.setDurationHour(durationHour);
                     myEvent.setDurationMinute(durationMinute);
-
+                    myEvent.setSeekStart(startTimeSeekBarProgress);
+                    myEvent.setSeekDuration(durationSeekBarProgress);
                     mCallback.onComposeTimeFinished();
                 }
             });
@@ -345,4 +341,6 @@ public class FragmentComposeTime extends Fragment {
     int roundUpToNearest5(int n) {
         return (n + 4) / 5 * 5;
     }
+
+
 }

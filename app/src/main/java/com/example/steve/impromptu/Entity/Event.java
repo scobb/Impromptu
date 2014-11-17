@@ -27,6 +27,8 @@ public class Event extends ParseObject implements Comparable<Event> {
     private String descriptionKey = "description";
     private String durationHourKey = "durationHour";
     private String durationMinuteKey = "durationMinute";
+    private String seekStartKey = "startProgress";
+    private String seekDurationKey = "durationProgress";
     private String eventTimeKey = "eventTime";
     private String locationKey = "location";
     private String ownerKey = "owner";
@@ -79,6 +81,7 @@ public class Event extends ParseObject implements Comparable<Event> {
         this.setStreamFriends(new ArrayList<ImpromptuUser>());
         this.setPushFriends(new ArrayList<ImpromptuUser>());
         this.setUsersGoing(new ArrayList<ImpromptuUser>());
+        this.setDurationHour(-1);
     }
 
     public void test() {
@@ -173,6 +176,14 @@ public class Event extends ParseObject implements Comparable<Event> {
         this.put("eventTimeMorning", morning);
     }
 
+    public void setSeekStart(int progress) {
+        this.put(seekStartKey, progress);
+    }
+
+    public void setSeekDuration(int progress) {
+        this.put(seekDurationKey, progress);
+    }
+
     public void setCreationTime(Time creationTime) {
         this.put(creationTimeKey, new Date(creationTime.toMillis(false)));
     }
@@ -211,10 +222,8 @@ public class Event extends ParseObject implements Comparable<Event> {
         this.put(durationHourKey, durationHour);
     }
 
-    public void setDurationMinute(int durationMinute) {
+    public void setDurationMinute(int durationMinute) { this.put(durationMinuteKey, durationMinute); }
 
-        this.put(durationMinuteKey, durationMinute);
-    }
 
     public String getType() {
 
@@ -374,6 +383,26 @@ public class Event extends ParseObject implements Comparable<Event> {
         }
         return this.getInt(durationMinuteKey);
     }
+
+    public int getSeekStart() {
+        try {
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching Event:", exc);
+        }
+        return this.getInt(seekStartKey);
+
+    }
+    public int getSeekDuration() {
+        try {
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching Event:", exc);
+        }
+        return this.getInt(seekDurationKey);
+
+    }
+
     public void verifyUsers(List<ImpromptuUser> users) {
         Iterator<ImpromptuUser> it = users.iterator();
         boolean needPersist = false;

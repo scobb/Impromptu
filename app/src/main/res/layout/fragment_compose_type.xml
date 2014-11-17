@@ -1,138 +1,207 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragComposePush_linearLayout_friends"
+    android:layout_marginTop="8dp"
     android:orientation="vertical"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingRight="16dp"
-    android:paddingLeft="16dp"
-    android:paddingTop="4dp"
-    android:paddingBottom="4dp">
+    android:layout_width="match_parent"
+    android:gravity="center_vertical"
+    android:background="@drawable/template_rounded_box">
+
+    <TextView
+        android:id="@+id/fragComposeType_textView_typesPrompt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Types:"
+        android:textColor="#000000"
+        android:textSize="24sp"/>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:id = "@+id/fragComposeType_listView">
+
+        </ListView>
+    <!--<LinearLayout-->
+        <!--android:id="@+id/fragComposeType_linearLayout_sports"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:background="@drawable/template_rounded_box">>-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/fragComposeType_imageView_sportIcon"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:src="@drawable/sport_icon"/>-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/fragComposeType_textView_sports"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Sports"-->
+            <!--android:textSize="24sp"/>-->
+    <!--</LinearLayout>-->
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/fragComposeType_linearLayout_drinking"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:background="@drawable/template_rounded_box">-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/fragComposeType_imageView_drinkingIcon"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:src="@drawable/drinking"/>-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/fragComposeType_textView_drinking"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Drinking"-->
+            <!--android:textSize="24sp"/>-->
+    <!--</LinearLayout>-->
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/fragComposeType_linearLayout_eating"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:background="@drawable/template_rounded_box">-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/fragComposeType_imageView_food"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:src="@drawable/food"/>-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/fragComposeType_textView_food"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Eating"-->
+            <!--android:textSize="24sp"/>-->
+    <!--</LinearLayout>-->
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/fragComposeType_linearLayout_tv"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:background="@drawable/template_rounded_box">-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/fragComposeType_imageView_tv"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:src="@drawable/tv"/>-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/fragComposeType_textView_tv"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="TV"-->
+            <!--android:textSize="24sp"/>-->
+    <!--</LinearLayout>-->
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/fragComposeType_linearLayout_studying"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:background="@drawable/template_rounded_box">-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/fragComposeType_imageView_studying"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:src="@drawable/studying"/>-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/fragComposeType_textView_studying"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Studying"-->
+            <!--android:textSize="24sp"/>-->
+    <!--</LinearLayout>-->
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/fragComposeType_linearLayout_working_out"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:background="@drawable/template_rounded_box">-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/fragComposeType_imageView_working_out"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:src="@drawable/working_out"/>-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/fragComposeType_textView_working_out"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Working Out"-->
+            <!--android:textSize="24sp"/>-->
+    <!--</LinearLayout>-->
+
 
     <LinearLayout
-        android:id="@+id/fragComposeType_linearLayout_sports"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@drawable/template_rounded_box">>
+        android:layout_marginTop="8dp">
 
-        <ImageView
-            android:id="@+id/fragComposeType_imageView_sportIcon"
+        <LinearLayout
+            android:id="@+id/fragComposeType_linearLayout_cancel"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:src="@drawable/sport_icon"/>
+            android:gravity="center_vertical"
+            android:layout_gravity="right"
+            android:background="@drawable/template_rounded_box">
 
-        <TextView
-            android:id="@+id/fragComposeType_textView_sports"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sports"
-            android:textSize="24sp"/>
-    </LinearLayout>
+            <TextView
+                android:id="@+id/fragComposeType_textView_cancelPrompt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cancel"
+                android:textSize="24sp"/>
 
-    <LinearLayout
-        android:id="@+id/fragComposeType_linearLayout_drinking"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@drawable/template_rounded_box">
+        </LinearLayout>
 
-        <ImageView
-            android:id="@+id/fragComposeType_imageView_drinkingIcon"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:src="@drawable/drinking"/>
+        <Space
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/fragComposeType_textView_drinking"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Drinking"
-            android:textSize="24sp"/>
-    </LinearLayout>
+        </Space>
 
-    <LinearLayout
-        android:id="@+id/fragComposeType_linearLayout_eating"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@drawable/template_rounded_box">
-
-        <ImageView
-            android:id="@+id/fragComposeType_imageView_food"
+        <LinearLayout
+            android:id="@+id/fragComposeType_linearLayout_okay"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:src="@drawable/food"/>
+            android:gravity="center_vertical|right"
+            android:layout_gravity="right"
+            android:background="@drawable/template_rounded_box">
 
-        <TextView
-            android:id="@+id/fragComposeType_textView_food"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Eating"
-            android:textSize="24sp"/>
-    </LinearLayout>
+            <TextView
+                android:id="@+id/fragComposeType_textView_okPrompt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Okay"
+                android:textSize="24sp"/>
 
-    <LinearLayout
-        android:id="@+id/fragComposeType_linearLayout_tv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@drawable/template_rounded_box">
+        </LinearLayout>
 
-        <ImageView
-            android:id="@+id/fragComposeType_imageView_tv"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:src="@drawable/tv"/>
-
-        <TextView
-            android:id="@+id/fragComposeType_textView_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TV"
-            android:textSize="24sp"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/fragComposeType_linearLayout_studying"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@drawable/template_rounded_box">
-
-        <ImageView
-            android:id="@+id/fragComposeType_imageView_studying"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:src="@drawable/studying"/>
-
-        <TextView
-            android:id="@+id/fragComposeType_textView_studying"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Studying"
-            android:textSize="24sp"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/fragComposeType_linearLayout_working_out"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@drawable/template_rounded_box">
-
-        <ImageView
-            android:id="@+id/fragComposeType_imageView_working_out"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:src="@drawable/working_out"/>
-
-        <TextView
-            android:id="@+id/fragComposeType_textView_working_out"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Working Out"
-            android:textSize="24sp"/>
     </LinearLayout>
 
 
