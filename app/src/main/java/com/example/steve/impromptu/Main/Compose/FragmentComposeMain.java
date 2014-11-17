@@ -135,7 +135,34 @@ public class FragmentComposeMain extends Fragment {
                 // change event's creation time
                 // call onComposeMainFinishedCallback
 
-                Toast.makeText(getActivity(), "Select create", Toast.LENGTH_SHORT).show();
+                Boolean complete = true;
+
+                if (myEvent.getTitle() == null) {
+                    complete = false;
+                }
+
+                if (myEvent.getStreamFriends() == null || myEvent.getStreamFriends().isEmpty()) {
+                    complete = false;
+                }
+
+                if (myEvent.getType() == null) {
+                    complete = false;
+                }
+
+                if (myEvent.getDurationHour() == -1) {
+                    complete = false;
+                }
+
+                if (myEvent.getFormattedAddress() == null) {
+
+                }
+
+                if (complete) {
+                    composeMainFinishedListenerCallback.onComposeMainFinished(true);
+                }
+                else {
+                    Toast.makeText(getActivity(), "Fill in minimum number of required fields", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });

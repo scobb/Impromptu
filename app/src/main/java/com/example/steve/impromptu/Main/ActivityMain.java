@@ -269,6 +269,9 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 
             Toast.makeText(this, "create new event", Toast.LENGTH_SHORT).show();
 
+            Event myEvent = getComposeEvent();
+            myEvent.persist();
+
         } else {
 
             Toast.makeText(this, "cancel new event", Toast.LENGTH_SHORT).show();
