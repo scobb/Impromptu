@@ -28,9 +28,6 @@ import java.util.Iterator;
  */
 public class FragmentComposePush extends Fragment {
 
-    //TODO: remove
-    static Boolean firstTime = true;
-
     ListView vFriendsList;
     TextView vGroupsText;
     LinearLayout vGroups;
@@ -73,19 +70,19 @@ public class FragmentComposePush extends Fragment {
         vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposePush_linearLayout_cancel);
 
         ImpromptuUser currentUser = (ImpromptuUser) ImpromptuUser.getCurrentUser();
+        ActivityMain myActivity = (ActivityMain) getActivity();
+        Event myEvent = myActivity.getComposeEvent();
 
         // TODO: remove when I have actual friends and groups
-        if (firstTime) {
+        if (myActivity.firstTime) {
             addTestFriends(currentUser);
             addTestGroups(currentUser);
-            firstTime = false;
+            myActivity.firstTime = false;
         }
 
         userFriendsList = (ArrayList<ImpromptuUser>) currentUser.getFriends();
         userGroupsList = (ArrayList<Group>) currentUser.getGroups();
 
-        ActivityMain myActivity = (ActivityMain) getActivity();
-        Event myEvent = myActivity.getComposeEvent();
 
         // initialize all friends to unselected
         for (ImpromptuUser friend : userFriendsList) {

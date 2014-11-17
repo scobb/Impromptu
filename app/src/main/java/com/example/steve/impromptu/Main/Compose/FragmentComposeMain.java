@@ -92,7 +92,8 @@ public class FragmentComposeMain extends Fragment {
             @Override
             public void onClick(View v) {
 
-                Toast.makeText(getActivity(), "Select stream", Toast.LENGTH_SHORT).show();
+                String attribute = "stream";
+                attributeSelectedListenerCallback.OnAttributeSelected(attribute);
 
             }
         });
