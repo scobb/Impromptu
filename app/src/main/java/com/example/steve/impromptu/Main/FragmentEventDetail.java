@@ -101,10 +101,6 @@ public class FragmentEventDetail extends Fragment {
         owner = ImpromptuUser.getUserById(eventData.getString("ownerKey"));
         event = Event.getEventById(eventData.getString("eventKey"));
 
-        // not sure what this does yet
-        int hasGooglePlay = GooglePlayServicesUtil.isGooglePlayServicesAvailable(myInflatedView.getContext());
-
-
         // Sets the data fields and picture
         titleTextView.setText(event.getTitle());
         ownerTextView.setText(owner.getName());
