@@ -48,9 +48,9 @@ public class Event extends ParseObject implements Comparable<Event> {
     private String addressKey = "formattedAddress";
     private String usersGoingKey = "usersGoing";
 
-    public void setStreamFriends(ArrayList<ImpromptuUser> streamFriends) {
-        this.put(streamFriendsKey, streamFriends);
-    }
+//    public void setStreamFriends(ArrayList<ImpromptuUser> streamFriends) {
+//        this.put(streamFriendsKey, streamFriends);
+//    }
 
     public void addStreamFriend(ImpromptuUser friend) {
         try {
@@ -263,10 +263,10 @@ public class Event extends ParseObject implements Comparable<Event> {
     public void setPushGroups(ArrayList<com.example.steve.impromptu.Entity.Group> pushGroups) {
         this.put(pushGroupsKey, pushGroups);
     }
-
-    public void setPushFriends(ArrayList<ImpromptuUser> pushFriends) {
-        this.put(pushFriendsKey, pushFriends);
-    }
+//
+//    public void setPushFriends(ArrayList<ImpromptuUser> pushFriends) {
+//        this.put(pushFriendsKey, pushFriends);
+//    }
 
 
     public void setEventTime(Time eventTime) {
