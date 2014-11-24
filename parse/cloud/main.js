@@ -91,11 +91,13 @@ Parse.Cloud.define("eventCleanup", function(request, response) {
 						user = users[j];
 						var events = user.get("events");
 						for (var i = events.length - 1; i >= 0; i--) {
-							if (event.id == eventId) {
+							if (events[i].id == eventId) {
 								// remove the event from their array
+								console.log("Removing an object because " + events[i].id + " == " + eventId);
 								events.splice(i, 1);
 							}
 						}
+						console.log("events after removal: " + events);
 					}
 					// persist updated users
 					Parse.Object.saveAll(users, {
