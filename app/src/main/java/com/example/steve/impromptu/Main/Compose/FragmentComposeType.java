@@ -6,39 +6,34 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Main.ActivityMain;
 import com.example.steve.impromptu.Main.Compose.ArrayAdapters.ArrayAdapterComposeType;
 import com.example.steve.impromptu.R;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * Created by jonreynolds on 10/16/14.
  */
 public class FragmentComposeType extends Fragment {
-    LinearLayout vSports;
-    LinearLayout vDrinking;
-    LinearLayout vEating;
-    LinearLayout vTv;
-    LinearLayout vStudying;
-    LinearLayout vWorkingOut;
+
     LinearLayout vOkay;
     LinearLayout vCancel;
     ListView vTypeList;
     public Event myEvent;
     ArrayAdapterComposeType typeAdapter = null;
+    String type = null;
 
-   ArrayList<Type> types = new ArrayList<Type>(Arrays.asList(new Type("Drinking", false),
-           new Type("Eating", false), new Type("Sports", false), new Type("Studying", false),
-                   new Type("TV", false), new Type("Working Out", false)));
+    ArrayList<Type> types = new ArrayList<Type>(Arrays.asList(new Type("Drinking", false),
+            new Type("Eating", false), new Type("Sports", false), new Type("Studying", false),
+            new Type("TV", false), new Type("Working Out", false)));
 
     OnComposeTypeFinishedListener composeTypeFinishedCallback;
 
@@ -60,83 +55,33 @@ public class FragmentComposeType extends Fragment {
 
         // get references to all the necessary GUI widgets
         vTypeList = (ListView) fragmentView.findViewById(R.id.fragComposeType_listView);
-//        vSports = (LinearLayout) fragmentView.findViewById(R.id.fragComposeType_linearLayout_sports);
-//        vDrinking = (LinearLayout) fragmentView.findViewById(R.id.fragComposeType_linearLayout_drinking);
-//        vEating = (LinearLayout) fragmentView.findViewById(R.id.fragComposeType_linearLayout_eating);
-//        vTv = (LinearLayout) fragmentView.findViewById(R.id.fragComposeType_linearLayout_tv);
-//        vStudying = (LinearLayout) fragmentView.findViewById(R.id.fragComposeType_linearLayout_studying);
-//        vWorkingOut = (LinearLayout) fragmentView.findViewById(R.id.fragComposeType_linearLayout_working_out);
         vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposeType_linearLayout_okay);
         vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposeType_linearLayout_cancel);
 
-
-       typeAdapter = new ArrayAdapterComposeType(getActivity(), R.layout.template_type_item, types, myEvent );
+        typeAdapter = new ArrayAdapterComposeType(getActivity(), R.layout.template_type_item, types, myEvent);
         vTypeList.setAdapter(typeAdapter);
 
-
-        vSports.setOnClickListener(new View.OnClickListener() {
+        vTypeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-
-                //Toast.makeText(getActivity(), "Select location", Toast.LENGTH_SHORT).show();
-                myEvent.setType("sports");
-                String attribute = "sports";
-                composeTypeFinishedCallback.onComposeTypeFinished();
-
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                type = types.get(i).getName();
             }
         });
-        vDrinking.setOnClickListener(new View.OnClickListener() {
+
+        vOkay.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
 
-                //Toast.makeText(getActivity(), "Select location", Toast.LENGTH_SHORT).show();
-                myEvent.setType("drinking");
-                String attribute = "drinking";
-                composeTypeFinishedCallback.onComposeTypeFinished();
+                ActivityMain myActivity = (ActivityMain) getActivity();
+                Event myEvent = myActivity.getComposeEvent();
 
-            }
-        });
-        vEating.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                //Toast.makeText(getActivity(), "Select location", Toast.LENGTH_SHORT).show();
-                myEvent.setType("eating");
-
-                composeTypeFinishedCallback.onComposeTypeFinished();
-            }
-        });
-        vTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                //Toast.makeText(getActivity(), "Select location", Toast.LENGTH_SHORT).show();
-                myEvent.setType("tv");
-                String attribute = "tv";
-                composeTypeFinishedCallback.onComposeTypeFinished();
-
-            }
-        });
-        vStudying.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                //Toast.makeText(getActivity(), "Select location", Toast.LENGTH_SHORT).show();
-                myEvent.setType("studying");
-                String attribute = "studying";
-                composeTypeFinishedCallback.onComposeTypeFinished();
-
-            }
-        });
-        vWorkingOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                //Toast.makeText(getActivity(), "Select location", Toast.LENGTH_SHORT).show();
-                myEvent.setType("working out");
-                String attribute = "working out";
-                composeTypeFinishedCallback.onComposeTypeFinished();
-
+                if (type != null) {
+                    myEvent.setType(type);
+                    composeTypeFinishedCallback.onComposeTypeFinished();
+                }
+                else {
+                    Toast.makeText(getActivity(), "Please select a type.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -169,12 +114,15 @@ public class FragmentComposeType extends Fragment {
         public String getName() {
             return this.type;
         }
+
         public void setName(String name) {
             this.type = name;
         }
+
         public Boolean getSelected() {
             return this.selected;
         }
+
         public void setSelected(Boolean selected) {
             this.selected = selected;
         }
