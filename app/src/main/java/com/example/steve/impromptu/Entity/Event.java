@@ -4,8 +4,6 @@ import android.text.format.Time;
 import android.util.Log;
 
 import com.example.steve.impromptu.R;
-import com.parse.FunctionCallback;
-import com.parse.Parse;
 import com.parse.ParseClassName;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
@@ -15,11 +13,11 @@ import com.parse.ParseRelation;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -140,6 +138,7 @@ public class Event extends ParseObject implements Comparable<Event> {
         }
         ParseRelation relation = this.getRelation(pushFriendsKey);
         ParseQuery q = relation.getQuery();
+        q.orderByAscending("name");
         try {
             save();
             return q.find();
@@ -395,6 +394,7 @@ public class Event extends ParseObject implements Comparable<Event> {
         }
         List<Group> groups = this.getList(streamGroupsKey);
         verifyGroups(groups);
+        Collections.sort(groups);
         return groups;
     }
 
@@ -407,6 +407,7 @@ public class Event extends ParseObject implements Comparable<Event> {
         }
         List<Group> groups = this.getList(pushGroupsKey);
         verifyGroups(groups);
+        Collections.sort(groups);
         return groups;
     }
 
