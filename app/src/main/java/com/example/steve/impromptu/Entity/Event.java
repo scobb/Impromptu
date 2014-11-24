@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.example.steve.impromptu.R;
 import com.parse.FunctionCallback;
+import com.parse.Parse;
 import com.parse.ParseClassName;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
@@ -18,6 +19,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -220,9 +222,20 @@ public class Event extends ParseObject implements Comparable<Event> {
 
 
     public void persist() {
-        final String eventId = this.getObjectId();
         Log.d("Impromptu", "Persisting event");
-        this.saveInBackground();
+        final Event ref = this;
+        this.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e==null) {
+                    String objectId = ref.getObjectId();
+                    HashMap<String, String> params = new HashMap<String, String>();
+                    params.put("eventId", objectId);
+                    Log.d("Impromptu", "Object id: " + objectId);
+                    ParseCloud.callFunctionInBackground("addNewEvent", params, null);
+                }
+            }
+        });
     }
 
     public void setOwner(ImpromptuUser owner) {
