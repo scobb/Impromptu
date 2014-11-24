@@ -4,17 +4,12 @@ import android.text.format.Time;
 import android.util.Log;
 
 import com.example.steve.impromptu.R;
-import com.parse.FunctionCallback;
 import com.parse.ParseClassName;
-import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
-import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -60,7 +55,7 @@ public class Event extends ParseObject implements Comparable<Event> {
         }
         ParseRelation<ImpromptuUser> relation = this.getRelation(streamFriendsKey);
         relation.add(friend);
-        persist();
+        saveInBackground();
 
     }
 
@@ -72,7 +67,7 @@ public class Event extends ParseObject implements Comparable<Event> {
         }
         ParseRelation<ImpromptuUser> relation = this.getRelation(streamFriendsKey);
         relation.remove(friend);
-        persist();
+        saveInBackground();
     }
 
     public void addPushFriend(ImpromptuUser friend) {
@@ -83,7 +78,7 @@ public class Event extends ParseObject implements Comparable<Event> {
         }
         ParseRelation<ImpromptuUser> relation = this.getRelation(pushFriendsKey);
         relation.add(friend);
-        persist();
+        saveInBackground();
 
     }
 
@@ -95,7 +90,7 @@ public class Event extends ParseObject implements Comparable<Event> {
         }
         ParseRelation<ImpromptuUser> relation = this.getRelation(pushFriendsKey);
         relation.remove(friend);
-        persist();
+        saveInBackground();
 
     }
 
@@ -107,6 +102,7 @@ public class Event extends ParseObject implements Comparable<Event> {
         }
         ParseRelation relation = this.getRelation(streamFriendsKey);
         ParseQuery q = relation.getQuery();
+        q.orderByAscending("name");
         try {
             save();
             return q.find();
@@ -142,13 +138,13 @@ public class Event extends ParseObject implements Comparable<Event> {
     public void clear() {
         this.setStreamGroups(new ArrayList<Group>());
         this.setPushGroups(new ArrayList<com.example.steve.impromptu.Entity.Group>());
-        this.setUsersGoing(new ArrayList<ImpromptuUser>());
         this.setDurationHour(-1);
     }
 
     public void test() {
         this.clear();
         ImpromptuUser stephen = ImpromptuUser.getUserById("mQMe4SHJNe");
+        ImpromptuUser jon = ImpromptuUser.getUserById("tqaTgngvn2");
         this.setOwner(stephen);
         this.setCreationTime(new Time());
         this.setDescription("my awesome test event");
@@ -160,6 +156,11 @@ public class Event extends ParseObject implements Comparable<Event> {
         this.setLatitude(30.25);
         this.setLongitude(-97.75);
         this.setLocationName("Austin");
+
+        this.addStreamFriend(jon);
+        this.addStreamFriend(stephen);
+        this.saveInBackground();
+
 //        this.addUserGoing((ImpromptuUser)ParseUser.getCurrentUser());
 //        this.addUserGoing((ImpromptuUser)ParseUser.getCurrentUser());
 
@@ -305,9 +306,9 @@ public class Event extends ParseObject implements Comparable<Event> {
         this.put(addressKey, address);
     }
 
-    public void setUsersGoing(ArrayList<ImpromptuUser> users) {
-        this.put(usersGoingKey, users);
-    }
+//    public void setUsersGoing(ArrayList<ImpromptuUser> users) {
+//        this.put(usersGoingKey, users);
+//    }
 
     public ImpromptuUser getOwner() {
         //TODO - add verification
@@ -323,7 +324,9 @@ public class Event extends ParseObject implements Comparable<Event> {
         this.put(durationHourKey, durationHour);
     }
 
-    public void setDurationMinute(int durationMinute) { this.put(durationMinuteKey, durationMinute); }
+    public void setDurationMinute(int durationMinute) {
+        this.put(durationMinuteKey, durationMinute);
+    }
 
 
     public String getType() {
@@ -368,7 +371,7 @@ public class Event extends ParseObject implements Comparable<Event> {
             }
         }
         if (needPersist)
-            this.persist();
+            this.saveInBackground();
     }
 
     public List<com.example.steve.impromptu.Entity.Group> getStreamGroups() {
@@ -494,6 +497,7 @@ public class Event extends ParseObject implements Comparable<Event> {
         return this.getInt(seekStartKey);
 
     }
+
     public int getSeekDuration() {
         try {
             this.fetchIfNeeded();
@@ -518,7 +522,7 @@ public class Event extends ParseObject implements Comparable<Event> {
         }
         if (needPersist) {
             Log.d("Impromptu", "Verify Users in event needed to persist.");
-            this.persist();
+            this.saveInBackground();
 
         }
     }
@@ -529,32 +533,47 @@ public class Event extends ParseObject implements Comparable<Event> {
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching Event:", exc);
         }
-        List<ImpromptuUser> users = this.getList(usersGoingKey);
-        verifyUsers(users);
-        return users;
+        ParseRelation relation = this.getRelation(usersGoingKey);
+        ParseQuery q = relation.getQuery();
+        q.orderByAscending("name");
+        try {
+            save();
+            return q.find();
+        } catch (ParseException exc) {
+            Log.e("Impromptu", "Error querying: ", exc);
+        }
+        return null;
     }
 
     public void addUserGoing(ImpromptuUser user) {
-        ArrayList<ImpromptuUser> usersGoing = (ArrayList<ImpromptuUser>)getUsersGoing();
-        if (!usersGoing.contains(user)) {
-            usersGoing.add(user);
-            persist();
+        try {
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching Event:", exc);
         }
+        ParseRelation<ImpromptuUser> relation = this.getRelation(usersGoingKey);
+        relation.add(user);
+        saveInBackground();
+
     }
 
     public void removeUserGoing(ImpromptuUser user) {
-        ArrayList<ImpromptuUser> usersGoing = (ArrayList<ImpromptuUser>)getUsersGoing();
-        if (usersGoing.contains(user)) {
-            usersGoing.remove(user);
-            persist();
+        try {
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching Event:", exc);
         }
+        ParseRelation<ImpromptuUser> relation = this.getRelation(usersGoingKey);
+        relation.remove(user);
+        saveInBackground();
+
     }
 
 
     @Override
     public int compareTo(Event other) {
-        Long myMillis = new Long(this.getEventTime().toMillis(true));
-        Long otherMillis = new Long(other.getEventTime().toMillis(true));
+        Long myMillis = this.getEventTime().toMillis(true);
+        Long otherMillis = other.getEventTime().toMillis(true);
         return myMillis.compareTo(otherMillis);
     }
 }
