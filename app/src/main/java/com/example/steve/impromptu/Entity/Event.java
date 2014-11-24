@@ -47,10 +47,24 @@ public class Event extends ParseObject implements Comparable<Event> {
     private String longitudeKey = "longitude";
     private String addressKey = "formattedAddress";
     private String usersGoingKey = "usersGoing";
+    private String pushedKey = "pushed";
 
 //    public void setStreamFriends(ArrayList<ImpromptuUser> streamFriends) {
 //        this.put(streamFriendsKey, streamFriends);
 //    }
+
+    public void setPushed(boolean val) {
+        this.put(pushedKey, val);
+    }
+
+    public boolean getPushed() {
+        try {
+            this.fetchIfNeeded();
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching Event:", exc);
+        }
+        return this.getBoolean(pushedKey);
+    }
 
     public void addStreamFriend(ImpromptuUser friend) {
         try {
@@ -224,6 +238,7 @@ public class Event extends ParseObject implements Comparable<Event> {
     public void persist() {
         Log.d("Impromptu", "Persisting event");
         final Event ref = this;
+        setPushed(true);
         this.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
