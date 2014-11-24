@@ -8,23 +8,31 @@ Parse.Cloud.define("addEvent", function(request, response) {
 	Parse.Cloud.useMasterKey();
 	var Event = Parse.Object.extend("Event");
 	var query = new Parse.Query(Event);
-	query.include("streamFriends");
 	var eventId = request.params.eventId;
+	console.log("eventId: " + eventId);
 	query.get(eventId).then(function(event) {
+		console.log("In query, event is " + event);
 		// users whose events array contain the event in question
-		var streamFriends = event.get("streamFriends");
-		Parse.Object.fetchAll(streamFriends).then(function(results) {
+		var relation = event.relation("streamFriends");
+		var q = relation.query();
+		q.find().then(function(results) {
+			console.log("In q, results are : " + results);
 			for (var j = 0; j < results.length; j++) {
 				var userEvents = results[j].get("events")
 				userEvents.push(event);
 			}
 			Parse.Object.saveAll(results).then(function() {
 				response.success("yay");
+			}, function(error) {
+				response.error(error);
 			});
+			
 
-		}), function(error) {
+		}, function(error) {
 			response.error(error);
-		};
+		});
+	}, function(error) {
+		response.error(error);
 	});
 });
 
