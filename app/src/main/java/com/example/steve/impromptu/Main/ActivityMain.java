@@ -1,6 +1,7 @@
 package com.example.steve.impromptu.Main;
 
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -410,6 +411,11 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         FragmentComposeMain fragment = new FragmentComposeMain();
         fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
         fragmentTransaction.commit();
+    }
+
+    public void filter(View view){
+        DialogFragment filterFragment = FragmentFilterDialog.newInstance();
+        filterFragment.show(getFragmentManager(), "dialog");
     }
 
     public Event getComposeEvent() {
