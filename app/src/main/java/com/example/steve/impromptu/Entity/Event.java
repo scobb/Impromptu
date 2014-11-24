@@ -4,11 +4,14 @@ import android.text.format.Time;
 import android.util.Log;
 
 import com.example.steve.impromptu.R;
+import com.parse.FunctionCallback;
 import com.parse.ParseClassName;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -159,7 +162,7 @@ public class Event extends ParseObject implements Comparable<Event> {
 
         this.addStreamFriend(jon);
         this.addStreamFriend(stephen);
-        this.saveInBackground();
+//        this.saveInBackground();
 
 //        this.addUserGoing((ImpromptuUser)ParseUser.getCurrentUser());
 //        this.addUserGoing((ImpromptuUser)ParseUser.getCurrentUser());
@@ -220,25 +223,6 @@ public class Event extends ParseObject implements Comparable<Event> {
         final String eventId = this.getObjectId();
         Log.d("Impromptu", "Persisting event");
         this.saveInBackground();
-//        this.saveInBackground(new SaveCallback() {
-//
-//            @Override
-//            public void done(ParseException e) {
-//                if (e != null) {
-//                    Log.e("Impromptu", "Error persisting an event: ", e);
-//                }
-//                HashMap<String, Object> params = new HashMap<String, Object>();
-//                params.put("eventId", eventId);
-//                ParseCloud.callFunctionInBackground("addEvent", params, new FunctionCallback<Object>() {
-//                    @Override
-//                    public void done(Object o, ParseException e) {
-//                        if (e != null) {
-//                            Log.e("Impromptu", "Exception in callback: ", e);
-//                        }
-//                    }
-//                });
-//            }
-//        });
     }
 
     public void setOwner(ImpromptuUser owner) {
