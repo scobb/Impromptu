@@ -119,10 +119,12 @@ public class Event extends ParseObject implements Comparable<Event> {
         }
         ParseRelation relation = this.getRelation(streamFriendsKey);
         ParseQuery q = relation.getQuery();
-        q.orderByAscending("name");
+//        q.orderByAscending("name");
         try {
             save();
-            return q.find();
+            List<ImpromptuUser> list = q.find();
+            Collections.sort(list);
+            return list;
         } catch (ParseException exc) {
             Log.e("Impromptu", "Error querying: ", exc);
         }
@@ -138,10 +140,12 @@ public class Event extends ParseObject implements Comparable<Event> {
         }
         ParseRelation relation = this.getRelation(pushFriendsKey);
         ParseQuery q = relation.getQuery();
-        q.orderByAscending("name");
+//        q.orderByAscending("name");
         try {
             save();
-            return q.find();
+            List<ImpromptuUser> list = q.find();
+            Collections.sort(list);
+            return list;
         } catch (ParseException exc) {
             Log.e("Impromptu", "Error querying: ", exc);
         }

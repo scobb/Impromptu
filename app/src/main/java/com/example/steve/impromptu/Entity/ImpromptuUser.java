@@ -46,7 +46,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
 
     @Override
     public int compareTo(ImpromptuUser other) {
-        return this.getName().compareTo(other.getName());
+        return this.getObjectId().compareTo(other.getObjectId());
     }
 
     public ImpromptuUser(String username, String pw, String email) {
@@ -245,6 +245,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         }
         List<ImpromptuUser> friends = this.getList(friendsKey);
         this.verifyFriends(friends);
+        Collections.sort(friends);
         return friends;
     }
 
@@ -273,6 +274,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         }
         List<Group> groups = getList(groupKey);
         verifyGroups(groups);
+        Collections.sort(groups);
         return groups;
     }
 
@@ -477,5 +479,22 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         return result;
     }
 
+    @Override
+    public boolean equals(Object object) {
+        boolean same = false;
+
+        if (object != null && object instanceof ImpromptuUser)
+        {
+            same = (this.getObjectId().equals(((ImpromptuUser) object).getObjectId()));
+        }
+
+        return same;
+    }
+
+    @Override
+    public int hashCode() {
+        int hc = (this.getObjectId()).hashCode();
+        return hc;
+    }
 
 }

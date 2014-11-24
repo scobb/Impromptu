@@ -94,7 +94,7 @@ public class ArrayAdapterComposePushFriends extends ArrayAdapter<ImpromptuUser> 
         Boolean contains = false;
 
         for (ImpromptuUser frd : list) {
-            if (frd.getName().equals(friend.getName())) {
+            if (frd.equals(friend)) {
                 contains = true;
                 break;
             }

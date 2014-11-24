@@ -15,7 +15,6 @@ import com.example.steve.impromptu.Entity.Group;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.Main.ActivityMain;
 import com.example.steve.impromptu.Main.Compose.ArrayAdapters.ArrayAdapterComposePushFriends;
-import com.example.steve.impromptu.Main.Compose.ArrayAdapters.ArrayAdapterComposePushGroups;
 import com.example.steve.impromptu.R;
 
 import java.util.ArrayList;
@@ -37,11 +36,7 @@ public class FragmentComposePush extends Fragment {
     ArrayList<ImpromptuUser> userFriendsList;
     ArrayList<Group> userGroupsList;
 
-    // List that holds all of the current user's friends that can be modified (change isSelected,etc.)
-    ArrayList<ImpromptuUser> modifiableFriendsList;
-
     ArrayAdapterComposePushFriends friendsAdapter = null;
-    ArrayAdapterComposePushGroups groupsAdapter = null;
 
     OnComposePushFinishedListener mCallback;
     OnComposePushChooseGroupsListener mGroupsCallback;
@@ -71,13 +66,6 @@ public class FragmentComposePush extends Fragment {
         ActivityMain myActivity = (ActivityMain) getActivity();
         Event myEvent = myActivity.getComposeEvent();
 
-        // TODO: remove when I have actual friends and groups
-        if (myActivity.firstTime) {
-            addTestFriends(currentUser);
-            addTestGroups(currentUser);
-            myActivity.firstTime = false;
-        }
-
         userFriendsList = (ArrayList<ImpromptuUser>) currentUser.getFriends();
         userGroupsList = (ArrayList<Group>) currentUser.getGroups();
 
@@ -96,6 +84,7 @@ public class FragmentComposePush extends Fragment {
 //        eventPushGroupsList = (ArrayList<Group>) myEvent.getPushGroups();
 
         if (!eventPushFriendsList.isEmpty()) {
+            // eventPushGroupsList and userFriendsList sorted by parse object id
 
             Iterator<ImpromptuUser> iterEventFriends = eventPushFriendsList.iterator();
             Iterator<ImpromptuUser> iterUserFriends = userFriendsList.iterator();
@@ -215,50 +204,30 @@ public class FragmentComposePush extends Fragment {
 
                 for (ImpromptuUser friend : userFriendsList) {
 
-                    ImpromptuUser frd = listContainsFriend(eventPushFriendsList, friend);
-
-                    if (frd != null) {
-                        // if this friend was in the eventPushFriendsList && is not selected, remove it
-                        if (!(friend.isSelected())) {
-//                            eventPushFriendsList.remove(frd);
-                            myEvent.removePushFriend(frd);
-                        }
+                    Boolean contains = eventPushFriendsList.contains(friend);
+                    if (contains && !friend.isSelected()) {
+                        myEvent.removePushFriend(friend);
                     }
 
-                    if (friend.isSelected()) {
-                        // if this is one of the selected friends && isn't already in the eventPushFriendsList, add it
-                        if (frd == null) {
-//                            eventPushFriendsList.add(friend);
-                            myEvent.addPushFriend(friend);
-                        }
+                    if (friend.isSelected() && !contains) {
+                        myEvent.addPushFriend(friend);
                     }
                 }
-//                Collections.sort(eventPushFriendsList); // make sure eventPushFriendsList is sorted alphabetically
-                // TODO fix this
-//                myEvent.setPushFriends(eventPushFriendsList);
-
 
                 for (Group group : userGroupsList) {
 
-                    Group grp = listContainsGroup(eventPushGroupsList, group);
+                    Boolean contains = eventPushGroupsList.contains(group);
 
-                    if (grp != null) {
-                        // if this group was in the eventPushGroupsList && is not selected, remove it
-                        if (!(grp.isSelected())) {
-                            eventPushGroupsList.remove(grp);
-                        }
+                    if (contains && group.isSelected()) {
+                        eventPushGroupsList.remove(group);
                     }
 
-                    if (group.isSelected()) {
-                        // if this one of the selected groups && isn't already in the eventPushFriendsList, add it
-                        if (grp == null) {
-                            eventPushGroupsList.add(group);
-                        }
+                    if (group.isSelected() && !contains) {
+                        eventPushGroupsList.add(group);
                     }
 
                 }
 //                Collections.sort(eventPushGroupsList); // make sure eventPushGroupsList is sorted alphabetically
-
                 myEvent.setPushGroups(eventPushGroupsList);
 
                 mCallback.onComposePushFinished();
@@ -290,71 +259,5 @@ public class FragmentComposePush extends Fragment {
             throw new ClassCastException(activity.toString()
                     + " must implement OnComposePushFinishedListener");
         }
-    }
-
-
-    public void addTestGroups(ImpromptuUser currentUser) {
-        Group myGroup1 = new Group();
-        myGroup1.clear();
-        myGroup1.setGroupName("Composers");
-        ImpromptuUser friend1 = new ImpromptuUser("Bob Newman");
-        ImpromptuUser friend2 = new ImpromptuUser("Wolfgang Mozart");
-        ImpromptuUser friend3 = new ImpromptuUser("John Williams");
-
-        myGroup1.add(friend1);
-        myGroup1.add(friend2);
-        myGroup1.add(friend3);
-
-        Group myGroup2 = new Group();
-        myGroup2.clear();
-        myGroup2.setGroupName("Small Composers");
-        ImpromptuUser friend4 = new ImpromptuUser("Alexandre Desplat");
-        ImpromptuUser friend5 = new ImpromptuUser("Hans Zimmer");
-
-        myGroup2.add(friend4);
-        myGroup2.add(friend5);
-
-        currentUser.addGroup(myGroup1);
-        currentUser.addGroup(myGroup2);
-
-        return;
-    }
-
-    public void addTestFriends(ImpromptuUser currentUser) {
-        ImpromptuUser friend1 = new ImpromptuUser("Bob Newman");
-        ImpromptuUser friend2 = new ImpromptuUser("Wolfgang Mozart");
-        ImpromptuUser friend3 = new ImpromptuUser("John Williams");
-        ImpromptuUser friend4 = new ImpromptuUser("Alexandre Desplat");
-        ImpromptuUser friend5 = new ImpromptuUser("Hans Zimmer");
-
-        currentUser.addFriend(friend1);
-        currentUser.addFriend(friend2);
-        currentUser.addFriend(friend3);
-        currentUser.addFriend(friend4);
-        currentUser.addFriend(friend5);
-
-        return;
-    }
-
-    public ImpromptuUser listContainsFriend(ArrayList<ImpromptuUser> list, ImpromptuUser friend) {
-
-        for (ImpromptuUser frd : list) {
-            if (frd.getName().equals(friend.getName())) {
-                return frd;
-            }
-        }
-
-        return null;
-    }
-
-    public Group listContainsGroup(ArrayList<Group> list, Group group) {
-
-        for (Group grp : list) {
-            if (group.getGroupName().equals(grp.getGroupName())) {
-                return grp;
-            }
-        }
-
-        return null;
     }
 }
