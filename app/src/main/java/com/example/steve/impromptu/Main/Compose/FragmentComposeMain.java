@@ -70,22 +70,22 @@ public class FragmentComposeMain extends Fragment {
 
             if (eventType != null) {
                 switch (eventType) {
-                    case "sports":
+                    case "Sports":
                         vType.setImageResource(R.drawable.sport_icon);
                         break;
-                    case "drinking":
+                    case "Drinking":
                         vType.setImageResource(R.drawable.drinking);
                         break;
-                    case "eating":
+                    case "Eating":
                         vType.setImageResource(R.drawable.food);
                         break;
-                    case "tv":
+                    case "TV":
                         vType.setImageResource(R.drawable.tv);
                         break;
-                    case "studying":
+                    case "Studying":
                         vType.setImageResource(R.drawable.studying);
                         break;
-                    case "working out":
+                    case "Working Out":
                         vType.setImageResource(R.drawable.working_out);
                         break;
                     default:
