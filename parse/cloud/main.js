@@ -5,36 +5,75 @@ Parse.Cloud.define("hello", function(request, response) {
 	response.success("Hello world!");
 });
 
-Parse.Cloud.afterSave("Event", function(request) {
+//Parse.Cloud.afterSave("Event", function(request) {
+//	Parse.Cloud.useMasterKey();
+//	var event = request.object;
+//	var Event = Parse.Object.extend("Event");
+//	console.log("Event is " + event);
+//	console.log("eventId: " + event.id);
+//	// users whose events array contain the event in question
+//	var relation = event.relation("streamFriends");
+//	var q = relation.query();
+//	
+//	q.find().then(function(results) {
+//		console.log("In q, results are : " + results);
+//		for (var j = 0; j < results.length; j++) {
+//			var userEvents = results[j].get("events")
+//			var needToAdd = true;
+//			for (var k = 0; k < userEvents.length; k++) {
+//				if (userEvents[k].id == event.id) {
+//					needToAdd = false;
+//					break;
+//				}
+//			}
+//			if (needToAdd)
+//				userEvents.push(event);
+//		}
+//		Parse.Object.saveAll(results);
+//
+//	}, function(error) {
+//		console.log("Error: " + error.message);
+//	});
+//});
+
+Parse.Cloud.define("addNewEvent", function(request, response) {
 	Parse.Cloud.useMasterKey();
-	var event = request.object;
 	var Event = Parse.Object.extend("Event");
-	console.log("Event is " + event);
-	console.log("eventId: " + event.id);
-	// users whose events array contain the event in question
-	var relation = event.relation("streamFriends");
-	var q = relation.query();
-	
-	q.find().then(function(results) {
-		console.log("In q, results are : " + results);
-		for (var j = 0; j < results.length; j++) {
-			var userEvents = results[j].get("events")
-			var needToAdd = true;
-			for (var k = 0; k < userEvents.length; k++) {
-				if (userEvents[k].id == event.id) {
-					needToAdd = false;
-					break;
+	var query = new Parse.Query(Event);
+	var eventId = request.params.eventId;
+	query.get(eventId).then(function(event) {
+		console.log("Event is " + event);
+		var relation = event.relation("streamFriends");
+		q2 = relation.query();
+		q2.find().then(function (streamFriends) {
+			console.log("streamFriends: " + streamFriends);
+			for (var i = 0; i < streamFriends.length; i++) {
+				var userEvents = streamFriends[i].get("events");
+				var hasEvent = false;
+				for (var k = 0; k < userEvents.length; k++) {
+					if (userEvents[k].id == eventId){ 
+						hasEvent = true;
+						break;
+					}
+					
+				}
+				if (!hasEvent) {
+					console.log("Persisting.");
+					userEvents.push(event);
 				}
 			}
-			if (needToAdd)
-				userEvents.push(event);
-		}
-		Parse.Object.saveAll(results);
-
+			Parse.Object.saveAll(streamFriends).then(function() {
+				response.success("yay.");
+			}, function(error) {
+				response.error(error);
+			})
+		}, function (error) {
+			response.error(error);
+		})
 	}, function(error) {
-		console.log("Error: " + error.message);
-	});
-});
+		response.error(error);
+	})
+})
 
 Parse.Cloud.define("eventCleanup", function(request, response) {
 	Parse.Cloud.useMasterKey();
