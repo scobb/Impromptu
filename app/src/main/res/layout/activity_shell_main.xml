@@ -21,7 +21,22 @@
             android:onClick="profile" />
 
         <Space
-            android:id="@+id/activityMain_space_extra"
+            android:id="@+id/activityMain_space_extra_2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            ></Space>
+
+        <Button
+            android:id="@+id/activityMain_button_filters"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Filter"
+            android:onClick="filter" />
+
+
+        <Space
+            android:id="@+id/activityMain_space_extra_3"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
