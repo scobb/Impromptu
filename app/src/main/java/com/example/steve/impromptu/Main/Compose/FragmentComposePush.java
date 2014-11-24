@@ -235,7 +235,8 @@ public class FragmentComposePush extends Fragment {
 
                 }
                 Collections.sort(eventPushFriendsList); // make sure eventPushFriendsList is sorted alphabetically
-                myEvent.setPushFriends(eventPushFriendsList);
+                // TODO fix this
+//                myEvent.setPushFriends(eventPushFriendsList);
 
 
                 for (Group group : userGroupsList) {

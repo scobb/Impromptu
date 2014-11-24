@@ -151,7 +151,9 @@ public class FragmentComposePushGroups extends Fragment {
                     }
                 }
                 Collections.sort(eventPushFriendsList);
-                myEvent.setPushFriends(eventPushFriendsList);
+
+                // TODO fix this
+//                myEvent.setPushFriends(eventPushFriendsList);
 
                 String test = "";
                 test = test + "Groups: ";
