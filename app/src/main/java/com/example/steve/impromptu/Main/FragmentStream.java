@@ -12,12 +12,16 @@ import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
+import com.example.steve.impromptu.Entity.ImpromptuLocation;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.R;
 import com.parse.FindCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseRelation;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,12 +48,19 @@ public class FragmentStream extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+
         // Gets query for the event streams
-        ParseQuery<Event> postQuery = ParseQuery.getQuery("Event");
-        postQuery.findInBackground(new FindCallback<Event>() {
+        ImpromptuUser currentUser = (ImpromptuUser) ParseUser.getCurrentUser();
+        List<Event> events = currentUser.getStreamEvents();
+
+        ParseObject.fetchAllIfNeededInBackground(events, new FindCallback<Event>() {
+
+                                       @Override
                                        public void done(List<Event> postsObjects, ParseException e) {
                                            if (e == null) {
                                                posts = new ArrayList<Event>(postsObjects);
+
+                                               Log.d("Impromptu", "Size: " + postsObjects.size());
 
                                                // Create the HashMap List
                                                List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();

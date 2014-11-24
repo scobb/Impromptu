@@ -151,7 +151,9 @@ public class FragmentComposeStreamGroups extends Fragment {
                     }
                 }
                 Collections.sort(eventStreamFriendsList);
-                myEvent.setStreamFriends(eventStreamFriendsList);
+
+                // TODO Fix this
+//                myEvent.setStreamFriends(eventStreamFriendsList);
 
                 String test = "";
                 test = test + "Groups: ";

@@ -83,6 +83,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     }
 
     public List<Event> getStreamEvents() {
+
         try {
             this.fetchIfNeeded();
         } catch (Exception exc) {
@@ -90,6 +91,8 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         }
         List<Event> events = this.getList(visibleEventsKey);
         verifyEvents(events);
+        Log.d("Impromptu", "List Size: " + events.size());
+
         return events;
     }
 

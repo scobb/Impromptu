@@ -236,7 +236,8 @@ public class FragmentComposeStream extends Fragment {
 
                 }
                 Collections.sort(eventStreamFriendsList); // make sure eventStreamFriendsList is sorted alphabetically
-                myEvent.setStreamFriends(eventStreamFriendsList);
+                // TODO Fix this
+//                myEvent.setStreamFriends(eventStreamFriendsList);
 
 
                 for (Group group : userGroupsList) {
