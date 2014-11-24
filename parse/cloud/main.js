@@ -1,38 +1,38 @@
 // Use Parse.Cloud.define to define as many cloud functions as you want.
 // For example:
+var _ = require('underscore');
 Parse.Cloud.define("hello", function(request, response) {
 	response.success("Hello world!");
 });
 
-Parse.Cloud.define("addEvent", function(request, response) {
+Parse.Cloud.afterSave("Event", function(request) {
 	Parse.Cloud.useMasterKey();
+	var event = request.object;
 	var Event = Parse.Object.extend("Event");
-	var query = new Parse.Query(Event);
-	var eventId = request.params.eventId;
-	console.log("eventId: " + eventId);
-	query.get(eventId).then(function(event) {
-		console.log("In query, event is " + event);
-		// users whose events array contain the event in question
-		var relation = event.relation("streamFriends");
-		var q = relation.query();
-		q.find().then(function(results) {
-			console.log("In q, results are : " + results);
-			for (var j = 0; j < results.length; j++) {
-				var userEvents = results[j].get("events")
-				userEvents.push(event);
+	console.log("Event is " + event);
+	console.log("eventId: " + event.id);
+	// users whose events array contain the event in question
+	var relation = event.relation("streamFriends");
+	var q = relation.query();
+	
+	q.find().then(function(results) {
+		console.log("In q, results are : " + results);
+		for (var j = 0; j < results.length; j++) {
+			var userEvents = results[j].get("events")
+			var needToAdd = true;
+			for (var k = 0; k < userEvents.length; k++) {
+				if (userEvents[k].id == event.id) {
+					needToAdd = false;
+					break;
+				}
 			}
-			Parse.Object.saveAll(results).then(function() {
-				response.success("yay");
-			}, function(error) {
-				response.error(error);
-			});
-			
+			if (needToAdd)
+				userEvents.push(event);
+		}
+		Parse.Object.saveAll(results);
 
-		}, function(error) {
-			response.error(error);
-		});
 	}, function(error) {
-		response.error(error);
+		console.log("Error: " + error.message);
 	});
 });
 
