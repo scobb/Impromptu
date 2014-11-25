@@ -36,7 +36,6 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -304,6 +303,13 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 
             Event myEvent = getComposeEvent();
             myEvent.persist();
+
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+            FragmentStream fragment = new FragmentStream();
+            fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+            fragmentTransaction.commit();
 
         } else {
 

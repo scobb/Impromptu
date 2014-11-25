@@ -113,16 +113,15 @@ public class FragmentComposePushGroups extends Fragment {
                 for (Group group : userGroupsList) {
 
                     Boolean contains = eventPushGroupsList.contains(group);
-                    if (contains && group.isSelected()) {
-                        // if this group was in the eventPushGroupsList && is not selected, remove it
-                        if (!(group.isSelected())) {
-                            eventPushGroupsList.remove(group);
-                            // remove friends that belong to group from eventPushFriendsList
-                            ArrayList<ImpromptuUser> friends = (ArrayList<ImpromptuUser>) group.getFriendsInGroup();
-                            for (ImpromptuUser friend : friends) {
-                                myEvent.removePushFriend(friend);
-                            }
+                    if (contains && !group.isSelected()) {
+                        // if this group was in the eventPushGroupsList && is not selected, remove it if (!(group.isSelected())) {
+                        eventPushGroupsList.remove(group);
+                        // remove friends that belong to group from eventPushFriendsList
+                        ArrayList<ImpromptuUser> friends = (ArrayList<ImpromptuUser>) group.getFriendsInGroup();
+                        for (ImpromptuUser friend : friends) {
+                            myEvent.removePushFriend(friend);
                         }
+
                     }
 
                     if (group.isSelected() && !contains) {

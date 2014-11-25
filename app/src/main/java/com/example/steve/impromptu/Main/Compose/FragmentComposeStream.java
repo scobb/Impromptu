@@ -9,14 +9,12 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.Group;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.Main.ActivityMain;
 import com.example.steve.impromptu.Main.Compose.ArrayAdapters.ArrayAdapterComposeStreamFriends;
-import com.example.steve.impromptu.Main.Compose.ArrayAdapters.ArrayAdapterComposeStreamGroups;
 import com.example.steve.impromptu.R;
 
 import java.util.ArrayList;
@@ -39,11 +37,7 @@ public class FragmentComposeStream extends Fragment {
     ArrayList<ImpromptuUser> userFriendsList;
     ArrayList<Group> userGroupsList;
 
-    // List that holds all of the current user's friends that can be modified (change isSelected,etc.)
-    ArrayList<ImpromptuUser> modifiableFriendsList;
-
     ArrayAdapterComposeStreamFriends friendsAdapter = null;
-    ArrayAdapterComposeStreamGroups groupsAdapter = null;
 
     OnComposeStreamFinishedListener mCallback;
     OnComposeStreamChooseGroupsListener mGroupsCallback;
@@ -73,16 +67,10 @@ public class FragmentComposeStream extends Fragment {
         ActivityMain myActivity = (ActivityMain) getActivity();
         Event myEvent = myActivity.getComposeEvent();
 
-        // TODO: remove when I have actual friends and groups
-        if (myActivity.firstTime) {
-            addTestFriends(currentUser);
-            addTestGroups(currentUser);
-            myActivity.firstTime = false;
-        }
+//        test();
 
         userFriendsList = (ArrayList<ImpromptuUser>) currentUser.getFriends();
         userGroupsList = (ArrayList<Group>) currentUser.getGroups();
-
 
 
         // initialize all friends to unselected
@@ -96,9 +84,10 @@ public class FragmentComposeStream extends Fragment {
         }
 
         eventStreamFriendsList = (ArrayList<ImpromptuUser>) myEvent.getStreamFriends();
-        eventStreamGroupsList = (ArrayList<Group>) myEvent.getStreamGroups();
+//        eventStreamGroupsList = (ArrayList<Group>) myEvent.getStreamGroups();
 
         if (!eventStreamFriendsList.isEmpty()) {
+            // eventStreamGroupsList and userFriendsList sorted by parse object id
 
             Iterator<ImpromptuUser> iterEventFriends = eventStreamFriendsList.iterator();
             Iterator<ImpromptuUser> iterUserFriends = userFriendsList.iterator();
@@ -218,62 +207,31 @@ public class FragmentComposeStream extends Fragment {
 
                 for (ImpromptuUser friend : userFriendsList) {
 
-                    ImpromptuUser frd = listContainsFriend(eventStreamFriendsList, friend);
-
-                    if (frd != null) {
-                        // if this friend was in the eventStreamFriendsList && is not selected, remove it
-                        if (!(friend.isSelected())) {
-                            eventStreamFriendsList.remove(frd);
-                        }
+                    Boolean contains = eventStreamFriendsList.contains(friend);
+                    if (contains && !friend.isSelected()) {
+                        myEvent.removeStreamFriend(friend);
                     }
 
-                    if (friend.isSelected()) {
-                        // if this is one of the selected friends && isn't already in the eventStreamFriendsList, add it
-                        if (frd == null) {
-                            eventStreamFriendsList.add(friend);
-                        }
+                    if (friend.isSelected() && !contains) {
+                        myEvent.addStreamFriend(friend);
                     }
-
                 }
-                Collections.sort(eventStreamFriendsList); // make sure eventStreamFriendsList is sorted alphabetically
-                // TODO Fix this
-//                myEvent.setStreamFriends(eventStreamFriendsList);
-
 
                 for (Group group : userGroupsList) {
 
-                    Group grp = listContainsGroup(eventStreamGroupsList, group);
+                    Boolean contains = eventStreamGroupsList.contains(group);
 
-                    if (grp != null) {
-                        // if this group was in the eventStreamGroupsList && is not selected, remove it
-                        if (!(grp.isSelected())) {
-                            eventStreamGroupsList.remove(grp);
-                        }
+                    if (contains && !group.isSelected()) {
+                        eventStreamGroupsList.remove(group);
                     }
 
-                    if (group.isSelected()) {
-                        // if this one of the selected groups && isn't already in the eventStreamFriendsList, add it
-                        if (grp == null) {
-                            eventStreamGroupsList.add(group);
-                        }
+                    if (group.isSelected() && !contains) {
+                        eventStreamGroupsList.add(group);
                     }
 
                 }
                 Collections.sort(eventStreamGroupsList); // make sure eventStreamGroupsList is sorted alphabetically
                 myEvent.setStreamGroups(eventStreamGroupsList);
-
-                String test = "Friends: ";
-                for (ImpromptuUser friend : eventStreamFriendsList) {
-                    if (friend.isSelected())
-                        test = test + friend.getName() + " ";
-                }
-                test = test + "\n Groups: ";
-                for (Group group : eventStreamGroupsList) {
-                    if (group.isSelected())
-                        test = test + group.getGroupName();
-                }
-
-                Toast.makeText(getActivity(), test, Toast.LENGTH_SHORT).show();
 
                 mCallback.onComposeStreamFinished();
             }
@@ -306,69 +264,19 @@ public class FragmentComposeStream extends Fragment {
         }
     }
 
-
-    public void addTestGroups(ImpromptuUser currentUser) {
-        Group myGroup1 = new Group();
-        myGroup1.clear();
-        myGroup1.setGroupName("Composers");
-        ImpromptuUser friend1 = new ImpromptuUser("Bob Newman");
-        ImpromptuUser friend2 = new ImpromptuUser("Wolfgang Mozart");
-        ImpromptuUser friend3 = new ImpromptuUser("John Williams");
-
-        myGroup1.add(friend1);
-        myGroup1.add(friend2);
-        myGroup1.add(friend3);
-
-        Group myGroup2 = new Group();
-        myGroup2.clear();
-        myGroup2.setGroupName("Small Composers");
-        ImpromptuUser friend4 = new ImpromptuUser("Alexandre Desplat");
-        ImpromptuUser friend5 = new ImpromptuUser("Hans Zimmer");
-
-        myGroup2.add(friend4);
-        myGroup2.add(friend5);
-
-        currentUser.addGroup(myGroup1);
-        currentUser.addGroup(myGroup2);
-
-        return;
-    }
-
-    public void addTestFriends(ImpromptuUser currentUser) {
-        ImpromptuUser friend1 = new ImpromptuUser("Bob Newman");
-        ImpromptuUser friend2 = new ImpromptuUser("Wolfgang Mozart");
-        ImpromptuUser friend3 = new ImpromptuUser("John Williams");
-        ImpromptuUser friend4 = new ImpromptuUser("Alexandre Desplat");
-        ImpromptuUser friend5 = new ImpromptuUser("Hans Zimmer");
-
-        currentUser.addFriend(friend1);
-        currentUser.addFriend(friend2);
-        currentUser.addFriend(friend3);
-        currentUser.addFriend(friend4);
-        currentUser.addFriend(friend5);
-
-        return;
-    }
-
-    public ImpromptuUser listContainsFriend(ArrayList<ImpromptuUser> list, ImpromptuUser friend) {
-
-        for (ImpromptuUser frd : list) {
-            if (frd.getName().equals(friend.getName())) {
-                return frd;
-            }
-        }
-
-        return null;
-    }
-
-    public Group listContainsGroup(ArrayList<Group> list, Group group) {
-
-        for (Group grp : list) {
-            if (group.getGroupName().equals(grp.getGroupName())) {
-                return grp;
-            }
-        }
-
-        return null;
-    }
+//    public void test () {
+//        ImpromptuUser me = (ImpromptuUser) ImpromptuUser.getCurrentUser();
+//        ArrayList<ImpromptuUser> friends = (ArrayList<ImpromptuUser>) me.getFriends();
+//
+//        Group everyone = new Group("everyone");
+//
+//        for (ImpromptuUser frd : friends) {
+//            everyone.add(frd);
+//        }
+//
+//        everyone.persist();
+//
+//        me.addGroup(everyone);
+//        me.persist();
+//    }
 }

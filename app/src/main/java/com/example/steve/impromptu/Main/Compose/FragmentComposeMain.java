@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.format.Time;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +15,10 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
+import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.Main.ActivityMain;
 import com.example.steve.impromptu.R;
+
 
 /**
  * Created by jonreynolds on 10/16/14.
@@ -154,10 +157,6 @@ public class FragmentComposeMain extends Fragment {
             @Override
             public void onClick(View v) {
 
-                // TODO make sure enough info is filled out
-                // change event's creation time
-                // call onComposeMainFinishedCallback
-
                 Boolean complete = true;
 
                 if (myEvent.getTitle() == null) {
@@ -181,6 +180,11 @@ public class FragmentComposeMain extends Fragment {
                 }
 
                 if (complete) {
+                    Time time = new Time();
+                    time.setToNow();
+
+                    myEvent.setOwner((ImpromptuUser) ImpromptuUser.getCurrentUser());
+                    myEvent.setCreationTime(time);
                     composeMainFinishedListenerCallback.onComposeMainFinished(true);
                 }
                 else {

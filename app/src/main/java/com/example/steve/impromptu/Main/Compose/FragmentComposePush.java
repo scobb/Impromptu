@@ -18,6 +18,7 @@ import com.example.steve.impromptu.Main.Compose.ArrayAdapters.ArrayAdapterCompos
 import com.example.steve.impromptu.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 /**
@@ -220,7 +221,7 @@ public class FragmentComposePush extends Fragment {
 
                     Boolean contains = eventPushGroupsList.contains(group);
 
-                    if (contains && group.isSelected()) {
+                    if (contains && !group.isSelected()) {
                         eventPushGroupsList.remove(group);
                     }
 
@@ -229,7 +230,7 @@ public class FragmentComposePush extends Fragment {
                     }
 
                 }
-//                Collections.sort(eventPushGroupsList); // make sure eventPushGroupsList is sorted alphabetically
+                Collections.sort(eventPushGroupsList); // make sure eventPushGroupsList is sorted alphabetically
                 myEvent.setPushGroups(eventPushGroupsList);
 
                 mCallback.onComposePushFinished();

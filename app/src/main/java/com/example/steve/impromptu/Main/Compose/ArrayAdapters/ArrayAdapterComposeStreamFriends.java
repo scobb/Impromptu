@@ -71,7 +71,7 @@ public class ArrayAdapterComposeStreamFriends extends ArrayAdapter<ImpromptuUser
 
                                 for (Group group : groupsList) {
                                     ArrayList<ImpromptuUser> friends = (ArrayList<ImpromptuUser>) group.getFriendsInGroup();
-                                    if (listContainsFriend(friends, friend)) {
+                                    if (friends.contains(friend)) {
                                         group.setSelected(false);
                                     }
                                 }
@@ -88,18 +88,5 @@ public class ArrayAdapterComposeStreamFriends extends ArrayAdapter<ImpromptuUser
         holder.text.setText(friendList.get(position).getName());
         holder.checkbox.setChecked(friendList.get(position).isSelected());
         return view;
-    }
-
-    public Boolean listContainsFriend(ArrayList<ImpromptuUser> list, ImpromptuUser friend) {
-        Boolean contains = false;
-
-        for (ImpromptuUser frd : list) {
-            if (frd.getName().equals(friend.getName())) {
-                contains = true;
-                break;
-            }
-        }
-
-        return contains;
     }
 }
