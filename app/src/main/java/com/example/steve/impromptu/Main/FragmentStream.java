@@ -60,12 +60,20 @@ public class FragmentStream extends ListFragment {
                                            if (e == null) {
                                                posts = new ArrayList<Event>(postsObjects);
 
-                                               Log.d("Impromptu", "Size: " + postsObjects.size());
 
                                                // Create the HashMap List
                                                List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
                                                for(Event post : posts){
-                                                   aList.add(post.getHashMap());
+
+                                                   Log.d("Impromptu", post.getObjectId() + " " + post.getType());
+
+                                                   // Check for the filters
+                                                   if(ActivityMain.getFiltersMap().get(post.getType()) != null) {
+                                                       if (ActivityMain.getFiltersMap().get(post.getType())) {
+                                                           Log.d("Impromptu", post.getType());
+                                                           aList.add(post.getHashMap());
+                                                       }
+                                                   }
                                                }
 
                                                // Initialize the adapter

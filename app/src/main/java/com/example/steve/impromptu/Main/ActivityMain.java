@@ -36,6 +36,7 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 
 
     // Filters
-    private Hashtable<String, Boolean> filters;
+    private static Hashtable<String, Boolean> filters = new Hashtable<String, Boolean>();;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +63,15 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 
         setContentView(R.layout.activity_shell_main);
 
+        // TODO Might have to move this to a different part of the Activity lifecycle - Arifin
         // Default filters
-        filters = new Hashtable<String, Boolean>();
+        filters.put("Drinking", true);
+        filters.put("Eating", true);
+        filters.put("Sports", true);
+        filters.put("Studying", true);
+        filters.put("TV", true);
+        filters.put("Working Out", true);
+
 
         // this block might be redundant because we do it in ActivityMain. not sure...
         ParseUser.registerSubclass(ImpromptuUser.class);
@@ -419,5 +427,13 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 
     public Event getComposeEvent() {
         return composeEvent;
+    }
+
+    public static Hashtable<String, Boolean> getFiltersMap(){
+        return filters;
+    }
+
+    public static void setFilter(String type, boolean state){
+
     }
 }
