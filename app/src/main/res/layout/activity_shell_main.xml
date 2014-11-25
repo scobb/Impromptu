@@ -5,9 +5,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
 
     <LinearLayout
+        android:id="@+id/activityMain_linearLayout_topMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -22,21 +24,6 @@
 
         <Space
             android:id="@+id/activityMain_space_extra_2"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            ></Space>
-
-        <Button
-            android:id="@+id/activityMain_button_filters"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Filter"
-            android:onClick="filter" />
-
-
-        <Space
-            android:id="@+id/activityMain_space_extra_3"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -61,6 +48,7 @@
         android:layout_alignParentEnd="true" />
 
     <LinearLayout
+        android:id="@+id/activityMain_linearLayout_bottomMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -85,15 +73,15 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Invites"
-            android:onClick="invites" />
+            android:text="Friends"
+            android:onClick="friends" />
         <Button
             android:id="@+id/activityMain_button_friends"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Friends"
-            android:onClick="friends" />
+            android:text="Events"
+            android:onClick="events" />
 
         </LinearLayout>
 </LinearLayout>

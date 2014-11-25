@@ -1,7 +1,6 @@
 package com.example.steve.impromptu.Main;
 
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -15,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
@@ -44,11 +44,11 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         , FragmentComposePushGroups.OnComposePushChooseGroupsFinishedListener, FragmentComposeStream.OnComposeStreamChooseGroupsListener, FragmentComposeStream.OnComposeStreamFinishedListener, FragmentComposeStreamGroups.OnComposeStreamChooseGroupsFinishedListener, FragmentComposeType.OnComposeTypeFinishedListener {
 
 
-    //TODO: remove
-    static public Boolean firstTime = true;
     Event composeEvent;
     public Dialog progressDialog;
 
+    LinearLayout vTopMenu;
+    LinearLayout vBottomMenu;
 
     // Filters
     private static Hashtable<String, Boolean> filters = new Hashtable<String, Boolean>();;
@@ -61,6 +61,9 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         StrictMode.setThreadPolicy(policy);
 
         setContentView(R.layout.activity_shell_main);
+
+        vTopMenu = (LinearLayout) findViewById(R.id.activityMain_linearLayout_topMenu);
+        vBottomMenu = (LinearLayout) findViewById(R.id.activityMain_linearLayout_bottomMenu);
 
         // TODO Might have to move this to a different part of the Activity lifecycle - Arifin
         // Default filters
@@ -78,12 +81,6 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         ParseObject.registerSubclass(Group.class);
         ParseObject.registerSubclass(FriendRequest.class);
         Parse.initialize(this, "sP5YdlJxg1WiwfKgSXX4KdrgpZzAV5g69dV8ryY0", "houV8Brg8oIuBKSLheR7qAW4AJfGq1QZmH62Spgk");
-
-        //Remove title bar
-//        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-//
-//        //Remove notification bar
-//        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -402,7 +399,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         Toast.makeText(this, "show map", Toast.LENGTH_SHORT).show();
     }
 
-    public void invites(View view) {
+    public void events(View view) {
         Toast.makeText(this, "show invites", Toast.LENGTH_SHORT).show();
     }
 
@@ -426,10 +423,10 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         fragmentTransaction.commit();
     }
 
-    public void filter(View view){
-        DialogFragment filterFragment = FragmentFilterDialog.newInstance();
-        filterFragment.show(getFragmentManager(), "dialog");
-    }
+//    public void filter(View view){
+//        DialogFragment filterFragment = FragmentFilterDialog.newInstance();
+//        filterFragment.show(getFragmentManager(), "dialog");
+//    }
 
     public Event getComposeEvent() {
         return composeEvent;
@@ -441,5 +438,17 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 
     public static void setFilter(String type, boolean state){
 
+    }
+
+//    public LinearLayout getTopMenu() { return vTopMenu; }
+//    public LinearLayout getBottomMenu() { return vBottomMenu; }
+
+    public LinearLayout clearTopMenu() {
+        int numChildren = vTopMenu.getChildCount();
+        while (numChildren > 2) {
+            vTopMenu.removeViewAt(vTopMenu.getChildCount() - 1);
+            numChildren -= 1;
+        }
+        return vTopMenu;
     }
 }
