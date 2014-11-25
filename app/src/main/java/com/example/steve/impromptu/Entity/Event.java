@@ -113,7 +113,7 @@ public class Event extends ParseObject implements Comparable<Event> {
 
     public List<ImpromptuUser> getStreamFriends() {
         try {
-            this.fetchIfNeeded();
+            this.fetch();
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching Event:", exc);
         }
@@ -132,7 +132,7 @@ public class Event extends ParseObject implements Comparable<Event> {
 
     public List<ImpromptuUser> getPushFriends() {
         try {
-            this.fetchIfNeeded();
+            this.fetch();
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching Event:", exc);
         }
@@ -353,7 +353,7 @@ public class Event extends ParseObject implements Comparable<Event> {
     public String getTitle() {
 
         try {
-            this.fetchIfNeeded();
+            this.fetch();
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching Event:", exc);
         }
@@ -363,7 +363,7 @@ public class Event extends ParseObject implements Comparable<Event> {
     public String getDescription() {
 
         try {
-            this.fetchIfNeeded();
+            this.fetch();
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching Event:", exc);
         }
@@ -388,7 +388,7 @@ public class Event extends ParseObject implements Comparable<Event> {
     public List<com.example.steve.impromptu.Entity.Group> getStreamGroups() {
 
         try {
-            this.fetchIfNeeded();
+            this.fetch();
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching Event:", exc);
         }
@@ -401,7 +401,7 @@ public class Event extends ParseObject implements Comparable<Event> {
     public List<com.example.steve.impromptu.Entity.Group> getPushGroups() {
 
         try {
-            this.fetchIfNeeded();
+            this.fetch();
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching Event:", exc);
         }
@@ -413,7 +413,7 @@ public class Event extends ParseObject implements Comparable<Event> {
 
     public Time getEventTime() {
         try {
-            this.fetchIfNeeded();
+            this.fetch();
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching Event:", exc);
         }
@@ -424,7 +424,7 @@ public class Event extends ParseObject implements Comparable<Event> {
 
     public Time getCreationTime() {
         try {
-            this.fetchIfNeeded();
+            this.fetch();
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching Event:", exc);
         }
@@ -444,7 +444,7 @@ public class Event extends ParseObject implements Comparable<Event> {
     public String getLocationName() {
 
         try {
-            this.fetchIfNeeded();
+            this.fetch();
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching Event:", exc);
         }
@@ -454,7 +454,7 @@ public class Event extends ParseObject implements Comparable<Event> {
     public String getFormattedAddress() {
 
         try {
-            this.fetchIfNeeded();
+            this.fetch();
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching Event:", exc);
         }
@@ -464,7 +464,7 @@ public class Event extends ParseObject implements Comparable<Event> {
     public Double getLongitude() {
 
         try {
-            this.fetchIfNeeded();
+            this.fetch();
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching Event:", exc);
         }
@@ -474,7 +474,7 @@ public class Event extends ParseObject implements Comparable<Event> {
     public Double getLatitude() {
 
         try {
-            this.fetchIfNeeded();
+            this.fetch();
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching Event:", exc);
         }
@@ -484,7 +484,7 @@ public class Event extends ParseObject implements Comparable<Event> {
     public int getDurationHour() {
 
         try {
-            this.fetchIfNeeded();
+            this.fetch();
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching Event:", exc);
         }
@@ -494,7 +494,7 @@ public class Event extends ParseObject implements Comparable<Event> {
     public int getDurationMinute() {
 
         try {
-            this.fetchIfNeeded();
+            this.fetch();
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching Event:", exc);
         }
@@ -503,7 +503,7 @@ public class Event extends ParseObject implements Comparable<Event> {
 
     public int getSeekStart() {
         try {
-            this.fetchIfNeeded();
+            this.fetch();
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching Event:", exc);
         }
@@ -513,7 +513,7 @@ public class Event extends ParseObject implements Comparable<Event> {
 
     public int getSeekDuration() {
         try {
-            this.fetchIfNeeded();
+            this.fetch();
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching Event:", exc);
         }
@@ -542,7 +542,7 @@ public class Event extends ParseObject implements Comparable<Event> {
 
     public List<ImpromptuUser> getUsersGoing() {
         try {
-            this.fetchIfNeeded();
+            this.fetch();
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching Event:", exc);
         }
