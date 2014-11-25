@@ -5,7 +5,7 @@ import android.app.Fragment;
 /**
  * Created by jonreynolds on 10/16/14.
  */
-public class FragmentInvites extends Fragment{
+public class FragmentRequests extends Fragment{
 
 
 }

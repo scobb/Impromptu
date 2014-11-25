@@ -3,43 +3,25 @@ package com.example.steve.impromptu.Main;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.app.ProgressDialog;
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
-import com.example.steve.impromptu.Login.ActivityLogin;
 import com.example.steve.impromptu.R;
 import com.example.steve.impromptu.UI.ScrollableMapFragment;
-import com.facebook.Request;
-import com.facebook.Response;
-import com.facebook.model.GraphUser;
-import com.facebook.widget.ProfilePictureView;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.games.GamesMetadata;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.parse.ParseFacebookUtils;
-import com.parse.ParseUser;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Created by Stephen Arifin on 10/16/14.
@@ -75,7 +57,7 @@ public class FragmentEventDetail extends Fragment {
         }
 
 
-        RelativeLayout ownerLayout = (RelativeLayout) myInflatedView.findViewById(R.id.fragEventDetail_relativeLayout_owner);
+        LinearLayout ownerLayout = (LinearLayout) myInflatedView.findViewById(R.id.fragEventDetail_linearLayout_owner);
         TextView titleTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_title);
         TextView ownerTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_owner);
         TextView descriptionTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_description);
