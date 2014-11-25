@@ -71,7 +71,8 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
 
     public List<Event> getStreamEvents() {
         try {
-            this.fetch();
+            this.fetchIfNeeded();
+            this.refresh();
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching User:", exc);
         }
@@ -225,7 +226,8 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
 
     public List<ImpromptuUser> getFriends() {
         try {
-            this.fetch();
+            this.fetchIfNeeded();
+            this.refresh();
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching User:", exc);
         }
@@ -254,7 +256,8 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
 
     public List<Group> getGroups() {
         try {
-            this.fetch();
+            this.fetchIfNeeded();
+            this.refresh();
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching User:", exc);
         }

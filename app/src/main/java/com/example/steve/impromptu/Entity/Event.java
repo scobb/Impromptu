@@ -10,6 +10,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
@@ -47,109 +48,183 @@ public class Event extends ParseObject implements Comparable<Event> {
     private String usersGoingKey = "usersGoing";
     private String pushedKey = "pushed";
 
+    private String localTitle = null;
+    private Time localCreationTime;
+    private String localDescription = null;
+    private int localDurationHour;
+    private int localDurationMinute;
+    private int localSeekStart;
+    private int localSeekDuration;
+    private ImpromptuUser localOwner;
+    private Time localEventTime;
+    private String localLocation = null;
+    private String localType = null;
+    private double localLatitude;
+    private double localLongitude;
+    private String localFormattedAddress = null;
+    public boolean localEventTimeMorning;
+    private boolean localPushed = false;
+    private List<ImpromptuUser> localAllFriends = new ArrayList<ImpromptuUser>();
+    private List<Group> localAllGroups = new ArrayList<Group>();
+    private List<ImpromptuUser> localStreamFriends = new ArrayList<ImpromptuUser>();
+    private List<ImpromptuUser> localPushFriends = new ArrayList<ImpromptuUser>();
+    private List<ImpromptuUser> localUsersGoing = new ArrayList<ImpromptuUser>();
+    private List<Group> localPushGroups = new ArrayList<Group>();
+    private List<Group> localStreamGroups = new ArrayList<Group>();
+
+
+
 //    public void setStreamFriends(ArrayList<ImpromptuUser> streamFriends) {
 //        this.put(streamFriendsKey, streamFriends);
 //    }
+
+    public void setAllFriends(List<ImpromptuUser> friends) {
+        localAllFriends = friends;
+    }
+
+    public List<ImpromptuUser> getAllFriends() {
+        Collections.sort(localAllFriends);
+        return localAllFriends;
+    }
+
+    public void setAllGroups(List<Group> groups) {
+        localAllGroups = groups;
+    }
+
+    public List<Group> getAllGroups() {
+        Collections.sort(localAllGroups);
+        return localAllGroups;
+    }
 
     public void setPushed(boolean val) {
         this.put(pushedKey, val);
     }
 
     public boolean getPushed() {
-        try {
-            this.fetchIfNeeded();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
+        if (getObjectId() != null) {
+            localPushed = true;
         }
-        return this.getBoolean(pushedKey);
+        return localPushed;
     }
 
     public void addStreamFriend(ImpromptuUser friend) {
-        try {
-            this.fetchIfNeeded();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
+        if (localPushed || getPushed()) {
+            try {
+                this.fetchIfNeeded();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching Event:", exc);
+            }
+            ParseRelation<ImpromptuUser> relation = this.getRelation(streamFriendsKey);
+            relation.add(friend);
+            saveInBackground();
+        } else {
+            Log.d("Impromptu", "Local addStreamFriend...");
+            localStreamFriends.add(friend);
         }
-        ParseRelation<ImpromptuUser> relation = this.getRelation(streamFriendsKey);
-        relation.add(friend);
-        saveInBackground();
-
     }
 
     public void removeStreamFriend(ImpromptuUser friend) {
-        try {
-            this.fetchIfNeeded();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
+        if (localPushed || getPushed()) {
+            try {
+                this.fetchIfNeeded();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching Event:", exc);
+            }
+            ParseRelation<ImpromptuUser> relation = this.getRelation(streamFriendsKey);
+            relation.remove(friend);
+            saveInBackground();
+        } else {
+            Log.d("Impromptu", "Local removeStreamFriend...");
+            localStreamFriends.remove(friend);
         }
-        ParseRelation<ImpromptuUser> relation = this.getRelation(streamFriendsKey);
-        relation.remove(friend);
-        saveInBackground();
     }
 
     public void addPushFriend(ImpromptuUser friend) {
-        try {
-            this.fetchIfNeeded();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
+
+        if (localPushed || getPushed()) {
+            try {
+                this.fetchIfNeeded();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching Event:", exc);
+            }
+            ParseRelation<ImpromptuUser> relation = this.getRelation(pushFriendsKey);
+            relation.add(friend);
+            saveInBackground();
+        } else {
+            Log.d("Impromptu", "Local addPushFriend...");
+            localPushFriends.add(friend);
         }
-        ParseRelation<ImpromptuUser> relation = this.getRelation(pushFriendsKey);
-        relation.add(friend);
-        saveInBackground();
 
     }
 
     public void removePushFriend(ImpromptuUser friend) {
-        try {
-            this.fetchIfNeeded();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
+        if (localPushed || getPushed()) {
+            try {
+                this.fetchIfNeeded();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching Event:", exc);
+            }
+            ParseRelation<ImpromptuUser> relation = this.getRelation(pushFriendsKey);
+            relation.remove(friend);
+            saveInBackground();
+        } else {
+            Log.d("Impromptu", "Local removePushFriend...");
+            localPushFriends.remove(friend);
         }
-        ParseRelation<ImpromptuUser> relation = this.getRelation(pushFriendsKey);
-        relation.remove(friend);
-        saveInBackground();
 
     }
 
     public List<ImpromptuUser> getStreamFriends() {
-        try {
-            this.fetch();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
+        if (localPushed || getPushed()) {
+            try {
+                this.fetch();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching Event:", exc);
+            }
+            ParseRelation relation = this.getRelation(streamFriendsKey);
+            ParseQuery q = relation.getQuery();
+            //        q.orderByAscending("name");
+            try {
+                save();
+                List<ImpromptuUser> list = q.find();
+                Collections.sort(list);
+                return list;
+            } catch (ParseException exc) {
+                Log.e("Impromptu", "Error querying: ", exc);
+            }
+            return null;
+        } else {
+            Log.d("Impromptu", "local getStreamFriends");
+            Collections.sort(localStreamFriends);
+            return localStreamFriends;
         }
-        ParseRelation relation = this.getRelation(streamFriendsKey);
-        ParseQuery q = relation.getQuery();
-//        q.orderByAscending("name");
-        try {
-            save();
-            List<ImpromptuUser> list = q.find();
-            Collections.sort(list);
-            return list;
-        } catch (ParseException exc) {
-            Log.e("Impromptu", "Error querying: ", exc);
-        }
-        return null;
 
     }
 
     public List<ImpromptuUser> getPushFriends() {
-        try {
-            this.fetch();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
+        if (localPushed || getPushed()) {
+            try {
+                this.fetch();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching Event:", exc);
+            }
+            ParseRelation relation = this.getRelation(pushFriendsKey);
+            ParseQuery q = relation.getQuery();
+            //        q.orderByAscending("name");
+            try {
+                save();
+                List<ImpromptuUser> list = q.find();
+                Collections.sort(list);
+                return list;
+            } catch (ParseException exc) {
+                Log.e("Impromptu", "Error querying: ", exc);
+            }
+            return null;
+        } else {
+            Log.d("Impromptu", "local getPushFriends");
+            Collections.sort(localPushFriends);
+            return localPushFriends;
         }
-        ParseRelation relation = this.getRelation(pushFriendsKey);
-        ParseQuery q = relation.getQuery();
-//        q.orderByAscending("name");
-        try {
-            save();
-            List<ImpromptuUser> list = q.find();
-            Collections.sort(list);
-            return list;
-        } catch (ParseException exc) {
-            Log.e("Impromptu", "Error querying: ", exc);
-        }
-        return null;
     }
 
     public Event() {
@@ -260,8 +335,44 @@ public class Event extends ParseObject implements Comparable<Event> {
 
     public void persist() {
         Log.d("Impromptu", "Persisting event");
+        if (!getPushed()) {
+            Log.d("Impromptu", "Saving all data to parse object in preparation for save.");
+            localPushed = true;
+            setTitle(localTitle);
+            setCreationTime(localCreationTime);
+            setDescription(localDescription);
+            setDurationHour(localDurationHour);
+            setDurationMinute(localDurationMinute);
+            setSeekStart(localSeekStart);
+            setSeekDuration(localSeekDuration);
+            setOwner((ImpromptuUser)ParseUser.createWithoutData("_User", localOwner.getObjectId()));
+            setEventTime(localEventTime);
+            setLocationName(localLocation);
+            setType(localType);
+            setLatitude(localLatitude);
+            setLongitude(localLongitude);
+            setFormattedAddress(localFormattedAddress);
+            setEventTimeMorning(localEventTimeMorning);
+            ParseRelation<ImpromptuUser> streamFriends = getRelation(streamFriendsKey);
+            for (ImpromptuUser friend : localStreamFriends) {
+                streamFriends.add(friend);
+            }
+            ParseRelation<ImpromptuUser> pushFriends = getRelation(pushFriendsKey);
+            for (ImpromptuUser friend : localPushFriends) {
+                pushFriends.add(friend);
+            }
+            ParseRelation<ImpromptuUser> usersGoing = getRelation(usersGoingKey);
+            for (ImpromptuUser friend : localUsersGoing) {
+                usersGoing.add(friend);
+            }
+
+            setPushGroups((ArrayList<Group>) localPushGroups);
+            setStreamGroups((ArrayList<Group>) localStreamGroups);
+            setPushed(true);
+        }
+
+
         final Event ref = this;
-        setPushed(true);
         this.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
@@ -271,33 +382,66 @@ public class Event extends ParseObject implements Comparable<Event> {
                     params.put("eventId", objectId);
                     Log.d("Impromptu", "Object id: " + objectId);
                     ParseCloud.callFunctionInBackground("addNewEvent", params, null);
+                } else {
+                    Log.e("Impromptu", "Exception when persisting event: ", e);
                 }
             }
         });
     }
 
     public void setOwner(ImpromptuUser owner) {
-        this.put(ownerKey, owner);
+
+        if (localPushed || getPushed()) {
+            this.put(ownerKey, owner);
+        } else {
+            Log.d("Impromptu", "Local setOwner");
+            localOwner = owner;
+        }
     }
 
     public void setType(String type) {
-        this.put(typeKey, type);
+
+        if (localPushed || getPushed()) {
+            this.put(typeKey, type);
+        } else {
+            Log.d("Impromptu", "Local setType");
+            localType = type;
+        }
     }
 
     public void setTitle(String title) {
-        this.put(titleKey, title);
+
+        if (localPushed || getPushed()) {
+            this.put(titleKey, title);
+        } else {
+            Log.d("Impromptu", "local setTitle");
+            localTitle = title;
+        }
     }
 
     public void setDescription(String description) {
-        this.put(descriptionKey, description);
+
+        if (localPushed || getPushed()) {
+            this.put(descriptionKey, description);
+        } else {
+            localDescription = description;
+        }
     }
 
     public void setStreamGroups(ArrayList<Group> streamGroups) {
-        this.put(streamGroupsKey, streamGroups);
+        if (localPushed || getPushed()) {
+            this.put(streamGroupsKey, streamGroups);
+        } else {
+            localStreamGroups = streamGroups;
+        }
     }
 
     public void setPushGroups(ArrayList<com.example.steve.impromptu.Entity.Group> pushGroups) {
-        this.put(pushGroupsKey, pushGroups);
+        if (localPushed || getPushed()) {
+            this.put(pushGroupsKey, pushGroups);
+        } else {
+            localPushGroups = pushGroups;
+        }
     }
 //
 //    public void setPushFriends(ArrayList<ImpromptuUser> pushFriends) {
@@ -306,92 +450,158 @@ public class Event extends ParseObject implements Comparable<Event> {
 
 
     public void setEventTime(Time eventTime) {
-        this.put(eventTimeKey, new Date(eventTime.toMillis(false)));
+
+        if (localPushed || getPushed()) {
+            this.put(eventTimeKey, new Date(eventTime.toMillis(false)));
+        } else {
+            localEventTime = eventTime;
+        }
     }
 
     public void setEventTimeMorning(Boolean morning) {
-        this.put("eventTimeMorning", morning);
+
+        if (localPushed || getPushed()) {
+            this.put("eventTimeMorning", morning);
+        } else {
+            localEventTimeMorning = morning;
+        }
     }
 
     public void setSeekStart(int progress) {
-        this.put(seekStartKey, progress);
+        if (localPushed || getPushed()) {
+            this.put(seekStartKey, progress);
+        } else {
+            localSeekStart = progress;
+        }
     }
 
     public void setSeekDuration(int progress) {
-        this.put(seekDurationKey, progress);
+        if (localPushed || getPushed()) {
+            this.put(seekDurationKey, progress);
+        } else {
+            localSeekDuration = progress;
+        }
     }
 
     public void setCreationTime(Time creationTime) {
-        this.put(creationTimeKey, new Date(creationTime.toMillis(false)));
+
+        if (localPushed || getPushed()) {
+            this.put(creationTimeKey, new Date(creationTime.toMillis(false)));
+        } else {
+            localCreationTime = creationTime;
+        }
     }
 
     public void setLocationName(String location) {
-        this.put(locationKey, location);
+
+        if (localPushed || getPushed()) {
+            this.put(locationKey, location);
+        } else {
+            localLocation = location;
+        }
     }
 
     public void setLatitude(Double latitude) {
-        this.put(latitudeKey, latitude);
+        if (localPushed || getPushed()) {
+            this.put(latitudeKey, latitude);
+        } else {
+            localLatitude = latitude;
+        }
     }
 
     public void setLongitude(Double longitude) {
-        this.put(longitudeKey, longitude);
+
+        if (localPushed || getPushed()) {
+            this.put(longitudeKey, longitude);
+        } else {
+            localLongitude = longitude;
+        }
     }
 
     public void setFormattedAddress(String address) {
-        this.put(addressKey, address);
+
+        if (localPushed || getPushed()) {
+            this.put(addressKey, address);
+        } else {
+            localFormattedAddress = address;
+        }
     }
 
-//    public void setUsersGoing(ArrayList<ImpromptuUser> users) {
-//        this.put(usersGoingKey, users);
-//    }
 
     public ImpromptuUser getOwner() {
         //TODO - add verification
-        try {
-            this.fetchIfNeeded();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
+
+        if (localPushed || getPushed()) {
+            try {
+                this.fetchIfNeeded();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching Event:", exc);
+            }
+            return (ImpromptuUser) this.get(ownerKey);
+        } else {
+            return localOwner;
         }
-        return (ImpromptuUser) this.get(ownerKey);
     }
 
     public void setDurationHour(int durationHour) {
-        this.put(durationHourKey, durationHour);
+
+        if (localPushed || getPushed()) {
+            this.put(durationHourKey, durationHour);
+        } else {
+            localDurationHour = durationHour;
+        }
     }
 
     public void setDurationMinute(int durationMinute) {
-        this.put(durationMinuteKey, durationMinute);
+
+        if (localPushed || getPushed()) {
+            this.put(durationMinuteKey, durationMinute);
+        } else {
+            localDurationMinute = durationMinute;
+        }
     }
 
 
     public String getType() {
 
-        try {
-            this.fetchIfNeeded();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
+        if (localPushed || getPushed()) {
+            try {
+                this.fetchIfNeeded();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching Event:", exc);
+            }
+            return (String) this.get(typeKey);
+        } else {
+            return localType;
         }
-        return (String) this.get(typeKey);
     }
 
     public String getTitle() {
 
-        try {
-            this.fetch();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
+        if (localPushed || getPushed()) {
+            try {
+                this.fetch();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching Event:", exc);
+            }
+            return (String) this.get(titleKey);
+        } else {
+            return localTitle;
         }
-        return (String) this.get(titleKey);
     }
 
     public String getDescription() {
 
-        try {
-            this.fetch();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
+        if (localPushed || getPushed()) {
+            try {
+                this.fetch();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching Event:", exc);
+            }
+            return this.getString(descriptionKey);
+        } else {
+            return localDescription;
         }
-        return this.getString(descriptionKey);
     }
 
     public void verifyGroups(List<Group> groups) {
@@ -411,137 +621,192 @@ public class Event extends ParseObject implements Comparable<Event> {
 
     public List<com.example.steve.impromptu.Entity.Group> getStreamGroups() {
 
-        try {
-            this.fetch();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
+        if (localPushed || getPushed()) {
+            try {
+                this.fetch();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching Event:", exc);
+            }
+            List<Group> groups = this.getList(streamGroupsKey);
+            verifyGroups(groups);
+            Collections.sort(groups);
+            return groups;
+        } else {
+            Collections.sort(localStreamGroups);
+            return localStreamGroups;
         }
-        List<Group> groups = this.getList(streamGroupsKey);
-        verifyGroups(groups);
-        Collections.sort(groups);
-        return groups;
     }
 
     public List<com.example.steve.impromptu.Entity.Group> getPushGroups() {
 
-        try {
-            this.fetch();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
+        if (localPushed || getPushed()) {
+            try {
+                this.fetch();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching Event:", exc);
+            }
+            List<Group> groups = this.getList(pushGroupsKey);
+            verifyGroups(groups);
+            Collections.sort(groups);
+            return groups;
+        } else {
+            Collections.sort(localPushGroups);
+            return localPushGroups;
         }
-        List<Group> groups = this.getList(pushGroupsKey);
-        verifyGroups(groups);
-        Collections.sort(groups);
-        return groups;
     }
 
     public Time getEventTime() {
-        try {
-            this.fetch();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
+
+        if (localPushed || getPushed()) {
+            try {
+                this.fetch();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching Event:", exc);
+            }
+            Time eventTime = new Time();
+            eventTime.set(this.getDate(eventTimeKey).getTime());
+            return eventTime;
+        } else {
+            return localEventTime;
         }
-        Time eventTime = new Time();
-        eventTime.set(this.getDate(eventTimeKey).getTime());
-        return eventTime;
     }
 
     public Time getCreationTime() {
-        try {
-            this.fetch();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
+
+        if (localPushed || getPushed()) {
+            try {
+                this.fetch();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching Event:", exc);
+            }
+            Time creationTime = new Time();
+            creationTime.set(this.getDate(creationTimeKey).getTime());
+            return creationTime;
+        } else {
+            return localCreationTime;
         }
-        Time creationTime = new Time();
-        creationTime.set(this.getDate(creationTimeKey).getTime());
-        return creationTime;
     }
 
     public Boolean getEventTimeMorning() {
-        return (Boolean) this.get("eventTimeMorning");
-    }
 
-    public String getLocation() {
-        return (String) this.get("location");
+        if (localPushed || getPushed()) {
+            return (Boolean) this.get("eventTimeMorning");
+        } else {
+            return localEventTimeMorning;
+        }
     }
 
     public String getLocationName() {
 
-        try {
-            this.fetch();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
+        if (localPushed || getPushed()) {
+            try {
+                this.fetch();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching Event:", exc);
+            }
+            return this.getString(locationKey);
+        } else {
+            return localLocation;
         }
-        return this.getString(locationKey);
     }
 
     public String getFormattedAddress() {
 
-        try {
-            this.fetch();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
+        if (localPushed || getPushed()) {
+            try {
+                this.fetch();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching Event:", exc);
+            }
+            return this.getString(addressKey);
+        } else {
+            return localFormattedAddress;
         }
-        return this.getString(addressKey);
     }
 
     public Double getLongitude() {
 
-        try {
-            this.fetch();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
+        if (localPushed || getPushed()) {
+            try {
+                this.fetch();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching Event:", exc);
+            }
+            return this.getDouble(longitudeKey);
+        } else {
+            return localLongitude;
         }
-        return this.getDouble(longitudeKey);
     }
 
     public Double getLatitude() {
 
-        try {
-            this.fetch();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
+        if (localPushed || getPushed()) {
+            try {
+                this.fetch();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching Event:", exc);
+            }
+            return this.getDouble(latitudeKey);
+        } else {
+            return localLatitude;
         }
-        return this.getDouble(latitudeKey);
     }
 
     public int getDurationHour() {
 
-        try {
-            this.fetch();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
+        if (localPushed || getPushed()) {
+            try {
+                this.fetch();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching Event:", exc);
+            }
+            return this.getInt(durationHourKey);
+        } else {
+            return localDurationHour;
         }
-        return this.getInt(durationHourKey);
     }
 
     public int getDurationMinute() {
 
-        try {
-            this.fetch();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
+        if (localPushed || getPushed()) {
+            try {
+                this.fetch();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching Event:", exc);
+            }
+            return this.getInt(durationMinuteKey);
+        } else {
+            return localDurationMinute;
         }
-        return this.getInt(durationMinuteKey);
     }
 
     public int getSeekStart() {
-        try {
-            this.fetch();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
+
+        if (localPushed || getPushed()) {
+            try {
+                this.fetch();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching Event:", exc);
+            }
+            return this.getInt(seekStartKey);
+        } else {
+            return localSeekStart;
         }
-        return this.getInt(seekStartKey);
 
     }
 
     public int getSeekDuration() {
-        try {
-            this.fetch();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
+
+        if (localPushed || getPushed()) {
+            try {
+                this.fetch();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching Event:", exc);
+            }
+            return this.getInt(seekDurationKey);
+        } else {
+            return localSeekDuration;
         }
-        return this.getInt(seekDurationKey);
 
     }
 
@@ -565,44 +830,58 @@ public class Event extends ParseObject implements Comparable<Event> {
     }
 
     public List<ImpromptuUser> getUsersGoing() {
-        try {
-            this.fetch();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
+
+        if (localPushed || getPushed()) {
+            try {
+                this.fetch();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching Event:", exc);
+            }
+            ParseRelation relation = this.getRelation(usersGoingKey);
+            ParseQuery q = relation.getQuery();
+            q.orderByAscending("name");
+            try {
+                save();
+                return q.find();
+            } catch (ParseException exc) {
+                Log.e("Impromptu", "Error querying: ", exc);
+            }
+            return null;
+        } else {
+            return localUsersGoing;
         }
-        ParseRelation relation = this.getRelation(usersGoingKey);
-        ParseQuery q = relation.getQuery();
-        q.orderByAscending("name");
-        try {
-            save();
-            return q.find();
-        } catch (ParseException exc) {
-            Log.e("Impromptu", "Error querying: ", exc);
-        }
-        return null;
     }
 
     public void addUserGoing(ImpromptuUser user) {
-        try {
-            this.fetchIfNeeded();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
+
+        if (localPushed || getPushed()) {
+            try {
+                this.fetchIfNeeded();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching Event:", exc);
+            }
+            ParseRelation<ImpromptuUser> relation = this.getRelation(usersGoingKey);
+            relation.add(user);
+            saveInBackground();
+        } else {
+            localUsersGoing.add(user);
         }
-        ParseRelation<ImpromptuUser> relation = this.getRelation(usersGoingKey);
-        relation.add(user);
-        saveInBackground();
 
     }
 
     public void removeUserGoing(ImpromptuUser user) {
-        try {
-            this.fetchIfNeeded();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Event:", exc);
+        if (localPushed || getPushed()) {
+            try {
+                this.fetchIfNeeded();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching Event:", exc);
+            }
+            ParseRelation<ImpromptuUser> relation = this.getRelation(usersGoingKey);
+            relation.remove(user);
+            saveInBackground();
+        } else {
+            localUsersGoing.remove(user);
         }
-        ParseRelation<ImpromptuUser> relation = this.getRelation(usersGoingKey);
-        relation.remove(user);
-        saveInBackground();
 
     }
 
