@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.Group;
@@ -20,7 +19,6 @@ import com.example.steve.impromptu.Main.Compose.ArrayAdapters.ArrayAdapterCompos
 import com.example.steve.impromptu.R;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 
 /**
@@ -95,7 +93,7 @@ public class FragmentComposePush extends Fragment {
         }
 
         eventPushFriendsList = (ArrayList<ImpromptuUser>) myEvent.getPushFriends();
-        eventPushGroupsList = (ArrayList<Group>) myEvent.getPushGroups();
+//        eventPushGroupsList = (ArrayList<Group>) myEvent.getPushGroups();
 
         if (!eventPushFriendsList.isEmpty()) {
 
@@ -222,19 +220,20 @@ public class FragmentComposePush extends Fragment {
                     if (frd != null) {
                         // if this friend was in the eventPushFriendsList && is not selected, remove it
                         if (!(friend.isSelected())) {
-                            eventPushFriendsList.remove(frd);
+//                            eventPushFriendsList.remove(frd);
+                            myEvent.removePushFriend(frd);
                         }
                     }
 
                     if (friend.isSelected()) {
                         // if this is one of the selected friends && isn't already in the eventPushFriendsList, add it
                         if (frd == null) {
-                            eventPushFriendsList.add(friend);
+//                            eventPushFriendsList.add(friend);
+                            myEvent.addPushFriend(friend);
                         }
                     }
-
                 }
-                Collections.sort(eventPushFriendsList); // make sure eventPushFriendsList is sorted alphabetically
+//                Collections.sort(eventPushFriendsList); // make sure eventPushFriendsList is sorted alphabetically
                 // TODO fix this
 //                myEvent.setPushFriends(eventPushFriendsList);
 
@@ -258,21 +257,9 @@ public class FragmentComposePush extends Fragment {
                     }
 
                 }
-                Collections.sort(eventPushGroupsList); // make sure eventPushGroupsList is sorted alphabetically
+//                Collections.sort(eventPushGroupsList); // make sure eventPushGroupsList is sorted alphabetically
+
                 myEvent.setPushGroups(eventPushGroupsList);
-
-                String test = "Friends: ";
-                for (ImpromptuUser friend : eventPushFriendsList) {
-                    if (friend.isSelected())
-                        test = test + friend.getName() + " ";
-                }
-                test = test + "\n Groups: ";
-                for (Group group : eventPushGroupsList) {
-                    if (group.isSelected())
-                        test = test + group.getGroupName();
-                }
-
-                Toast.makeText(getActivity(), test, Toast.LENGTH_SHORT).show();
 
                 mCallback.onComposePushFinished();
             }

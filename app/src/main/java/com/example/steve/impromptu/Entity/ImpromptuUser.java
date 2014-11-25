@@ -69,23 +69,9 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         this.put(visibleEventsKey, events);
     }
 
-    /**
-     * will be called by cloud code, postSave from Event
-     *
-     * @param event
-     */
-    public void addStreamEvent(Event event) {
-        List<Event> events = getStreamEvents();
-        if (!events.contains(event)) {
-            events.add(event);
-            Collections.sort(events);
-        }
-    }
-
     public List<Event> getStreamEvents() {
-
         try {
-            this.fetchIfNeeded();
+            this.fetch();
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching User:", exc);
         }
@@ -239,7 +225,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
 
     public List<ImpromptuUser> getFriends() {
         try {
-            this.fetchIfNeeded();
+            this.fetch();
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching User:", exc);
         }
@@ -267,7 +253,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
 
     public List<Group> getGroups() {
         try {
-            this.fetchIfNeeded();
+            this.fetch();
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching User:", exc);
         }
