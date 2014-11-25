@@ -109,26 +109,41 @@ public class FragmentComposeLocation extends Fragment {
 
         vSelectedLocation.setText("");
 
-        if (returnVal == null) {
+        //TODO: when loading default value, set on map?
+
+
+        returnVal = null;
+
+        if (myEvent.getLocationName() != null)
+        {
             returnVal = new ImpromptuLocation();
+
+            String formattedAdr = myEvent.getFormattedAddress();
+            if (!(formattedAdr == null)) {
+                returnVal.setFormattedAddress(formattedAdr);
+            }
+
+            String name = myEvent.getLocationName();
+            if (!(name ==null)) {
+                returnVal.setName(name);
+            }
+
+            Double lat = myEvent.getLatitude();
+            Double lng = myEvent.getLongitude();
+            if (!(lat == null) && !(lng == null)) {
+                LatLng coord = new LatLng(lat, lng);
+                returnVal.setCoordinates(coord);
+            }
         }
 
-        String formattedAdr = myEvent.getFormattedAddress();
-        if (!(formattedAdr == null)) {
-            returnVal.setFormattedAddress(formattedAdr);
-        }
+        //if (returnVal == null) {
+            //returnVal = new ImpromptuLocation();
+        //}
 
-        String name = myEvent.getLocationName();
-        if (!(name ==null)) {
-            returnVal.setName(name);
-        }
 
-        Double lat = myEvent.getLatitude();
-        Double lng = myEvent.getLongitude();
-        if (!(lat == null) && !(lng == null)) {
-            LatLng coord = new LatLng(lat, lng);
-            returnVal.setCoordinates(coord);
-        }
+
+
+        //TODO: make fragment scrollable (see FragmentEventDetail), move buttons
 
         //this works just a little differently:
         MapFragment mf = (MapFragment) getFragmentManager().findFragmentById(R.id.fragComposeLocation_map);
@@ -154,6 +169,8 @@ public class FragmentComposeLocation extends Fragment {
         vOkay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                //TODO: MAKE SURE I ERROR CHECK. Currently have error when I hit Ok after clicking nothing
 
                 if(returnVal == null)
                 {
@@ -237,7 +254,7 @@ public class FragmentComposeLocation extends Fragment {
     /*
     //TODO: master list:
     -take care of other todos
-    -test location determination on actual phone (not using default location)
+    -make it zoom to your location AND event location in same picture? (low priority)
      */
 
 
