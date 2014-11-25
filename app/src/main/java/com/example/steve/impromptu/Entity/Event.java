@@ -203,7 +203,7 @@ public class Event extends ParseObject implements Comparable<Event> {
         HashMap<String, String> map = new HashMap<String, String>();
 
         map.put("user", this.getOwner().getName());
-        map.put("picture", Integer.toString(R.drawable.ic_launcher));
+        map.put("picture", getPicture());
 
         Time creationTime = new Time();
         creationTime.set(this.getDate("creationTime").getTime());
@@ -215,6 +215,26 @@ public class Event extends ParseObject implements Comparable<Event> {
         map.put("date", hour + ":" + minute);
         map.put("content", this.getDescription());
         return map;
+    }
+
+    public String getPicture(){
+        switch(this.getType()){
+            case "Drinking":
+                return Integer.toString(R.drawable.drinking);
+            case "Eating":
+                return Integer.toString(R.drawable.food);
+            case "Sports":
+                return Integer.toString(R.drawable.sport_icon);
+            case "Studying":
+                return Integer.toString(R.drawable.studying);
+            case "TV":
+                return Integer.toString(R.drawable.tv);
+            case "Working Out":
+                return Integer.toString(R.drawable.working_out);
+            default:
+                return Integer.toString(R.drawable.drinking);
+        }
+
     }
 
     public static Event getEventById(String id) {

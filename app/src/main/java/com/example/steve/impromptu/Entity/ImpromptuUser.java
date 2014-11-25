@@ -90,7 +90,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
             Log.e("Impromptu", "Error fetching User:", exc);
         }
         List<Event> events = this.getList(visibleEventsKey);
-        verifyEvents(events);
+//        verifyEvents(events);
         Log.d("Impromptu", "List Size: " + events.size());
 
         return events;
