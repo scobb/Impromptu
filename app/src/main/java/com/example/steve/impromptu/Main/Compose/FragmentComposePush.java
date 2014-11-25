@@ -66,6 +66,8 @@ public class FragmentComposePush extends Fragment {
         ActivityMain myActivity = (ActivityMain) getActivity();
         Event myEvent = myActivity.getComposeEvent();
 
+//        test();
+
         userFriendsList = (ArrayList<ImpromptuUser>) currentUser.getFriends();
         userGroupsList = (ArrayList<Group>) currentUser.getGroups();
 
@@ -260,4 +262,20 @@ public class FragmentComposePush extends Fragment {
                     + " must implement OnComposePushFinishedListener");
         }
     }
+
+//    public void test () {
+//        ImpromptuUser me = (ImpromptuUser) ImpromptuUser.getCurrentUser();
+//        ArrayList<ImpromptuUser> friends = (ArrayList<ImpromptuUser>) me.getFriends();
+//
+//        Group everyone = new Group("everyone");
+//
+//        for (ImpromptuUser frd : friends) {
+//            everyone.add(frd);
+//        }
+//
+//        everyone.persist();
+//
+//        me.addGroup(everyone);
+//        me.persist();
+//    }
 }
