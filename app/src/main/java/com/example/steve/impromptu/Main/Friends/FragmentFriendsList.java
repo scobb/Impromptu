@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,7 @@ public class FragmentFriendsList extends Fragment {
     ArrayList<ImpromptuUser> friends = new ArrayList<>();
     ArrayList<ImpromptuUser> friendRequests = new ArrayList<>();
     ArrayList<FriendAndRequestHolder> masterList = new ArrayList<>(); // holds all friend requests and friends
+    ArrayList<FriendAndRequestHolder> filteredList = new ArrayList<>(); // holds friend requests and friends that match search
     ImpromptuUser currentUser;
     static ArrayAdapterFriendsList adapter;
 
@@ -68,8 +71,42 @@ public class FragmentFriendsList extends Fragment {
             masterList.add(holder);
         }
 
-        adapter = new ArrayAdapterFriendsList(getActivity(), R.layout.template_friend_or_request_item, masterList, currentUser);
+        for (FriendAndRequestHolder hld : masterList) {
+            filteredList.add(hld); // filteredList starts off with the same holders as masterList; will change with search
+        }
+
+        adapter = new ArrayAdapterFriendsList(getActivity(), R.layout.template_friend_or_request_item, filteredList, currentUser);
         vList.setAdapter(adapter);
+
+        vSearchBar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+
+                int textLength = charSequence.length();
+                String text = charSequence.toString().toLowerCase();
+                filteredList.clear();
+
+                for (FriendAndRequestHolder holder : masterList) {
+                    if (textLength <= holder.getName().length()) {
+                        if (holder.getName().toLowerCase().contains(text)) {
+                            filteredList.add(holder);
+                        }
+                    }
+                }
+
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
 
         return fragmentView;
     }
