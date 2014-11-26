@@ -51,7 +51,7 @@ public class FragmentComposeStreamGroups extends Fragment {
         vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposeStreamGroups_linearLayout_cancel);
 
         ImpromptuUser currentUser = (ImpromptuUser) ImpromptuUser.getCurrentUser();
-        userGroupsList = (ArrayList<Group>) currentUser.getGroups();
+//        userGroupsList = (ArrayList<Group>) currentUser.getGroups();
 
         ActivityMain myActivity = (ActivityMain) getActivity();
         Event myEvent = myActivity.getComposeEvent();

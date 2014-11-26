@@ -63,14 +63,13 @@ public class FragmentComposePush extends Fragment {
         vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposePush_linearLayout_okay);
         vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposePush_linearLayout_cancel);
 
-        ImpromptuUser currentUser = (ImpromptuUser) ImpromptuUser.getCurrentUser();
         ActivityMain myActivity = (ActivityMain) getActivity();
         Event myEvent = myActivity.getComposeEvent();
 
 //        test();
 
-        userFriendsList = (ArrayList<ImpromptuUser>) currentUser.getFriends();
-        userGroupsList = (ArrayList<Group>) currentUser.getGroups();
+        userFriendsList = (ArrayList<ImpromptuUser>) myEvent.getAllFriends();
+        userGroupsList = (ArrayList<Group>) myEvent.getAllGroups();
 
 
         // initialize all friends to unselected

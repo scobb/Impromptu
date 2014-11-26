@@ -413,8 +413,14 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     }
 
     public void compose(View view) {
+        ImpromptuUser currentUser = (ImpromptuUser) ImpromptuUser.getCurrentUser();
+
         composeEvent = new Event();
         composeEvent.clear();
+
+        composeEvent.setAllFriends(currentUser.getFriends());
+        composeEvent.setAllGroups(currentUser.getGroups());
+
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
