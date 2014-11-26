@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.text.format.Time;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -114,6 +115,9 @@ public class FragmentComposeTime extends Fragment {
             endTime = new Time();
 
             currentTime.setToNow();
+            startTime.setToNow();
+            endTime.setToNow();
+            Log.d("Impromptu", "startTime: " + startTime);
             startTime.hour = currentTime.hour;
             absoluteStartHour = startTime.hour;
             startTime.minute = currentTime.minute;
@@ -267,7 +271,7 @@ public class FragmentComposeTime extends Fragment {
 
                     ActivityMain myActivity = (ActivityMain) getActivity();
                     myEvent = myActivity.getComposeEvent();
-
+                    Log.d("Impromptu", "Onclick listener! startTime: " + startTime.toMillis(false));
                     myEvent.setEventTime(startTime);
                     myEvent.setEventTimeMorning(startMorning);
                     myEvent.setDurationHour(durationHour);
