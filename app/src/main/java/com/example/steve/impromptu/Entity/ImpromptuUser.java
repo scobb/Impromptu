@@ -83,7 +83,10 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
             if (result.size() > 0) {
                 Log.d("Impromptu", "Friend request already exists.");
                 return false;
-            } else {
+            } else if (getFriends().contains(friend)) {
+                Log.d("Impromptu", "User already in friends list.");
+                return false;
+            }else {
                 FriendRequest fr = new FriendRequest();
                 fr.setFrom(this);
                 fr.setTo(friend);
