@@ -61,27 +61,30 @@
             android:layout_height="wrap_content"
             android:text="Stream"
             android:onClick="stream" />
-        <Button
-            android:id="@+id/activityMain_button_map"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="Map"
-            android:onClick="map" />
-        <Button
-            android:id="@+id/activityMain_button_invites"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="Friends"
-            android:onClick="friends" />
+
         <Button
             android:id="@+id/activityMain_button_friends"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Events"
-            android:onClick="events" />
+            android:text="Friends"
+            android:onClick="friends" />
+
+        <Button
+            android:id="@+id/activityMain_button_groups"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Groups"
+            android:onClick="groups" />
+
+        <Button
+            android:id="@+id/activityMain_button_updates"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Updates"
+            android:onClick="updates" />
 
         </LinearLayout>
 </LinearLayout>

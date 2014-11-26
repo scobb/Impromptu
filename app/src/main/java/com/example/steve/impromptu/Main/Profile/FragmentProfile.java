@@ -1,4 +1,4 @@
-package com.example.steve.impromptu.Main;
+package com.example.steve.impromptu.Main.Profile;
 
 import android.app.Fragment;
 import android.app.ProgressDialog;

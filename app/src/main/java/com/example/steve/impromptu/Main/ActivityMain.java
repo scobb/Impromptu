@@ -30,6 +30,8 @@ import com.example.steve.impromptu.Main.Compose.FragmentComposeStream;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeStreamGroups;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeTime;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeType;
+import com.example.steve.impromptu.Main.Friends.FragmentFriendsList;
+import com.example.steve.impromptu.Main.Profile.FragmentProfile;
 import com.example.steve.impromptu.R;
 import com.parse.Parse;
 import com.parse.ParseObject;
@@ -395,16 +397,25 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         fragmentTransaction.commit();
     }
 
-    public void map(View view) {
-        Toast.makeText(this, "show map", Toast.LENGTH_SHORT).show();
-    }
+//    public void map(View view) {
+//        Toast.makeText(this, "show map", Toast.LENGTH_SHORT).show();
+//    }
 
-    public void events(View view) {
-        Toast.makeText(this, "show invites", Toast.LENGTH_SHORT).show();
+    public void updates(View view) {
+        Toast.makeText(this, "show updates", Toast.LENGTH_SHORT).show();
     }
 
     public void friends(View view) {
-        Toast.makeText(this, "show friends", Toast.LENGTH_SHORT).show();
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        FragmentFriendsList fragment = new FragmentFriendsList();
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
+    public void groups(View view) {
+        Toast.makeText(this, "show groups", Toast.LENGTH_SHORT).show();
     }
 
     public void profile(View view) {
@@ -444,17 +455,5 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 
     public static void setFilter(String type, boolean state){
 
-    }
-
-//    public LinearLayout getTopMenu() { return vTopMenu; }
-//    public LinearLayout getBottomMenu() { return vBottomMenu; }
-
-    public LinearLayout clearTopMenu() {
-        int numChildren = vTopMenu.getChildCount();
-        while (numChildren > 2) {
-            vTopMenu.removeViewAt(vTopMenu.getChildCount() - 1);
-            numChildren -= 1;
-        }
-        return vTopMenu;
     }
 }

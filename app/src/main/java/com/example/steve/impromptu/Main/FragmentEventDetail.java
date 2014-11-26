@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
+import com.example.steve.impromptu.Main.Profile.FragmentProfile;
 import com.example.steve.impromptu.R;
 import com.example.steve.impromptu.UI.ScrollableMapFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;

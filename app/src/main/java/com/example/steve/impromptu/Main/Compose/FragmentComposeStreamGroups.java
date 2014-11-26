@@ -49,12 +49,11 @@ public class FragmentComposeStreamGroups extends Fragment {
         vGroupsList = (ListView) fragmentView.findViewById(R.id.fragComposeStreamGroups_listView_groupsList);
         vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposeStreamGroups_linearLayout_okay);
         vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposeStreamGroups_linearLayout_cancel);
-
-        ImpromptuUser currentUser = (ImpromptuUser) ImpromptuUser.getCurrentUser();
-//        userGroupsList = (ArrayList<Group>) currentUser.getGroups();
-
         ActivityMain myActivity = (ActivityMain) getActivity();
         Event myEvent = myActivity.getComposeEvent();
+
+//        ImpromptuUser currentUser = (ImpromptuUser) ImpromptuUser.getCurrentUser();
+        userGroupsList = (ArrayList<Group>) myEvent.getAllGroups();
 
         // initialize all groups to unselected
         for (Group group : userGroupsList) {
