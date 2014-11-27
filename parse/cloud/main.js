@@ -5,36 +5,36 @@ Parse.Cloud.define("hello", function(request, response) {
 	response.success("Hello world!");
 });
 
-//Parse.Cloud.afterSave("Event", function(request) {
-//	Parse.Cloud.useMasterKey();
-//	var event = request.object;
-//	var Event = Parse.Object.extend("Event");
-//	console.log("Event is " + event);
-//	console.log("eventId: " + event.id);
-//	// users whose events array contain the event in question
-//	var relation = event.relation("streamFriends");
-//	var q = relation.query();
+// Parse.Cloud.afterSave("Event", function(request) {
+// Parse.Cloud.useMasterKey();
+// var event = request.object;
+// var Event = Parse.Object.extend("Event");
+// console.log("Event is " + event);
+// console.log("eventId: " + event.id);
+// // users whose events array contain the event in question
+// var relation = event.relation("streamFriends");
+// var q = relation.query();
 //	
-//	q.find().then(function(results) {
-//		console.log("In q, results are : " + results);
-//		for (var j = 0; j < results.length; j++) {
-//			var userEvents = results[j].get("events")
-//			var needToAdd = true;
-//			for (var k = 0; k < userEvents.length; k++) {
-//				if (userEvents[k].id == event.id) {
-//					needToAdd = false;
-//					break;
-//				}
-//			}
-//			if (needToAdd)
-//				userEvents.push(event);
-//		}
-//		Parse.Object.saveAll(results);
+// q.find().then(function(results) {
+// console.log("In q, results are : " + results);
+// for (var j = 0; j < results.length; j++) {
+// var userEvents = results[j].get("events")
+// var needToAdd = true;
+// for (var k = 0; k < userEvents.length; k++) {
+// if (userEvents[k].id == event.id) {
+// needToAdd = false;
+// break;
+// }
+// }
+// if (needToAdd)
+// userEvents.push(event);
+// }
+// Parse.Object.saveAll(results);
 //
-//	}, function(error) {
-//		console.log("Error: " + error.message);
-//	});
-//});
+// }, function(error) {
+// console.log("Error: " + error.message);
+// });
+// });
 
 Parse.Cloud.define("addNewEvent", function(request, response) {
 	Parse.Cloud.useMasterKey();
@@ -72,6 +72,75 @@ Parse.Cloud.define("addNewEvent", function(request, response) {
 		})
 	}, function(error) {
 		response.error(error);
+	})
+})
+
+Parse.Cloud.job("cleanAllEvents", function(request, response) {
+	Parse.Cloud.useMasterKey();
+	var Event = Parse.Object.extend("Event");
+	var query = new Parse.Query(Event);
+	query.find().then(function(events) {
+		// look for events more than 24 hours old
+		var toDelete = []
+		var now = new Date().getTime() / 1000;
+		var targetTime = now - 3600 * 24;
+		for (var i = 0; i < events.length; i++) {
+			var event = events[i];
+			if (!event.get("pushed")) {
+				toDelete.push(event);
+			} else if (event.get("eventTime").getTime() < targetTime) {
+				toDelete.push(event);
+			}
+		}
+		
+	console.log("toDelete.length: " + toDelete.length);
+	return toDelete;
+	}).then(function(eventsToDelete) {
+		var q = new Parse.Query(Parse.User);
+		var toPersist = [];
+		q.include('events');
+		q.find().then(function(allUsers) {
+			allUsers.forEach(function(user) {
+				var events = user.get('events');
+				var needPersist = false;
+				for (var i = events.length - 1; i >= 0; i--) {
+					if (events[i] == null) {
+						console.log("Found a null event for " + user.id);
+						events.splice(i,1);
+						needPersist = true;
+					} else {
+						for (var k = 0; k < eventsToDelete.length; k++) {
+							if (events[i].id == eventsToDelete[k].id) {
+								console.log("Found event " + events[i].id + " for user " + user.id);
+								events.splice(i,1);
+								needPersist = true;
+								break;
+							}
+						}
+					}
+				}
+				if (needPersist) {
+					toPersist.push(user);
+				}
+			})
+		return [toPersist, eventsToDelete];
+		}).then(function(data){
+			var toPersist = data[0];
+			var toDelete = data[1];
+			console.log("toPersist.length: " + toPersist.length);
+			var promise = Parse.Promise.as();
+			promise = promise.then(function() {
+				return Parse.Object.saveAll(toPersist);
+			});
+			promise = promise.then(function() {
+				console.log("deleting events.");
+				return Parse.Object.destroyAll(toDelete);
+			});
+			return promise;
+		}).then(function() {
+			console.log("Done.");
+			response.success("Booyah.");
+		})
 	})
 })
 
