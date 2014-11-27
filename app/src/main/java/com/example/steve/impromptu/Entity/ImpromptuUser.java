@@ -6,6 +6,8 @@ import android.util.Log;
 
 import com.facebook.Request;
 import com.facebook.Response;
+import com.parse.FunctionCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseFile;
@@ -19,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -101,7 +104,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
             } else if (getFriends().contains(friend)) {
                 Log.d("Impromptu", "User already in friends list.");
                 return false;
-            }else {
+            } else {
                 FriendRequest fr = new FriendRequest();
                 fr.setFrom(this);
                 fr.setTo(friend);
@@ -127,6 +130,21 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         Log.d("Impromptu", "List Size: " + events.size());
 
         return events;
+    }
+
+    public void destroyFriendship(ImpromptuUser friend) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("fromId", this.getObjectId());
+        params.put("toId", friend.getObjectId());
+
+        ParseCloud.callFunctionInBackground("destroyFriendship", params, new FunctionCallback<Object>() {
+            @Override
+            public void done(Object o, ParseException e) {
+                if (e != null) {
+                    Log.e("Impromptu", "Exception destroying friendship: ", e);
+                }
+            }
+        });
     }
 
     /**
