@@ -2,7 +2,6 @@ package com.example.steve.impromptu.Main.Compose.ArrayAdapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Picture;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,11 +31,6 @@ public class ArrayAdapterFriendsList extends ArrayAdapter<FragmentFriendsList.Fr
         this.context = context;
         this.masterList = masterList;
         this.currentUser = currentUser;
-    }
-
-    static class ViewHolder {
-        protected TextView name;
-        protected Picture profilePicture;
     }
 
     @Override
@@ -74,54 +68,60 @@ public class ArrayAdapterFriendsList extends ArrayAdapter<FragmentFriendsList.Fr
             if (picture != null) {
                 vPicture.setImageBitmap(holder.getPicture());
             }
+            else {
+                vPicture.setImageResource(R.drawable.ic_launcher);
+            }
 
             vName.setText(holder.getName());
 
-            if (holder.getIsFriend()) {
-                vAccept.setOnClickListener(null);
+            if (holder.getIsAddFBFriend()) { // making list of people who are not my friends
 
-                vDecline.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
+            } else { // making list of current friends and people requesting friendship
+                if (holder.getIsFriend()) { // is current friend (means not requesting friendship)
+                    vAccept.setOnClickListener(null);
+                    vAccept.setVisibility(View.GONE);
+
+                    vDecline.setImageResource(R.drawable.ic_action_remove);
+                    vDecline.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            currentUser.removeFriend(masterList.get(position).getUser());
+                            int color = context.getResources().getColor(android.R.color.holo_red_light);
+                            View parent = (View) view.getParent();
+                            parent.setBackgroundColor(color);
+
+                        }
+                    });
+                } else { // is not a current friend (means seeking friendship)
+                    vAccept.setVisibility(View.VISIBLE);
+                    vAccept.setImageResource(R.drawable.ic_action_accept);
+                    vAccept.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            FragmentFriendsList.FriendAndRequestHolder holder = masterList.get(position);
+                            currentUser.addFriend(holder.getUser());
+                            
+                            int color = context.getResources().getColor(android.R.color.holo_green_light);
+                            View parent = (View) view.getParent();
+                            parent.setBackgroundColor(color);
+
+                        }
+                    });
+
+                    vDecline.setImageResource(R.drawable.ic_action_discard);
+                    vDecline.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
 
 //                        masterList.remove(position);
-                        currentUser.removeFriend(masterList.get(position).getUser());
-                        int color = context.getResources().getColor(android.R.color.holo_red_light);
-                        View parent = (View) view.getParent();
-                        parent.setBackgroundColor(color);
-
-                    }
-                });
-
-                vAccept.setVisibility(View.INVISIBLE);
-            } else {
-                vAccept.setVisibility(View.VISIBLE);
-
-                vAccept.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                        FragmentFriendsList.FriendAndRequestHolder holder = masterList.get(position);
-                        currentUser.addFriend(holder.getUser());
-                        int color = context.getResources().getColor(android.R.color.holo_green_light);
-                        View parent = (View) view.getParent();
-                        parent.setBackgroundColor(color);//                        holder.setIsFriend(true);
-//                        masterList.add(holder);
-//                        masterList.remove(position);
-
-                    }
-                });
-
-                vDecline.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-//                        masterList.remove(position);
-                        int color = context.getResources().getColor(android.R.color.holo_red_light);
-                        View parent = (View) view.getParent();
-                        parent.setBackgroundColor(color);
-                    }
-                });
+                            int color = context.getResources().getColor(android.R.color.holo_red_light);
+                            View parent = (View) view.getParent();
+                            parent.setBackgroundColor(color);
+                        }
+                    });
+                }
             }
         } else {
             view = convertView;

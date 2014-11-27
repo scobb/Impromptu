@@ -1,6 +1,5 @@
 package com.example.steve.impromptu.Main.Friends;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -28,12 +27,14 @@ public class FragmentFriendsList extends Fragment {
     ArrayList<FriendRequest> requests = new ArrayList<>();
     ArrayList<ImpromptuUser> friends = new ArrayList<>();
     ArrayList<ImpromptuUser> friendRequests = new ArrayList<>();
-    ArrayList<FriendAndRequestHolder> masterList = new ArrayList<>(); // holds all friend requests and friends
+    ArrayList<ImpromptuUser> fBFriends = new ArrayList<>();
+    ArrayList<FriendAndRequestHolder> masterFriendsList = new ArrayList<>(); // holds all friend requests and friends
+    ArrayList<FriendAndRequestHolder> masterFacebookFriendsList = new ArrayList<>(); // holds all of current user's FB friends in impromptu
     ArrayList<FriendAndRequestHolder> filteredList = new ArrayList<>(); // holds friend requests and friends that match search
     ImpromptuUser currentUser;
-    static ArrayAdapterFriendsList adapter;
+    ArrayAdapterFriendsList adapter;
 
-    Boolean flag = false;
+    Boolean addingFriends = false;
 
     ListView vList;
     ImageView vAddFriend;
@@ -54,25 +55,45 @@ public class FragmentFriendsList extends Fragment {
         currentUser = (ImpromptuUser) ImpromptuUser.getCurrentUser();
         friends = (ArrayList<ImpromptuUser>) currentUser.getFriends();
         requests = (ArrayList<FriendRequest>) FriendRequest.getPendingRequestToUser(currentUser);
-
+        fBFriends = currentUser.getFacebookFriends();
 
         for (FriendRequest rqst : requests) {
             friendRequests.add(rqst.getFrom());
         }
 
-        FriendAndRequestHolder holder = null;
+        FriendAndRequestHolder holder;
+        Boolean isFriend;
+        Boolean hasSentRequest;
+        Boolean isAddFBFriend = true;
+        
+        for (ImpromptuUser fBFriend : fBFriends) {
+            isFriend = friends.contains(fBFriend); // is a current friend
+            hasSentRequest = friendRequests.contains(fBFriend); // is sending a request
+
+            if (!isFriend && !hasSentRequest) {
+                holder = new FriendAndRequestHolder(fBFriend, isFriend, hasSentRequest, isAddFBFriend);
+                masterFacebookFriendsList.add(holder);
+            }
+        }
+
+        isAddFBFriend = false;
+        isFriend = false;
+        hasSentRequest = true;
         for (ImpromptuUser user : friendRequests) {
-            holder = new FriendAndRequestHolder(user, false);
-            masterList.add(holder);
+            holder = new FriendAndRequestHolder(user, isFriend, hasSentRequest, isAddFBFriend);
+            masterFriendsList.add(holder);
         }
 
+        isAddFBFriend = false;
+        isFriend = true;
+        hasSentRequest = false;
         for (ImpromptuUser user : friends) {
-            holder = new FriendAndRequestHolder(user, true);
-            masterList.add(holder);
+            holder = new FriendAndRequestHolder(user, isFriend, hasSentRequest, isAddFBFriend);
+            masterFriendsList.add(holder);
         }
 
-        for (FriendAndRequestHolder hld : masterList) {
-            filteredList.add(hld); // filteredList starts off with the same holders as masterList; will change with search
+        for (FriendAndRequestHolder hld : masterFriendsList) {
+            filteredList.add(hld); // filteredList starts off with the same holders as masterFriendsList; will change with search
         }
 
         adapter = new ArrayAdapterFriendsList(getActivity(), R.layout.template_friend_or_request_item, filteredList, currentUser);
@@ -91,7 +112,8 @@ public class FragmentFriendsList extends Fragment {
                 String text = charSequence.toString().toLowerCase();
                 filteredList.clear();
 
-                for (FriendAndRequestHolder holder : masterList) {
+                if ()
+                for (FriendAndRequestHolder holder : masterFriendsList) {
                     if (textLength <= holder.getName().length()) {
                         if (holder.getName().toLowerCase().contains(text)) {
                             filteredList.add(holder);
@@ -108,30 +130,47 @@ public class FragmentFriendsList extends Fragment {
             }
         });
 
+        vAddFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (addingFriends) { // transition to finding FB friends on impromptu
+                    vAddFriend.setImageResource(R.drawable.ic_action_add_person);
+                    addingFriends = false;
+                    initializeFilteredFriendsList();
+                }
+                else { // transition to current friends and requests
+                    vAddFriend.setImageResource(R.drawable.ic_action_person);
+                    addingFriends = true;
+                    initializeFilteredFBFriendsList();
+                }
+//                adapter.notifyDataSetChanged();
+            }
+        });
+
         return fragmentView;
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    private void initializeFilteredFriendsList() {
+        filteredList.clear();
+        for (FriendAndRequestHolder hld : masterFriendsList) {
+            filteredList.add(hld); // filteredList starts off with the same holders as masterFriendsList; will change with search
+        }
+        adapter = new ArrayAdapterFriendsList(getActivity(), R.layout.template_friend_or_request_item, filteredList, currentUser);
+        vList.setAdapter(adapter);
+    }
 
-        // TODO
-//        // This makes sure that the container activity has implemented
-//        // the callback interface. If not, it throws an exception
-//        try {
-//            mCallback = (OnComposePushFinishedListener) activity;
-//            mGroupsCallback = (OnComposePushChooseGroupsListener) activity;
-//        } catch (ClassCastException e) {
-//            throw new ClassCastException(activity.toString()
-//                    + " must implement OnComposePushFinishedListener");
-//        }
+    private void initializeFilteredFBFriendsList() {
+        filteredList.clear();
+        for (FriendAndRequestHolder hld : masterFacebookFriendsList) {
+            filteredList.add(hld); // filteredList starts off with the same holders as masterFBFriendsList; will change with search
+        }
+        adapter = new ArrayAdapterFriendsList(getActivity(), R.layout.template_friend_or_request_item, filteredList, currentUser);
+        vList.setAdapter(adapter);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-
-        //TODO: does this save removed and added friends?
         currentUser.persist();
     }
 
@@ -141,21 +180,25 @@ public class FragmentFriendsList extends Fragment {
         private Boolean isFriend;
         private Bitmap picture;
         private String name;
+        private Boolean isRequesting;
+        private Boolean isAddFBFriend;
 
-        public FriendAndRequestHolder(ImpromptuUser user, Boolean isFriend) {
+        public FriendAndRequestHolder(ImpromptuUser user, Boolean isFriend, Boolean isRequesting, Boolean isAddFBFriend) {
             this.user = user;
             this.isFriend = isFriend;
             this.picture = user.getPicture();
             this.name = user.getName();
+            this.isRequesting = isRequesting;
+            this.isAddFBFriend = isAddFBFriend;
         }
 
         public Boolean getIsFriend() {
             return isFriend;
         }
 
-        public void setIsFriend(Boolean isFriend) {
-            this.isFriend = isFriend;
-        }
+//        public void setIsFriend(Boolean isFriend) {
+//            this.isFriend = isFriend;
+//        }
 
         public Bitmap getPicture() {
             return picture;
@@ -168,10 +211,14 @@ public class FragmentFriendsList extends Fragment {
         public ImpromptuUser getUser() {
             return user;
         }
-    }
 
-    public static void notifyChange() {
-        adapter.notifyDataSetChanged();
+        public Boolean getIsRequesting() {
+            return isRequesting;
+        }
+
+        public Boolean getIsAddFBFriend() {
+            return isAddFBFriend;
+        }
     }
 
 }

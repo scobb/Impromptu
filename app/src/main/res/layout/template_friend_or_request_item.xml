@@ -3,6 +3,8 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
     android:gravity="center_vertical">
 
     <ImageView
@@ -31,6 +33,6 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginLeft="8dp"
-        android:src="@drawable/ic_action_remove"/>
+        android:src="@drawable/ic_action_discard"/>
 
 </LinearLayout>
