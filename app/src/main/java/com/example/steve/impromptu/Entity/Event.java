@@ -13,12 +13,15 @@ import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -283,14 +286,15 @@ public class Event extends ParseObject implements Comparable<Event> {
         map.put("user", this.getOwner().getName());
         map.put("picture", getPicture());
 
-        Time creationTime = new Time();
-        creationTime.set(this.getDate("creationTime").getTime());
+        Date currentDate = new Date();
+        Date eventDate = this.getDate(eventTimeKey);
 
-        int hour = creationTime.hour;
-        int minute = creationTime.minute;
+        long timeDifference = currentDate.getTime() - eventDate.getTime();
+        long hourDifference = TimeUnit.MILLISECONDS.toHours(timeDifference);
 
+        int difference = (int) Math.ceil(hourDifference);
 
-        map.put("date", hour + ":" + minute);
+        map.put("date", "In about " + difference + " hours");
         map.put("content", this.getDescription());
         return map;
     }
