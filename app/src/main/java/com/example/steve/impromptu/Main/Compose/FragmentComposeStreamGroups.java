@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.Group;
@@ -50,12 +49,11 @@ public class FragmentComposeStreamGroups extends Fragment {
         vGroupsList = (ListView) fragmentView.findViewById(R.id.fragComposeStreamGroups_listView_groupsList);
         vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposeStreamGroups_linearLayout_okay);
         vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposeStreamGroups_linearLayout_cancel);
-
-        ImpromptuUser currentUser = (ImpromptuUser) ImpromptuUser.getCurrentUser();
-        userGroupsList = (ArrayList<Group>) currentUser.getGroups();
-
         ActivityMain myActivity = (ActivityMain) getActivity();
         Event myEvent = myActivity.getComposeEvent();
+
+//        ImpromptuUser currentUser = (ImpromptuUser) ImpromptuUser.getCurrentUser();
+        userGroupsList = (ArrayList<Group>) myEvent.getAllGroups();
 
         // initialize all groups to unselected
         for (Group group : userGroupsList) {
@@ -63,7 +61,8 @@ public class FragmentComposeStreamGroups extends Fragment {
         }
 
         eventStreamGroupsList = (ArrayList<Group>) myEvent.getStreamGroups();
-        if (!eventStreamGroupsList.isEmpty() && !userGroupsList.isEmpty()) {
+
+        if (!eventStreamGroupsList.isEmpty()) {
             // there are groups to stream to && user has groups
 
             Iterator<Group> iterEventGroups = eventStreamGroupsList.iterator();
@@ -109,61 +108,41 @@ public class FragmentComposeStreamGroups extends Fragment {
 
                 ActivityMain myActivity = (ActivityMain) getActivity();
                 Event myEvent = myActivity.getComposeEvent();
-                ArrayList<ImpromptuUser> eventStreamFriendsList = (ArrayList<ImpromptuUser>) myEvent.getStreamFriends();
 
                 for (Group group : userGroupsList) {
 
-                    Group grp = listContainsGroup(eventStreamGroupsList, group);
-
-                    if (grp != null) {
-                        // if this group was in the eventStreamGroupsList && is not selected, remove it
-                        if (!(group.isSelected())) {
-                            eventStreamGroupsList.remove(grp);
-                            // remove friends that belong to group from eventStreamFriendsList
-                            ArrayList<ImpromptuUser> friends = (ArrayList<ImpromptuUser>)group.getFriendsInGroup();
-                            for (ImpromptuUser friend : friends) {
-                                // TODO: potential hazard with remove
-                                eventStreamFriendsList.remove(friend);
-                            }
+                    Boolean contains = eventStreamGroupsList.contains(group);
+                    if (contains && !group.isSelected()) {
+                        // if this group was in the eventStreamGroupsList && is not selected, remove it if (!(group.isSelected())) {
+                        eventStreamGroupsList.remove(group);
+                        // remove friends that belong to group from eventStreamFriendsList
+                        ArrayList<ImpromptuUser> friends = (ArrayList<ImpromptuUser>) group.getFriendsInGroup();
+                        for (ImpromptuUser friend : friends) {
+                            myEvent.removeStreamFriend(friend);
                         }
+
                     }
 
-                    if (group.isSelected()) {
+                    if (group.isSelected() && !contains) {
                         // if this is one of the selected groups && it was not already in the eventStreamGroupsList, add it
-                        if (grp == null)
-                            eventStreamGroupsList.add(group);
+                        eventStreamGroupsList.add(group);
                     }
                 }
                 Collections.sort(eventStreamGroupsList); // make sure eventStreamGroupsList is sorted alphabetically
                 myEvent.setStreamGroups(eventStreamGroupsList);
 
+                ArrayList<ImpromptuUser> eventStreamFriendsList = (ArrayList<ImpromptuUser>) myEvent.getStreamFriends();
                 for (Group group : eventStreamGroupsList) {
                     ArrayList<ImpromptuUser> friendsList = (ArrayList<ImpromptuUser>) group.getFriendsInGroup();
 
                     for (ImpromptuUser friend : friendsList) {
 
-                        ImpromptuUser frd = listContainsFriend(eventStreamFriendsList, friend);
-
-                        if (frd == null) {
-                            eventStreamFriendsList.add(friend);
+                        if (!eventStreamFriendsList.contains(friend)) {
+                            myEvent.addStreamFriend(friend);
                         }
 
                     }
                 }
-                Collections.sort(eventStreamFriendsList);
-
-                // TODO Fix this
-//                myEvent.setStreamFriends(eventStreamFriendsList);
-
-                String test = "";
-                test = test + "Groups: ";
-                for (Group group : eventStreamGroupsList) {
-                    if (group.isSelected())
-                        test = test + group.getGroupName();
-                }
-
-                Toast.makeText(getActivity(), test, Toast.LENGTH_SHORT).show();
-
 
                 mCallback.onComposeStreamChooseGroupsFinished();
             }
@@ -193,27 +172,4 @@ public class FragmentComposeStreamGroups extends Fragment {
                     + " must implement OnComposeStreamFinishedListener");
         }
     }
-
-    public ImpromptuUser listContainsFriend(ArrayList<ImpromptuUser> list, ImpromptuUser friend) {
-
-        for (ImpromptuUser frd : list) {
-            if (frd.getName().equals(friend.getName())) {
-                return frd;
-            }
-        }
-
-        return null;
-    }
-
-    public Group listContainsGroup(ArrayList<Group> list, Group group) {
-
-        for (Group grp : list) {
-            if (group.getGroupName().equals(grp.getGroupName())) {
-                return grp;
-            }
-        }
-
-        return null;
-    }
-
 }

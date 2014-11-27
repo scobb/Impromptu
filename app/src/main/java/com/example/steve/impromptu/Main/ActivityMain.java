@@ -1,7 +1,6 @@
 package com.example.steve.impromptu.Main;
 
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -15,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
@@ -30,13 +30,14 @@ import com.example.steve.impromptu.Main.Compose.FragmentComposeStream;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeStreamGroups;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeTime;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeType;
+import com.example.steve.impromptu.Main.Friends.FragmentFriendsList;
+import com.example.steve.impromptu.Main.Profile.FragmentProfile;
 import com.example.steve.impromptu.R;
 import com.parse.Parse;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -45,11 +46,11 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         , FragmentComposePushGroups.OnComposePushChooseGroupsFinishedListener, FragmentComposeStream.OnComposeStreamChooseGroupsListener, FragmentComposeStream.OnComposeStreamFinishedListener, FragmentComposeStreamGroups.OnComposeStreamChooseGroupsFinishedListener, FragmentComposeType.OnComposeTypeFinishedListener {
 
 
-    //TODO: remove
-    static public Boolean firstTime = true;
     Event composeEvent;
     public Dialog progressDialog;
 
+    LinearLayout vTopMenu;
+    LinearLayout vBottomMenu;
 
     // Filters
     private static Hashtable<String, Boolean> filters = new Hashtable<String, Boolean>();;
@@ -62,6 +63,9 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         StrictMode.setThreadPolicy(policy);
 
         setContentView(R.layout.activity_shell_main);
+
+        vTopMenu = (LinearLayout) findViewById(R.id.activityMain_linearLayout_topMenu);
+        vBottomMenu = (LinearLayout) findViewById(R.id.activityMain_linearLayout_bottomMenu);
 
         // TODO Might have to move this to a different part of the Activity lifecycle - Arifin
         // Default filters
@@ -79,12 +83,6 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         ParseObject.registerSubclass(Group.class);
         ParseObject.registerSubclass(FriendRequest.class);
         Parse.initialize(this, "sP5YdlJxg1WiwfKgSXX4KdrgpZzAV5g69dV8ryY0", "houV8Brg8oIuBKSLheR7qAW4AJfGq1QZmH62Spgk");
-
-        //Remove title bar
-//        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-//
-//        //Remove notification bar
-//        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -305,6 +303,13 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
             Event myEvent = getComposeEvent();
             myEvent.persist();
 
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+            FragmentStream fragment = new FragmentStream();
+            fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+            fragmentTransaction.commit();
+
         } else {
 
             Toast.makeText(this, "cancel new event", Toast.LENGTH_SHORT).show();
@@ -392,16 +397,25 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         fragmentTransaction.commit();
     }
 
-    public void map(View view) {
-        Toast.makeText(this, "show map", Toast.LENGTH_SHORT).show();
-    }
+//    public void map(View view) {
+//        Toast.makeText(this, "show map", Toast.LENGTH_SHORT).show();
+//    }
 
-    public void invites(View view) {
-        Toast.makeText(this, "show invites", Toast.LENGTH_SHORT).show();
+    public void updates(View view) {
+        Toast.makeText(this, "show updates", Toast.LENGTH_SHORT).show();
     }
 
     public void friends(View view) {
-        Toast.makeText(this, "show friends", Toast.LENGTH_SHORT).show();
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        FragmentFriendsList fragment = new FragmentFriendsList();
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
+    public void groups(View view) {
+        Toast.makeText(this, "show groups", Toast.LENGTH_SHORT).show();
     }
 
     public void profile(View view) {
@@ -410,8 +424,14 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     }
 
     public void compose(View view) {
+        ImpromptuUser currentUser = (ImpromptuUser) ImpromptuUser.getCurrentUser();
+
         composeEvent = new Event();
         composeEvent.clear();
+
+        composeEvent.setAllFriends(currentUser.getFriends());
+        composeEvent.setAllGroups(currentUser.getGroups());
+
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
@@ -420,10 +440,10 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         fragmentTransaction.commit();
     }
 
-    public void filter(View view){
-        DialogFragment filterFragment = FragmentFilterDialog.newInstance();
-        filterFragment.show(getFragmentManager(), "dialog");
-    }
+//    public void filter(View view){
+//        DialogFragment filterFragment = FragmentFilterDialog.newInstance();
+//        filterFragment.show(getFragmentManager(), "dialog");
+//    }
 
     public Event getComposeEvent() {
         return composeEvent;

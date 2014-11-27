@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.Group;
@@ -50,12 +49,11 @@ public class FragmentComposePushGroups extends Fragment {
         vGroupsList = (ListView) fragmentView.findViewById(R.id.fragComposePushGroups_listView_groupsList);
         vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposePushGroups_linearLayout_okay);
         vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposePushGroups_linearLayout_cancel);
-
-        ImpromptuUser currentUser = (ImpromptuUser) ImpromptuUser.getCurrentUser();
-        userGroupsList = (ArrayList<Group>) currentUser.getGroups();
-
         ActivityMain myActivity = (ActivityMain) getActivity();
         Event myEvent = myActivity.getComposeEvent();
+
+//        ImpromptuUser currentUser = (ImpromptuUser) ImpromptuUser.getCurrentUser();
+        userGroupsList = (ArrayList<Group>) myEvent.getAllGroups();
 
         // initialize all groups to unselected
         for (Group group : userGroupsList) {
@@ -63,7 +61,8 @@ public class FragmentComposePushGroups extends Fragment {
         }
 
         eventPushGroupsList = (ArrayList<Group>) myEvent.getPushGroups();
-        if (!eventPushGroupsList.isEmpty() && !userGroupsList.isEmpty()) {
+
+        if (!eventPushGroupsList.isEmpty()) {
             // there are groups to push to && user has groups
 
             Iterator<Group> iterEventGroups = eventPushGroupsList.iterator();
@@ -109,61 +108,41 @@ public class FragmentComposePushGroups extends Fragment {
 
                 ActivityMain myActivity = (ActivityMain) getActivity();
                 Event myEvent = myActivity.getComposeEvent();
-                ArrayList<ImpromptuUser> eventPushFriendsList = (ArrayList<ImpromptuUser>) myEvent.getPushFriends();
 
                 for (Group group : userGroupsList) {
 
-                    Group grp = listContainsGroup(eventPushGroupsList, group);
-
-                    if (grp != null) {
-                        // if this group was in the eventPushGroupsList && is not selected, remove it
-                        if (!(group.isSelected())) {
-                            eventPushGroupsList.remove(grp);
-                            // remove friends that belong to group from eventPushFriendsList
-                            ArrayList<ImpromptuUser> friends = (ArrayList<ImpromptuUser>)group.getFriendsInGroup();
-                            for (ImpromptuUser friend : friends) {
-                                // TODO: potential hazard with remove
-                                eventPushFriendsList.remove(friend);
-                            }
+                    Boolean contains = eventPushGroupsList.contains(group);
+                    if (contains && !group.isSelected()) {
+                        // if this group was in the eventPushGroupsList && is not selected, remove it if (!(group.isSelected())) {
+                        eventPushGroupsList.remove(group);
+                        // remove friends that belong to group from eventPushFriendsList
+                        ArrayList<ImpromptuUser> friends = (ArrayList<ImpromptuUser>) group.getFriendsInGroup();
+                        for (ImpromptuUser friend : friends) {
+                            myEvent.removePushFriend(friend);
                         }
+
                     }
 
-                    if (group.isSelected()) {
+                    if (group.isSelected() && !contains) {
                         // if this is one of the selected groups && it was not already in the eventPushGroupsList, add it
-                        if (grp == null)
-                            eventPushGroupsList.add(group);
+                        eventPushGroupsList.add(group);
                     }
                 }
                 Collections.sort(eventPushGroupsList); // make sure eventPushGroupsList is sorted alphabetically
                 myEvent.setPushGroups(eventPushGroupsList);
 
+                ArrayList<ImpromptuUser> eventPushFriendsList = (ArrayList<ImpromptuUser>) myEvent.getPushFriends();
                 for (Group group : eventPushGroupsList) {
                     ArrayList<ImpromptuUser> friendsList = (ArrayList<ImpromptuUser>) group.getFriendsInGroup();
 
                     for (ImpromptuUser friend : friendsList) {
 
-                        ImpromptuUser frd = listContainsFriend(eventPushFriendsList, friend);
-
-                        if (frd == null) {
-                            eventPushFriendsList.add(friend);
+                        if (!eventPushFriendsList.contains(friend)) {
+                            myEvent.addPushFriend(friend);
                         }
 
                     }
                 }
-                Collections.sort(eventPushFriendsList);
-
-                // TODO fix this
-//                myEvent.setPushFriends(eventPushFriendsList);
-
-                String test = "";
-                test = test + "Groups: ";
-                for (Group group : eventPushGroupsList) {
-                    if (group.isSelected())
-                        test = test + group.getGroupName();
-                }
-
-                Toast.makeText(getActivity(), test, Toast.LENGTH_SHORT).show();
-
 
                 mCallback.onComposePushChooseGroupsFinished();
             }
@@ -193,27 +172,4 @@ public class FragmentComposePushGroups extends Fragment {
                     + " must implement OnComposePushFinishedListener");
         }
     }
-
-    public ImpromptuUser listContainsFriend(ArrayList<ImpromptuUser> list, ImpromptuUser friend) {
-
-        for (ImpromptuUser frd : list) {
-            if (frd.getName().equals(friend.getName())) {
-                return frd;
-            }
-        }
-
-        return null;
-    }
-
-    public Group listContainsGroup(ArrayList<Group> list, Group group) {
-
-        for (Group grp : list) {
-            if (group.getGroupName().equals(grp.getGroupName())) {
-                return grp;
-            }
-        }
-
-        return null;
-    }
-
 }

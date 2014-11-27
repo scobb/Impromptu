@@ -55,7 +55,7 @@ public class Group extends ParseObject implements Comparable<Group> {
 
     @Override
     public int compareTo(Group other) {
-        return this.getGroupName().compareTo(other.getGroupName());
+        return this.getObjectId().compareTo(other.getObjectId());
     }
 
     public List<ImpromptuUser> getFriendsInGroup() {
@@ -129,6 +129,24 @@ public class Group extends ParseObject implements Comparable<Group> {
 
     public void setSelected(Boolean selected) {
         this.isSelected = selected;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        boolean same = false;
+
+        if (object != null && object instanceof Group)
+        {
+            same = this.getObjectId().equals(((Group) object).getObjectId());
+        }
+
+        return same;
+    }
+
+    @Override
+    public int hashCode() {
+        int hc = (this.getObjectId()).hashCode();
+        return hc;
     }
 
 }
