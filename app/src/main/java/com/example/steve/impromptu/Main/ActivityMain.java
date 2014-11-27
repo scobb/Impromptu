@@ -34,8 +34,12 @@ import com.example.steve.impromptu.Main.Friends.FragmentFriendsList;
 import com.example.steve.impromptu.Main.Profile.FragmentProfile;
 import com.example.steve.impromptu.R;
 import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
+import com.parse.ParsePush;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -87,10 +91,30 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
+        registerForPush();
+        ParseInstallation inst = ParseInstallation.getCurrentInstallation();
+        inst.put("user", ImpromptuUser.getCurrentUser());
+        inst.saveInBackground();
+
         FragmentStream fragment = new FragmentStream();
         fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
         fragmentTransaction.commit();
     }
+
+    public void registerForPush() {
+        ParsePush.subscribeInBackground("", new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.d("com.parse.push", "successfully subscribed to the broadcast channel.");
+                } else {
+                    Log.e("com.parse.push", "failed to subscribe for push", e);
+                }
+            }
+        });
+    }
+
+
 
     public void forwardToProfileFragment() {
         FragmentManager fragmentManager = getFragmentManager();
@@ -120,7 +144,26 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 //        ImpromptuUser currentUser = (ImpromptuUser)ParseUser.getCurrentUser();
 //        Bitmap profilePic = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
 //        currentUser.setPicture(profilePic);
+        Log.d("Impromptu", "In debug.");
         ImpromptuUser currentUser = (ImpromptuUser) ParseUser.getCurrentUser();
+        ImpromptuUser lala = ImpromptuUser.getUserById("CEEe8UEHBx");
+        ImpromptuUser stephen = ImpromptuUser.getUserById("mQMe4SHJNe");
+        ImpromptuUser jon = ImpromptuUser.getUserById("tqaTgngvn2");
+//        currentUser.createFriendRequest(stephen);
+//        currentUser.createFriendRequest(jon);
+//        List<Event> myOwnedEvents = currentUser.getOwnedEvents();
+//        for (Event e: myOwnedEvents) {
+//            Log.d("Impromptu", e.getTitle());
+//        }
+        currentUser.destroyFriendship(lala);
+//        Event e = new Event();
+//        e.getStreamFriends();
+//        e.addStreamFriend(currentUser);
+//        e.addPushFriend(currentUser);
+//        e.getPushFriends();
+//        e.removeStreamFriend(currentUser);
+//        e.removePushFriend(currentUser);
+//        e.removePushFriend(currentUser);
 //        currentUser.clearFriends();
 
 //        Bitmap profilePic = currentUser.getPicture();
@@ -141,16 +184,16 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 //        }
 //        currentUser.persist();
 
-        ArrayList<ImpromptuUser> friends = currentUser.getFacebookFriends();
-        Log.d("Impromptu", "Friends...");
-        for (ImpromptuUser friend : friends) {
-            Log.d("Impromptu", friend.getName());
-        }
-        List<ImpromptuUser> results = ImpromptuUser.getUserByName("bob");
-        Log.d("Impromptu", "num results: " + results.size());
-        for (ImpromptuUser user : results) {
-            Log.d("Impromptu", user.getName());
-        }
+//        ArrayList<ImpromptuUser> friends = currentUser.getFacebookFriends();
+//        Log.d("Impromptu", "Friends...");
+//        for (ImpromptuUser friend : friends) {
+//            Log.d("Impromptu", friend.getName());
+//        }
+//        List<ImpromptuUser> results = ImpromptuUser.getUserByName("bob");
+//        Log.d("Impromptu", "num results: " + results.size());
+//        for (ImpromptuUser user : results) {
+//            Log.d("Impromptu", user.getName());
+//        }
 //        Event event = new Event();
 //        event.test();
 //        event.persist();
