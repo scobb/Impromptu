@@ -433,7 +433,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         return filters;
     }
 
-    public static void setFilter(String type, boolean state){
-
+    public static void updateFilters(Hashtable<String, Boolean> updatedMap){
+        filters = new Hashtable<String, Boolean>(updatedMap);
     }
 }
