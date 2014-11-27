@@ -95,6 +95,7 @@ public class ArrayAdapterFriendsList extends ArrayAdapter<FragmentFriendsList.Fr
                             int color = context.getResources().getColor(android.R.color.holo_green_light);
                             View parent = (View) view.getParent();
                             parent.setBackgroundColor(color);
+                            vAccept.setVisibility(View.GONE);
                         }
 
                     }
@@ -112,9 +113,11 @@ public class ArrayAdapterFriendsList extends ArrayAdapter<FragmentFriendsList.Fr
                         public void onClick(View view) {
 
                             currentUser.removeFriend(masterList.get(position).getUser());
+                            // TODO: call cloud code to remove from other dude
                             int color = context.getResources().getColor(android.R.color.holo_red_light);
                             View parent = (View) view.getParent();
                             parent.setBackgroundColor(color);
+                            vDecline.setVisibility(View.GONE);
 
                         }
                     });
@@ -148,6 +151,10 @@ public class ArrayAdapterFriendsList extends ArrayAdapter<FragmentFriendsList.Fr
                             int color = context.getResources().getColor(android.R.color.holo_red_light);
                             View parent = (View) view.getParent();
                             parent.setBackgroundColor(color);
+
+                            vAccept.setVisibility(View.GONE);
+                            vDecline.setVisibility(View.GONE);
+
                         }
                     });
                 }
