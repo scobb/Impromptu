@@ -7,6 +7,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +23,7 @@ import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.ImpromptuLocation;
 import com.example.steve.impromptu.Main.ActivityMain;
 import com.example.steve.impromptu.R;
+import com.example.steve.impromptu.UI.ScrollableMapFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -65,8 +68,10 @@ public class FragmentComposeLocation extends Fragment {
     private Vector<Marker> searchResultMarkers;
     private ImpromptuLocation returnVal;
     private TextView vSelectedLocation;
+    private ScrollView vScrollView;
 
     private static View fragmentView;
+    private FragmentActivity myContext;
 
     OnComposeLocationFinishedListener mCallback;
 
@@ -91,7 +96,12 @@ public class FragmentComposeLocation extends Fragment {
         /* map is already there, just return view as it is */
         }
 
-        // Inflate the layout for this fragment
+        //this works just a little differently:
+
+        ScrollableMapFragment mf = (ScrollableMapFragment) myContext.getSupportFragmentManager().findFragmentById(R.id.fragComposeLocation_map);
+        vMap = mf.getMap();
+
+
 
 
         ActivityMain myActivity = (ActivityMain) getActivity();
@@ -103,6 +113,7 @@ public class FragmentComposeLocation extends Fragment {
         vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposeLocation_linearLayout_okay);
         vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposeLocation_linearLayout_cancel);
         vSelectedLocation = (TextView) fragmentView.findViewById(R.id.fragComposeLocation_textView_selectedLocation);
+        vScrollView = (ScrollView) fragmentView.findViewById(R.id.fragComposeLocation_scrollView);
 
 
         myEvent = myActivity.getComposeEvent();
@@ -145,9 +156,7 @@ public class FragmentComposeLocation extends Fragment {
 
         //TODO: make fragment scrollable (see FragmentEventDetail), move buttons
 
-        //this works just a little differently:
-        MapFragment mf = (MapFragment) getFragmentManager().findFragmentById(R.id.fragComposeLocation_map);
-        vMap = mf.getMap();
+
 
         vSearchPlace.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -245,9 +254,20 @@ public class FragmentComposeLocation extends Fragment {
         });
 
 
+        ((ScrollableMapFragment) myContext.getSupportFragmentManager().findFragmentById(R.id.fragComposeLocation_map))
+                .setListener(new ScrollableMapFragment.OnTouchListener() {
+
+                    @Override
+                    public void onTouch() {
+                        vScrollView.requestDisallowInterceptTouchEvent(true);
+                    }
+                });
+
 
         return fragmentView;
     }
+
+
 
 
 
@@ -261,6 +281,8 @@ public class FragmentComposeLocation extends Fragment {
 
     @Override
     public void onAttach(Activity activity) {
+
+        myContext=(FragmentActivity) activity;
         super.onAttach(activity);
 
         // This makes sure that the container activity has implemented
