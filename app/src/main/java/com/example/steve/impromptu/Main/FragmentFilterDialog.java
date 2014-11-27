@@ -152,7 +152,15 @@ public class FragmentFilterDialog extends DialogFragment{
         });
 
         // Pass null as the parent view because its going in the dialog layout
-        builder.setView(view);
+        builder.setView(view)
+                .setPositiveButton("Update",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                ActivityMain.updateFilters(currentFilters);
+                            }
+                        }
+                )
+        ;
         return builder.create();
     }
 
