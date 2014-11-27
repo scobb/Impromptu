@@ -57,39 +57,40 @@ public class FragmentFriendsList extends Fragment {
         requests = (ArrayList<FriendRequest>) FriendRequest.getPendingRequestToUser(currentUser);
         fBFriends = currentUser.getFacebookFriends();
 
-        for (FriendRequest rqst : requests) {
-            friendRequests.add(rqst.getFrom());
-        }
-
         FriendAndRequestHolder holder;
         Boolean isFriend;
         Boolean hasSentRequest;
-        Boolean isAddFBFriend = true;
-        
+        Boolean isAddFBFriend = false;
+
+        isAddFBFriend = false;
+        isFriend = false;
+        ImpromptuUser requestOwner;
+        for (FriendRequest rqst : requests) {
+            requestOwner = rqst.getFrom();
+            if (!friends.contains(requestOwner)) { // TODO: won't be necessary when requests are made only from the app (i.e. not programatically)
+                friendRequests.add(requestOwner);
+                holder = new FriendAndRequestHolder(requestOwner, isFriend, isAddFBFriend);
+                holder.setRequest(rqst);
+                masterFriendsList.add(holder);
+            }
+        }
+
+        isAddFBFriend = false;
+        isFriend = true;
+        for (ImpromptuUser user : friends) {
+            holder = new FriendAndRequestHolder(user, isFriend, isAddFBFriend);
+            masterFriendsList.add(holder);
+        }
+
+        isAddFBFriend = true;
         for (ImpromptuUser fBFriend : fBFriends) {
             isFriend = friends.contains(fBFriend); // is a current friend
             hasSentRequest = friendRequests.contains(fBFriend); // is sending a request
 
             if (!isFriend && !hasSentRequest) {
-                holder = new FriendAndRequestHolder(fBFriend, isFriend, hasSentRequest, isAddFBFriend);
+                holder = new FriendAndRequestHolder(fBFriend, isFriend, isAddFBFriend);
                 masterFacebookFriendsList.add(holder);
             }
-        }
-
-        isAddFBFriend = false;
-        isFriend = false;
-        hasSentRequest = true;
-        for (ImpromptuUser user : friendRequests) {
-            holder = new FriendAndRequestHolder(user, isFriend, hasSentRequest, isAddFBFriend);
-            masterFriendsList.add(holder);
-        }
-
-        isAddFBFriend = false;
-        isFriend = true;
-        hasSentRequest = false;
-        for (ImpromptuUser user : friends) {
-            holder = new FriendAndRequestHolder(user, isFriend, hasSentRequest, isAddFBFriend);
-            masterFriendsList.add(holder);
         }
 
         for (FriendAndRequestHolder hld : masterFriendsList) {
@@ -112,8 +113,14 @@ public class FragmentFriendsList extends Fragment {
                 String text = charSequence.toString().toLowerCase();
                 filteredList.clear();
 
-                if ()
-                for (FriendAndRequestHolder holder : masterFriendsList) {
+                ArrayList<FriendAndRequestHolder> useThisList = new ArrayList<FriendAndRequestHolder>();
+                if (addingFriends) {
+                    useThisList = masterFacebookFriendsList;
+                }
+                else {
+                    useThisList = masterFriendsList;
+                }
+                for (FriendAndRequestHolder holder : useThisList) {
                     if (textLength <= holder.getName().length()) {
                         if (holder.getName().toLowerCase().contains(text)) {
                             filteredList.add(holder);
@@ -180,15 +187,14 @@ public class FragmentFriendsList extends Fragment {
         private Boolean isFriend;
         private Bitmap picture;
         private String name;
-        private Boolean isRequesting;
         private Boolean isAddFBFriend;
+        private FriendRequest request = null;
 
-        public FriendAndRequestHolder(ImpromptuUser user, Boolean isFriend, Boolean isRequesting, Boolean isAddFBFriend) {
+        public FriendAndRequestHolder(ImpromptuUser user, Boolean isFriend, Boolean isAddFBFriend) {
             this.user = user;
             this.isFriend = isFriend;
             this.picture = user.getPicture();
             this.name = user.getName();
-            this.isRequesting = isRequesting;
             this.isAddFBFriend = isAddFBFriend;
         }
 
@@ -212,12 +218,16 @@ public class FragmentFriendsList extends Fragment {
             return user;
         }
 
-        public Boolean getIsRequesting() {
-            return isRequesting;
-        }
-
         public Boolean getIsAddFBFriend() {
             return isAddFBFriend;
+        }
+
+        public FriendRequest getRequest() {
+            return request;
+        }
+
+        public void setRequest(FriendRequest request) {
+            this.request = request;
         }
     }
 

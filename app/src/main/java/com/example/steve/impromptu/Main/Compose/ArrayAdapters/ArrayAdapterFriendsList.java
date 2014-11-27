@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.Main.Friends.FragmentFriendsList;
@@ -60,8 +61,8 @@ public class ArrayAdapterFriendsList extends ArrayAdapter<FragmentFriendsList.Fr
             view = inflater.inflate(R.layout.template_friend_or_request_item, null);
             FragmentFriendsList.FriendAndRequestHolder holder = masterList.get(position);
             ImageView vPicture = (ImageView) view.findViewById(R.id.templateFriendOrRequestItem_imageView_picture);
-            ImageView vAccept = (ImageView) view.findViewById(R.id.templateFriendOrRequestItem_imageView_accept);
-            ImageView vDecline = (ImageView) view.findViewById(R.id.templateFriendOrRequestItem_imageView_decline);
+            final ImageView vAccept = (ImageView) view.findViewById(R.id.templateFriendOrRequestItem_imageView_accept);
+            final ImageView vDecline = (ImageView) view.findViewById(R.id.templateFriendOrRequestItem_imageView_decline);
             TextView vName = (TextView) view.findViewById(R.id.templateFriendOrRequestItem_textView_name);
 
             Bitmap picture = holder.getPicture();
@@ -76,11 +77,35 @@ public class ArrayAdapterFriendsList extends ArrayAdapter<FragmentFriendsList.Fr
 
             if (holder.getIsAddFBFriend()) { // making list of people who are not my friends
 
+                vDecline.setOnClickListener(null);
+                vDecline.setVisibility(View.GONE);
+
+                vAccept.setVisibility(View.VISIBLE);
+                vAccept.setImageResource(R.drawable.ic_action_new);
+                vAccept.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        ImpromptuUser newFriend = masterList.get(position).getUser();
+                        Boolean sent = currentUser.createFriendRequest(newFriend);
+                        if (!sent) {
+                            Toast.makeText(context, "You have already sent a friend request to " + newFriend.getName(), Toast.LENGTH_LONG);
+                        }
+                        else {
+                            int color = context.getResources().getColor(android.R.color.holo_green_light);
+                            View parent = (View) view.getParent();
+                            parent.setBackgroundColor(color);
+                        }
+
+                    }
+                });
+
             } else { // making list of current friends and people requesting friendship
                 if (holder.getIsFriend()) { // is current friend (means not requesting friendship)
                     vAccept.setOnClickListener(null);
                     vAccept.setVisibility(View.GONE);
 
+                    vDecline.setVisibility(View.VISIBLE);
                     vDecline.setImageResource(R.drawable.ic_action_remove);
                     vDecline.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -101,21 +126,25 @@ public class ArrayAdapterFriendsList extends ArrayAdapter<FragmentFriendsList.Fr
                         public void onClick(View view) {
 
                             FragmentFriendsList.FriendAndRequestHolder holder = masterList.get(position);
-                            currentUser.addFriend(holder.getUser());
-                            
+                            holder.getRequest().accept();
                             int color = context.getResources().getColor(android.R.color.holo_green_light);
                             View parent = (View) view.getParent();
                             parent.setBackgroundColor(color);
 
+                            vAccept.setVisibility(View.GONE);
+                            vDecline.setVisibility(View.GONE);
+
                         }
                     });
 
+                    vDecline.setVisibility((View.VISIBLE));
                     vDecline.setImageResource(R.drawable.ic_action_discard);
                     vDecline.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
 
-//                        masterList.remove(position);
+                            FragmentFriendsList.FriendAndRequestHolder holder = masterList.get(position);
+                            holder.getRequest().decline();
                             int color = context.getResources().getColor(android.R.color.holo_red_light);
                             View parent = (View) view.getParent();
                             parent.setBackgroundColor(color);
