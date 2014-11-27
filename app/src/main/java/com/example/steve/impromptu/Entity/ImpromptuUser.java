@@ -70,6 +70,21 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     }
 
     /**
+     *
+     * @return - a list of events owned by this user.
+     */
+    public List<Event> getOwnedEvents() {
+        ParseQuery<Event> q = new ParseQuery<>(Event.class);
+        q.whereEqualTo("owner", this);
+        try {
+            return q.find();
+        } catch (ParseException e) {
+            Log.e("Impromptu", "Exception getting owned events: ", e);
+        }
+        return new ArrayList<>();
+    }
+
+    /**
      * generates and persists a friend request from this user to friend
      * @param friend - friend to create a request to
      * @return - true if request successfully created, false otherwise.
