@@ -69,6 +69,52 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         this.put(visibleEventsKey, events);
     }
 
+    /**
+     *
+     * @return - a list of events owned by this user.
+     */
+    public List<Event> getOwnedEvents() {
+        ParseQuery<Event> q = new ParseQuery<>(Event.class);
+        q.whereEqualTo("owner", this);
+        try {
+            return q.find();
+        } catch (ParseException e) {
+            Log.e("Impromptu", "Exception getting owned events: ", e);
+        }
+        return new ArrayList<>();
+    }
+
+    /**
+     * generates and persists a friend request from this user to friend
+     * @param friend - friend to create a request to
+     * @return - true if request successfully created, false otherwise.
+     */
+    public boolean createFriendRequest(ImpromptuUser friend) {
+        ParseQuery<FriendRequest> q = new ParseQuery<>(FriendRequest.class);
+        q.whereEqualTo("from", this);
+        q.whereEqualTo("to", friend);
+        try {
+            List<FriendRequest> result = q.find();
+            if (result.size() > 0) {
+                Log.d("Impromptu", "Friend request already exists.");
+                return false;
+            } else if (getFriends().contains(friend)) {
+                Log.d("Impromptu", "User already in friends list.");
+                return false;
+            }else {
+                FriendRequest fr = new FriendRequest();
+                fr.setFrom(this);
+                fr.setTo(friend);
+                fr.persist();
+                Log.d("Impromptu", "Adding friend request.");
+                return true;
+            }
+        } catch (ParseException e ) {
+            Log.e("Impromptu", "Error finding friend request:", e);
+            return false;
+        }
+    }
+
     public List<Event> getStreamEvents() {
         try {
             this.fetchIfNeeded();
