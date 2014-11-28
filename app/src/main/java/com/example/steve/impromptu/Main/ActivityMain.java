@@ -58,6 +58,12 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     LinearLayout vTopMenu;
     LinearLayout vBottomMenu;
     TextView vLocationWithinApp;
+    LinearLayout vProfile;
+    LinearLayout vCompose;
+    LinearLayout vStream;
+    LinearLayout vFriends;
+    LinearLayout vGroups;
+    LinearLayout vUpdates;
 
     // Filters
     private static Hashtable<String, Boolean> filters = new Hashtable<String, Boolean>();;
@@ -71,6 +77,12 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 
         setContentView(R.layout.activity_shell_main);
 
+        vProfile = (LinearLayout) findViewById(R.id.activityMain_linearLayout_profile);
+        vCompose = (LinearLayout) findViewById(R.id.activityMain_linearLayout_compose);
+        vStream = (LinearLayout) findViewById(R.id.activityMain_linearLayout_stream);
+        vFriends = (LinearLayout) findViewById(R.id.activityMain_linearLayout_friends);
+        vGroups = (LinearLayout) findViewById(R.id.activityMain_linearLayout_groups);
+        vUpdates = (LinearLayout) findViewById(R.id.activityMain_linearLayout_updates);
         vTopMenu = (LinearLayout) findViewById(R.id.activityMain_linearLayout_topMenu);
         vBottomMenu = (LinearLayout) findViewById(R.id.activityMain_linearLayout_bottomMenu);
         vLocationWithinApp = (TextView) findViewById(R.id.activityMain_textView_locationWithinApp);
@@ -438,6 +450,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     }
 
     public void stream(View view) {
+        setHighlightedButton("Stream");
         updateLocationWithinApp("Stream");
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -452,12 +465,14 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 //    }
 
     public void updates(View view) {
+        setHighlightedButton("Updates");
         updateLocationWithinApp("Updates");
         vLocationWithinApp.setText(locationWithinApp);
         Toast.makeText(this, "show updates", Toast.LENGTH_SHORT).show();
     }
 
     public void friends(View view) {
+        setHighlightedButton("Friends");
         updateLocationWithinApp("Friends");
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -468,6 +483,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     }
 
     public void groups(View view) {
+        setHighlightedButton("Groups");
         updateLocationWithinApp("Groups");
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -478,12 +494,14 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     }
 
     public void profile(View view) {
+        setHighlightedButton("Profile");
         updateLocationWithinApp("Profile");
         forwardToProfileFragment();
         //Toast.makeText(this, "show profile", Toast.LENGTH_SHORT).show();
     }
 
     public void compose(View view) {
+        setHighlightedButton("Compose");
         updateLocationWithinApp("Compose");
         ImpromptuUser currentUser = (ImpromptuUser) ImpromptuUser.getCurrentUser();
 
@@ -521,5 +539,36 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     public void updateLocationWithinApp(String newLocationWithinApp) {
         locationWithinApp = newLocationWithinApp;
         vLocationWithinApp.setText(locationWithinApp);
+    }
+
+    public void setHighlightedButton(String button) {
+
+        vProfile.setBackgroundResource(R.color.transparent);
+        vCompose.setBackgroundResource(R.color.transparent);
+        vStream.setBackgroundResource(R.color.transparent);
+        vFriends.setBackgroundResource(R.color.transparent);
+        vGroups.setBackgroundResource(R.color.transparent);
+        vUpdates.setBackgroundResource(R.color.transparent);
+
+        switch(button) {
+            case "Profile":
+                vProfile.setBackgroundResource(R.color.impromptu_complementary_green);
+                break;
+            case "Compose":
+                vCompose.setBackgroundResource(R.color.impromptu_complementary_green);
+                break;
+            case "Stream":
+                vStream.setBackgroundResource(R.color.impromptu_complementary_green);
+                break;
+            case "Friends":
+                vFriends.setBackgroundResource(R.color.impromptu_complementary_green);
+                break;
+            case "Groups":
+                vGroups.setBackgroundResource(R.color.impromptu_complementary_green);
+                break;
+            case "Updates":
+                vUpdates.setBackgroundResource(R.color.impromptu_complementary_green);
+                break;
+        }
     }
 }

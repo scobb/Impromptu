@@ -96,7 +96,7 @@ public class ArrayAdapterFriendsList extends ArrayAdapter<FragmentFriendsList.Fr
                             Toast.makeText(context, "You have already sent a friend request to " + newFriend.getName(), Toast.LENGTH_LONG);
                         }
                         else {
-                            int color = context.getResources().getColor(android.R.color.holo_green_light);
+                            int color = context.getResources().getColor(R.color.impromptu_add_green);
                             View parent = (View) view.getParent();
                             parent.setBackgroundColor(color);
                             vAccept.setVisibility(View.GONE);
@@ -116,9 +116,10 @@ public class ArrayAdapterFriendsList extends ArrayAdapter<FragmentFriendsList.Fr
                         @Override
                         public void onClick(View view) {
 
-                            currentUser.removeFriend(masterList.get(position).getUser());
-                            // TODO: call cloud code to remove from other dude
-                            int color = context.getResources().getColor(android.R.color.holo_red_light);
+                            ImpromptuUser oldFriend = masterList.get(position).getUser();
+                            currentUser.removeFriend(oldFriend);
+                            currentUser.destroyFriendship(oldFriend);
+                            int color = context.getResources().getColor(R.color.impromptu_remove_red);
                             View parent = (View) view.getParent();
                             parent.setBackgroundColor(color);
                             vDecline.setVisibility(View.GONE);
@@ -134,7 +135,7 @@ public class ArrayAdapterFriendsList extends ArrayAdapter<FragmentFriendsList.Fr
 
                             FragmentFriendsList.FriendAndRequestHolder holder = masterList.get(position);
                             holder.getRequest().accept();
-                            int color = context.getResources().getColor(android.R.color.holo_green_light);
+                            int color = context.getResources().getColor(R.color.impromptu_add_green);
                             View parent = (View) view.getParent();
                             parent.setBackgroundColor(color);
 
@@ -152,7 +153,7 @@ public class ArrayAdapterFriendsList extends ArrayAdapter<FragmentFriendsList.Fr
 
                             FragmentFriendsList.FriendAndRequestHolder holder = masterList.get(position);
                             holder.getRequest().decline();
-                            int color = context.getResources().getColor(android.R.color.holo_red_light);
+                            int color = context.getResources().getColor(R.color.impromptu_remove_red);
                             View parent = (View) view.getParent();
                             parent.setBackgroundColor(color);
 

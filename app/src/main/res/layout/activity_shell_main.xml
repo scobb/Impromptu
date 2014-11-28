@@ -10,7 +10,6 @@
 
     <LinearLayout
         android:id="@+id/activityMain_linearLayout_topMenu"
-        android:paddingRight="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="48dp"
@@ -29,8 +28,7 @@
             <ImageView
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:src="@drawable/logo_solo"
-                android:background="@drawable/selector_main_icons" />
+                android:src="@drawable/logo_solo" />
 
         </LinearLayout>
 
@@ -65,11 +63,9 @@
             android:background="@drawable/selector_main_icons">
 
             <ImageView
-                android:id="@+id/activityMain_button_compose"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_action_new_light"
-                android:background="@drawable/selector_main_icons" />
+                android:src="@drawable/ic_action_new_light" />
 
         </LinearLayout>
 
@@ -86,8 +82,6 @@
 
     <LinearLayout
         android:id="@+id/activityMain_linearLayout_bottomMenu"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -106,8 +100,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_action_view_as_list"
-                android:background="@drawable/selector_main_icons" />
+                android:src="@drawable/ic_action_view_as_list" />
 
         </LinearLayout>
 
@@ -128,8 +121,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_action_person_light"
-                android:background="@drawable/selector_main_icons" />
+                android:src="@drawable/ic_action_person_light" />
 
         </LinearLayout>
 
@@ -150,8 +142,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_action_group"
-                android:background="@drawable/selector_main_icons" />
+                android:src="@drawable/ic_action_group" />
         </LinearLayout>
 
         <Space

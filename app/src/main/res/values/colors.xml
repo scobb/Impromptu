@@ -2,6 +2,9 @@
 <resources>
     <color name="impromptu_green">#06753C</color>
     <color name="impromptu_complementary_green">#3AB275</color>
+    <color name="impromptu_remove_red">#FF7C6C</color>
+    <color name="impromptu_add_green">#6CFFB4</color>
+    <color name="transparent">#00FFFFFF</color>
     <color name="list_item_selected">#33B5E5</color>
     <color name="list_item_unselected">#FFFFFF</color>
 </resources>

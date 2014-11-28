@@ -89,7 +89,7 @@ public class ArrayAdapterEditGroup extends ArrayAdapter<FragmentGroupsList.Frien
                             if (!currentGroup.getFriendsInGroup().contains(newGroupMember)) {
                                 currentGroup.add(newGroupMember);
 
-                                int color = context.getResources().getColor(android.R.color.holo_green_light);
+                                int color = context.getResources().getColor(R.color.impromptu_add_green);
                                 View parent = (View) view.getParent();
                                 parent.setBackgroundColor(color);
                                 vChange.setVisibility(View.GONE);
@@ -101,7 +101,7 @@ public class ArrayAdapterEditGroup extends ArrayAdapter<FragmentGroupsList.Frien
                         else {
                             currentGroup.add(newGroupMember);
 
-                            int color = context.getResources().getColor(android.R.color.holo_green_light);
+                            int color = context.getResources().getColor(R.color.impromptu_add_green);
                             View parent = (View) view.getParent();
                             parent.setBackgroundColor(color);
                             vChange.setVisibility(View.GONE);
@@ -118,7 +118,7 @@ public class ArrayAdapterEditGroup extends ArrayAdapter<FragmentGroupsList.Frien
                         ImpromptuUser removeGroupMember = masterList.get(position).getUser();
                         currentGroup.remove(removeGroupMember);
 
-                        int color = context.getResources().getColor(android.R.color.holo_red_light);
+                        int color = context.getResources().getColor(R.color.impromptu_remove_red);
                         View parent = (View) view.getParent();
                         parent.setBackgroundColor(color);
                         vChange.setVisibility(View.GONE);

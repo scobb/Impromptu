@@ -51,7 +51,7 @@ public class FragmentGroupsList extends Fragment {
     ImageView vEdit;
     ImageView vAddToGroup;
 
-    //TODO: add X to remove groups, add done & cancel, add text watcher for group name, demolishFriendship(), change main buttons to icons, add cancel to compose type
+    //TODO: add X to remove groups, add done & cancel, demolishFriendship() to remove friend and me from groups, add cancel to compose type
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -135,10 +135,12 @@ public class FragmentGroupsList extends Fragment {
                     switchToAddOrEditGroup();
                 } else { // transition to current groups
                     // TODO
+                    currentGroup.setGroupName(vEditName.getText().toString());
                     if (currentGroup.getGroupName() != null && currentGroup.getFriendsInGroup() != null) {
 
                         currentGroup.persist();
                         if (!groups.contains(currentGroup)) {
+
                             groups.add(currentGroup);
                             currentUser.persist();
                         }
