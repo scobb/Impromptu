@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -37,15 +38,29 @@ public class FragmentStream extends ListFragment {
 
 
     List<Event> posts;
+    LinearLayout mapStream;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        View fragmentView = inflater.inflate(R.layout.fragment_stream, container, false);
+
 
         // Gets query for the event streams
         ImpromptuUser currentUser = (ImpromptuUser) ParseUser.getCurrentUser();
         List<Event> events = currentUser.getStreamEvents();
+        mapStream = (LinearLayout) fragmentView.findViewById(R.id.fragStream_linearLayout_mapStream);
+
+        mapStream.setOnClickListener(new View.OnClickListener() {
+            @Override
+        public void onClick(View v) {
+
+                FragmentMap nextFrag = new FragmentMap();
+                getFragmentManager().beginTransaction().replace(R.id.activityMain_frameLayout_shell, nextFrag).addToBackStack(null).commit();
+            }
+        });
+
 
         ParseObject.fetchAllIfNeededInBackground(events, new FindCallback<Event>() {
 
@@ -88,7 +103,8 @@ public class FragmentStream extends ListFragment {
                                        }
                                    });
 
-        return super.onCreateView(inflater, container, savedInstanceState);
+        //return super.onCreateView(inflater, container, savedInstanceState);
+        return fragmentView;
     }
 
 
