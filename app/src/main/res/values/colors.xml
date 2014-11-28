@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="impromptu_green">#06753C</color>
+    <color name="impromptu_complementary_green">#3AB275</color>
     <color name="list_item_selected">#33B5E5</color>
     <color name="list_item_unselected">#FFFFFF</color>
 </resources>

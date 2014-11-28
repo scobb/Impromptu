@@ -58,7 +58,7 @@ public class ArrayAdapterGroupsList extends ArrayAdapter<Group> {
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(
                     Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.template_friend_or_request_item, null);
+            view = inflater.inflate(R.layout.template_group_item, null);
             Group group = masterList.get(position);
 //            ImageView vPicture = (ImageView) view.findViewById(R.id.templateFriendOrRequestItem_imageView_picture);
             TextView vName = (TextView) view.findViewById(R.id.templateGroupItem_textView_name);
