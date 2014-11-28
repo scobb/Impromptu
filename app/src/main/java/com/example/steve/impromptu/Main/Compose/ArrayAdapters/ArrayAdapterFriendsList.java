@@ -49,6 +49,10 @@ public class ArrayAdapterFriendsList extends ArrayAdapter<FragmentFriendsList.Fr
         return position;
     }
 
+//    public void updateAdapter(ArrayList<FragmentFriendsList.FriendAndRequestHolder> updatedList) {
+//        this.masterList = updatedList;
+//        this.notifyDataSetChanged();
+//    }
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {

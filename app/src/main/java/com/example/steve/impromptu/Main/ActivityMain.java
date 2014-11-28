@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
@@ -31,19 +32,18 @@ import com.example.steve.impromptu.Main.Compose.FragmentComposeStreamGroups;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeTime;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeType;
 import com.example.steve.impromptu.Main.Friends.FragmentFriendsList;
+import com.example.steve.impromptu.Main.Groups.FragmentGroupsList;
 import com.example.steve.impromptu.Main.Profile.FragmentProfile;
 import com.example.steve.impromptu.R;
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
-import com.parse.ParsePush;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 
 public class ActivityMain extends FragmentActivity implements FragmentComposeTime.OnComposeTimeFinishedListener, FragmentComposeMain.OnAttributeSelectedListener,
         FragmentComposeMain.OnComposeMainFinishedListener, FragmentComposeLocation.OnComposeLocationFinishedListener, FragmentComposePush.OnComposePushFinishedListener, FragmentComposePush.OnComposePushChooseGroupsListener
@@ -53,8 +53,11 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     Event composeEvent;
     public Dialog progressDialog;
 
+    String locationWithinApp = "Stream";
+
     LinearLayout vTopMenu;
     LinearLayout vBottomMenu;
+    TextView vLocationWithinApp;
 
     // Filters
     private static Hashtable<String, Boolean> filters = new Hashtable<String, Boolean>();;
@@ -70,6 +73,9 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 
         vTopMenu = (LinearLayout) findViewById(R.id.activityMain_linearLayout_topMenu);
         vBottomMenu = (LinearLayout) findViewById(R.id.activityMain_linearLayout_bottomMenu);
+        vLocationWithinApp = (TextView) findViewById(R.id.activityMain_textView_locationWithinApp);
+
+        vLocationWithinApp.setText(locationWithinApp);
 
         // TODO Might have to move this to a different part of the Activity lifecycle - Arifin
         // Default filters
@@ -432,6 +438,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     }
 
     public void stream(View view) {
+        updateLocationWithinApp("Stream");
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
@@ -445,10 +452,13 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 //    }
 
     public void updates(View view) {
+        updateLocationWithinApp("Updates");
+        vLocationWithinApp.setText(locationWithinApp);
         Toast.makeText(this, "show updates", Toast.LENGTH_SHORT).show();
     }
 
     public void friends(View view) {
+        updateLocationWithinApp("Friends");
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
@@ -458,15 +468,23 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     }
 
     public void groups(View view) {
-        Toast.makeText(this, "show groups", Toast.LENGTH_SHORT).show();
+        updateLocationWithinApp("Groups");
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        FragmentGroupsList fragment = new FragmentGroupsList();
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.commit();
     }
 
     public void profile(View view) {
+        updateLocationWithinApp("Profile");
         forwardToProfileFragment();
         //Toast.makeText(this, "show profile", Toast.LENGTH_SHORT).show();
     }
 
     public void compose(View view) {
+        updateLocationWithinApp("Compose");
         ImpromptuUser currentUser = (ImpromptuUser) ImpromptuUser.getCurrentUser();
 
         composeEvent = new Event();
@@ -498,5 +516,10 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 
     public static void updateFilters(Hashtable<String, Boolean> updatedMap){
         filters = new Hashtable<String, Boolean>(updatedMap);
+    }
+
+    public void updateLocationWithinApp(String newLocationWithinApp) {
+        locationWithinApp = newLocationWithinApp;
+        vLocationWithinApp.setText(locationWithinApp);
     }
 }
