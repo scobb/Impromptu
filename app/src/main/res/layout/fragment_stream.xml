@@ -1,33 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp">
+    android:layout_height="match_parent">
 
-    <ListView android:id="@id/android:list"
+    <FrameLayout android:id="@android:id/empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
+    <ListView
+        android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#00FF00"
-        android:layout_weight="1"
-        android:drawSelectorOnTop="false"/>
-
-    <TextView android:id="@id/android:empty"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#FF0000"
-        android:text="No data"/>
+        android:cacheColorHint="@android:color/white"
+        android:drawSelectorOnTop="false" />
 
     <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="#00FF00" >
+        android:id="@+id/filter_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/filter_bar_height"
+        android:layout_gravity="bottom"
+        android:background="@color/impromptu_complementary_green"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:onClick="filter" >
 
-        <TextView android:id="@+id/android_filter"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Filters" />
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/filter_bar" />
 
     </LinearLayout>
-</LinearLayout>
+
+</FrameLayout>
