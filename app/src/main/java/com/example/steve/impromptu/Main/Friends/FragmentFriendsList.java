@@ -128,7 +128,9 @@ public class FragmentFriendsList extends Fragment {
                     }
                 }
 
-                adapter.notifyDataSetChanged();
+//                adapter.updateAdapter(filteredList);
+                adapter = new ArrayAdapterFriendsList(getActivity(), R.layout.template_friend_or_request_item, filteredList, currentUser);
+                vList.setAdapter(adapter);
             }
 
             @Override
@@ -146,7 +148,7 @@ public class FragmentFriendsList extends Fragment {
                     initializeFilteredFriendsList();
                 }
                 else { // transition to current friends and requests
-                    vAddFriend.setImageResource(R.drawable.ic_action_person);
+                    vAddFriend.setImageResource(R.drawable.ic_action_back);
                     addingFriends = true;
                     initializeFilteredFBFriendsList();
                 }

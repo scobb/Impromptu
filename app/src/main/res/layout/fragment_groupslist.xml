@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingRight="16dp"
+    android:paddingLeft="16dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp">
+
+    <LinearLayout
+        android:id="@+id/fragGroupsList_linearLayout_editName"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/fragGroupsList_imageView_addGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_add_group" />
+
+        <EditText
+            android:id="@+id/fragGroupsList_editText_name"
+            android:visibility="gone"
+            android:layout_marginLeft="8dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:hint="Group name..."
+            android:maxLines="1" />
+
+        <ImageView
+            android:id="@+id/fragGroupsList_imageView_edit"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_edit" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/fragGroupsList_linearLayout_searchAndAdd"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:gravity="center_vertical">
+
+        <EditText
+            android:id="@+id/fragGroupsList_editText_search"
+            android:visibility="gone"
+            android:layout_marginLeft="8dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:maxLines="1" />
+
+        <ImageView
+            android:id="@+id/fragGroupsList_imageView_search"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_search" />
+
+
+    </LinearLayout>
+
+    <ListView
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:id="@+id/fragGroupsList_listView_groupsList"></ListView>
+
+    <ListView
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:id="@+id/fragGroupsList_listView_friendsInGroupList"
+        android:visibility="gone"></ListView>
+
+
+</LinearLayout>
