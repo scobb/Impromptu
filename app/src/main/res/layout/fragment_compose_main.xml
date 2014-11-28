@@ -69,7 +69,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Stream"
-            android:textSize="24sp"/>
+            android:textSize="24sp"
+
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:scrollHorizontally="false"/>
 
     </LinearLayout>
 
@@ -86,7 +90,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Push"
-            android:textSize="24sp"/>
+            android:textSize="24sp"
+
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:scrollHorizontally="false"/>
 
     </LinearLayout>
 
@@ -104,7 +112,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Time"
-            android:textSize="24sp"/>
+            android:textSize="24sp"
+
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:scrollHorizontally="false"/>
 
     </LinearLayout>
 
@@ -122,7 +134,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Location"
-            android:textSize="24sp"/>
+            android:textSize="24sp"
+
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:scrollHorizontally="false"/>
 
     </LinearLayout>
 
