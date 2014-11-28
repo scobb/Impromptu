@@ -4,4 +4,22 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:id="@+id/fragStream_linearLayout_listStream"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:gravity="center_vertical|center_horizontal"
+        android:layout_gravity="center"
+        android:background="@drawable/template_rounded_box">
+        <TextView
+            android:id="@+id/fragStream_textView_listStream"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="List Stream"
+            android:textSize="24sp"/>
+    </LinearLayout>
+
 </LinearLayout>

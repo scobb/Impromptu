@@ -6,23 +6,41 @@
     android:paddingLeft="8dp"
     android:paddingRight="8dp">
 
+    <LinearLayout
+        android:id="@+id/fragStream_linearLayout_mapStream"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:gravity="center_vertical|center_horizontal"
+        android:layout_gravity="center"
+        android:background="@drawable/template_rounded_box">
+        <TextView
+            android:id="@+id/fragStream_textView_mapStream"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Map Stream"
+            android:textSize="24sp"/>
+    </LinearLayout>
+
     <ListView android:id="@id/android:list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#00FF00"
         android:layout_weight="1"
         android:drawSelectorOnTop="false"/>
+    <!-- android:background="#00FF00" -->
 
     <TextView android:id="@id/android:empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#FF0000"
         android:text="No data"/>
+    <!-- android:background="#FF0000" -->
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="#00FF00" >
+        android:layout_height="wrap_content">
+        <!--android:background="#00FF00" -->
 
         <TextView android:id="@+id/android_filter"
             android:layout_width="match_parent"
