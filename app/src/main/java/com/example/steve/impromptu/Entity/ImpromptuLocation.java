@@ -23,9 +23,9 @@ public class ImpromptuLocation {
     public String toString(){
         String res = name;
         if(!name.equals("")) {
-            res += "/n";
+            res += "\n";
         }
-        res += name + "/n" + coordinates;
+        res += name + "\n" + coordinates;
         return res;
     }
 

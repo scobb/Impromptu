@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
@@ -33,6 +34,7 @@ public class FragmentComposeMain extends Fragment {
     LinearLayout vTime;
     LinearLayout vLocation;
     LinearLayout vCreate;
+    TextView vLocationPrompt;
     public Event myEvent;
 
     OnComposeMainFinishedListener composeMainFinishedListenerCallback;
@@ -64,7 +66,10 @@ public class FragmentComposeMain extends Fragment {
         vPush = (LinearLayout) fragmentView.findViewById(R.id.fragComposeMain_linearLayout_push);
         vTime = (LinearLayout) fragmentView.findViewById(R.id.fragComposeMain_linearLayout_time);
         vLocation = (LinearLayout) fragmentView.findViewById(R.id.fragComposeMain_linearLayout_location);
+        vLocationPrompt = (TextView) fragmentView.findViewById(R.id.fragComposeMain_textView_locationPrompt);
         vCreate = (LinearLayout) fragmentView.findViewById(R.id.fragComposeMain_linearLayout_create);
+
+        vLocationPrompt.setText("Location");
 
         if (myEvent != null) {
             String eventType = myEvent.getType();
@@ -101,6 +106,8 @@ public class FragmentComposeMain extends Fragment {
             if (eventDescription != null) {
                 vDescription.setText(eventDescription);
             }
+
+
         }
 //how do I get it to go to the select type page?
         vType.setOnClickListener(new View.OnClickListener() {
@@ -146,7 +153,6 @@ public class FragmentComposeMain extends Fragment {
             @Override
             public void onClick(View v) {
 
-                //Toast.makeText(getActivity(), "Select location", Toast.LENGTH_SHORT).show();
                 String attribute = "location";
                 attributeSelectedListenerCallback.OnAttributeSelected(attribute);
 
@@ -247,6 +253,20 @@ public class FragmentComposeMain extends Fragment {
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement all listeners");
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        vLocationPrompt.setText("Location");
+
+        if(myEvent != null) {
+            //TODO: refactor this check? different way of asking "is location null"?? Add function to Event?
+            if (myEvent.getLocationName() != null) {
+                vLocationPrompt.setText("Location: " + myEvent.getLocationName());
+            }
         }
     }
 

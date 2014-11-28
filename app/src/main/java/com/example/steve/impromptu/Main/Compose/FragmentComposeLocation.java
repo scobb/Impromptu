@@ -97,17 +97,12 @@ public class FragmentComposeLocation extends Fragment {
         }
 
         //this works just a little differently:
-
         ScrollableMapFragment mf = (ScrollableMapFragment) myContext.getSupportFragmentManager().findFragmentById(R.id.fragComposeLocation_map);
         vMap = mf.getMap();
-
-
-
 
         ActivityMain myActivity = (ActivityMain) getActivity();
 
         // get references to GUI widgets
-        //vLocationPrompt = (TextView) fragmentView.findViewById(R.id.fragComposeLocation_textView_locationPrompt);
         vAddress = (EditText) fragmentView.findViewById(R.id.fragComposeLocation_editText_address);
         vSearchPlace = (TextView) fragmentView.findViewById(R.id.fragComposeLocation_textView_searchPlace);
         vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposeLocation_linearLayout_okay);
@@ -115,16 +110,89 @@ public class FragmentComposeLocation extends Fragment {
         vSelectedLocation = (TextView) fragmentView.findViewById(R.id.fragComposeLocation_textView_selectedLocation);
         vScrollView = (ScrollView) fragmentView.findViewById(R.id.fragComposeLocation_scrollView);
 
+        //set on-click listeners
+        vSearchPlace.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchPlace();
+            }
+        });
 
+        vCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                clearSearchResultMarkers();
+                mCallback.onComposeLocationFinished();
+
+            }
+        });
+
+        vOkay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //TODO: MAKE SURE I ERROR CHECK.
+
+                if(returnVal == null)
+                {
+                    Toast.makeText(getActivity(), "No location selected", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                //Toast.makeText(getActivity(), "Selected: " + returnVal.toString(), Toast.LENGTH_SHORT).show();
+
+                myEvent.setLocationName(returnVal.getName());
+                myEvent.setFormattedAddress(returnVal.getFormattedAddress());
+                myEvent.setLatitude(returnVal.getCoordinates().latitude);
+                myEvent.setLongitude(returnVal.getCoordinates().longitude);
+
+                clearSearchResultMarkers();
+                mCallback.onComposeLocationFinished();
+            }
+        });
+
+        vSelectedLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(returnVal != null)
+                {
+                    clearSearchResultMarkers();
+
+                    searchResultMarkers.add(vMap.addMarker(new MarkerOptions().title(returnVal.getName())
+                            .snippet(returnVal.getFormattedAddress())
+                            .position(returnVal.getCoordinates())));
+
+                    vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(returnVal.getCoordinates(), DEFAULTZOOM));
+                }
+            }
+        });
+
+        vMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+
+            @Override
+            public boolean onMarkerClick(Marker marker){
+                markerClick(marker);
+                return false; //false means let the default behavior occur, also
+            }
+        });
+
+
+        ((ScrollableMapFragment) myContext.getSupportFragmentManager().findFragmentById(R.id.fragComposeLocation_map))
+                .setListener(new ScrollableMapFragment.OnTouchListener() {
+
+                    @Override
+                    public void onTouch() {
+                        vScrollView.requestDisallowInterceptTouchEvent(true);
+                    }
+                });
+
+
+        //initialize return value, pre-load with existing event if there is one
         myEvent = myActivity.getComposeEvent();
-
-        vSelectedLocation.setText("");
-
-        //TODO: when loading default value, set on map?
-
-
         returnVal = null;
 
+          //TODO: refactor this check? different way of asking "is location null"?? Put add function to Event?
         if (myEvent.getLocationName() != null)
         {
             returnVal = new ImpromptuLocation();
@@ -147,73 +215,6 @@ public class FragmentComposeLocation extends Fragment {
             }
         }
 
-        //if (returnVal == null) {
-            //returnVal = new ImpromptuLocation();
-        //}
-
-
-
-
-        //TODO: make fragment scrollable (see FragmentEventDetail), move buttons
-
-
-
-        vSearchPlace.setOnClickListener(new View.OnClickListener() {
-            @Override
-        public void onClick(View v) {
-                searchPlace();
-            }
-        });
-
-        vCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                clearSearchResultMarkers();
-                mCallback.onComposeLocationFinished();
-
-            }
-        });
-
-        vOkay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                //TODO: MAKE SURE I ERROR CHECK. Currently have error when I hit Ok after clicking nothing
-
-                if(returnVal == null)
-                {
-                    Toast.makeText(getActivity(), "No location selected", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                Toast.makeText(getActivity(), "Selected: " + returnVal.toString(), Toast.LENGTH_SHORT).show();
-
-                myEvent.setLocationName(returnVal.getName());
-                myEvent.setFormattedAddress(returnVal.getFormattedAddress());
-                myEvent.setLatitude(returnVal.getCoordinates().latitude);
-                myEvent.setLongitude(returnVal.getCoordinates().longitude);
-
-                clearSearchResultMarkers();
-                mCallback.onComposeLocationFinished();
-            }
-        });
-
-        vSelectedLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(returnVal != null)
-                {
-                    clearSearchResultMarkers();
-
-                    searchResultMarkers.add(vMap.addMarker(new MarkerOptions().title(returnVal.getName())
-                        .snippet(returnVal.getFormattedAddress())
-                        .position(returnVal.getCoordinates())));
-
-                    vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(returnVal.getCoordinates(), DEFAULTZOOM));
-                }
-            }
-        });
 
 
         //some map initializations:
@@ -244,29 +245,18 @@ public class FragmentComposeLocation extends Fragment {
             toggleMapType();
         }
 
-        vMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
 
-            @Override
-            public boolean onMarkerClick(Marker marker){
-                markerClick(marker);
-                return false; //false means let the default behavior occur, also
-            }
-        });
+        vSelectedLocation.setText("");
 
+        //if a selection has already been made, start with it listed at the bottom
+        if(returnVal != null) {
+            selectLoc(returnVal); //set vSelectedLocation text
+        }
 
-        ((ScrollableMapFragment) myContext.getSupportFragmentManager().findFragmentById(R.id.fragComposeLocation_map))
-                .setListener(new ScrollableMapFragment.OnTouchListener() {
-
-                    @Override
-                    public void onTouch() {
-                        vScrollView.requestDisallowInterceptTouchEvent(true);
-                    }
-                });
 
 
         return fragmentView;
     }
-
 
 
 
@@ -319,35 +309,6 @@ public class FragmentComposeLocation extends Fragment {
 
     }
 
-    /*
-    private void searchAddress()
-    {
-        String address = vAddress.getText().toString();
-        String[] addressChunks = address.split("[ ]+");
-        String addressQuery = "https://maps.googleapis.com/maps/api/geocode/json?address=";
-
-        if (addressChunks.length > 0) {
-            addressQuery += addressChunks[0];
-        }
-
-        for (int i = 1; i < addressChunks.length; i++) {
-            addressQuery += "+";
-            addressQuery += addressChunks[i];
-        }
-
-        // doesn't seem to help much in searching addresses
-        //if(myLoc != null) {
-        //    addressQuery += "&location=" + myLoc.latitude + "," + myLoc.longitude + "&radius=" + SEARCHRADIUS;
-        //}
-
-
-        // move this key into strings.xml
-        addressQuery += "&key=AIzaSyCRP8acNPFERUdMPouoFU_cM0sTfdT6tww";
-
-
-        new HttpAddressAsyncTask().execute(addressQuery);
-    }*/
-
     private void searchPlace(){
         String query = vAddress.getText().toString();
         String[] queryChunks = query.split("[ ]+");
@@ -389,26 +350,6 @@ public class FragmentComposeLocation extends Fragment {
             processJSON(result, true);
         }
     }
-
-    /*
-    private class HttpAddressAsyncTask extends AsyncTask<String, Void, String> {
-
-        public HttpAddressAsyncTask() {
-        }
-
-        @Override
-        protected String doInBackground(String... urls) {
-
-            return GET(urls[0]);
-        }
-
-        // onPostExecute displays the results of the AsyncTask.
-        @Override
-        protected void onPostExecute(String result) {
-
-            processJSON(result, false);
-        }
-    } */
 
     private synchronized void processJSON(String result, boolean isPlaceQuery) {
         String errorMsg = "Sorry, an error has occurred.";
@@ -487,7 +428,6 @@ public class FragmentComposeLocation extends Fragment {
     private void selectLoc(ImpromptuLocation il){
         returnVal = il;
         //Toast.makeText(getActivity(), il.getFormattedAddress() + " " + il.getCoordinates().toString(), Toast.LENGTH_SHORT).show();
-        //TODO: make text wrap nicely
         vSelectedLocation.setText("   " + il.getName() + "\n   " + il.getFormattedAddress());
     }
 
@@ -538,45 +478,4 @@ public class FragmentComposeLocation extends Fragment {
 
         return ans.toString();
     }
-
-    /*
-    public boolean isConnected() {
-        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(this.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected())
-            return true;
-        else
-            return false;
-    }
-    */
 }
-
-        /*
-        int hasGooglePlay = GooglePlayServicesUtil.isGooglePlayServicesAvailable(fragmentView.getContext());
-
-        String toastMe = "Google Play Services are available";
-
-        switch(hasGooglePlay)
-        {
-            case ConnectionResult.SUCCESS:
-                toastMe = "Success";
-             break;
-            case ConnectionResult.SERVICE_MISSING:
-                toastMe = "Service Missing";
-                break;
-            case ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED:
-                toastMe = "Service Version Update Required";
-                break;
-            case ConnectionResult.SERVICE_DISABLED:
-                toastMe = "Service Disabled";
-                break;
-            case ConnectionResult.SERVICE_INVALID:
-                toastMe = "Service Invalid";
-                break;
-            default:
-                toastMe = "Well, we at least entered the switch case";
-                break;
-        }
-
-        Toast.makeText(getActivity(), toastMe, Toast.LENGTH_SHORT).show();
-        */
