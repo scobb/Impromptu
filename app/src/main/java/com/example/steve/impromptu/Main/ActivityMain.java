@@ -364,6 +364,8 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
             Event myEvent = getComposeEvent();
             myEvent.persist();
 
+            updateLocationWithinApp("Stream");
+
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
