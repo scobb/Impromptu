@@ -202,6 +202,11 @@ public class ActivityLogin extends FragmentActivity {
                                 }
                             });
                     req.executeAsync();
+                    ((ImpromptuUser)user).clearGroups();
+                    ((ImpromptuUser)user).clearFriends();
+                    ((ImpromptuUser)user).clearStreamEvents();
+                    ((ImpromptuUser)user).persist();
+
                     Log.d("Impromptu",
                             "User signed up and logged in through Facebook!");
                     forwardToMainActivity();
