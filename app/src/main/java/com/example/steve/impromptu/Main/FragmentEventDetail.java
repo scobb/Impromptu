@@ -3,6 +3,11 @@ package com.example.steve.impromptu.Main;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Context;
+import android.content.Intent;
+import android.location.Location;
+import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.InflateException;
@@ -37,6 +42,9 @@ public class FragmentEventDetail extends Fragment {
 
     private ImpromptuUser owner;
     private Event event;
+    private LinearLayout vOpenInGMaps;
+
+    private static final LatLng defaultLocation = new LatLng(30.2864802, -97.74116620000001); //UT Austin ^___^
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,6 +72,7 @@ public class FragmentEventDetail extends Fragment {
         TextView descriptionTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_description);
         ImageView profilePictureView = (ImageView) myInflatedView.findViewById(R.id.fragEventDetail_imageView_profilePic);
         scrollView = (ScrollView) myInflatedView.findViewById(R.id.fragEventDetail_scrollView);
+        vOpenInGMaps = (LinearLayout) myInflatedView.findViewById(R.id.fragEventDetail_linearLayout_openInGMaps);
 
         //MapFragment mf = (MapFragment) getFragmentManager().findFragmentById(R.id.fragEventDetail_location_map);
 
@@ -112,6 +121,34 @@ public class FragmentEventDetail extends Fragment {
                 fragment.setArguments(userData);
                 transaction.replace(R.id.activityMain_frameLayout_shell, fragment);
                 transaction.commit();
+            }
+        });
+
+        vOpenInGMaps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: implement
+
+                LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+                String locationProvider = LocationManager.NETWORK_PROVIDER;
+                //Or use LocationManager.GPS_PROVIDER
+                Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
+                LatLng myLoc;
+
+                if(lastKnownLocation == null)
+                {
+                    myLoc = defaultLocation;
+                }
+                else
+                {
+                    myLoc = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+                }
+
+                String url = "http://maps.google.com/maps?saddr=" + myLoc.latitude + "," + myLoc.longitude
+                        + "&daddr=" + event.getLatitude() + "," + event.getLongitude() + "&mode=driving";
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+                startActivity(intent);
             }
         });
 

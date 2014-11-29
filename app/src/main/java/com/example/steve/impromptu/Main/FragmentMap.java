@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
@@ -278,6 +279,9 @@ public class FragmentMap extends Fragment {
             fragment.setArguments(eventData);
             transaction.replace(R.id.activityMain_frameLayout_shell, fragment);
             transaction.commit();
+        }
+        else {
+            Toast.makeText(getActivity(), "Please select an event.", Toast.LENGTH_SHORT).show();
         }
     }
 
