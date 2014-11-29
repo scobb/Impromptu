@@ -2,6 +2,9 @@ package com.example.steve.impromptu.Main;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -17,7 +20,11 @@ import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.R;
 import com.example.steve.impromptu.UI.ScrollableMapFragment;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -25,12 +32,20 @@ import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * Created by jonreynolds on 10/16/14.
  */
 public class FragmentMap extends Fragment {
+
+    private static final int MAXRESULTNUM = 20;
+    private static final int DEFAULTZOOM = 15;
+    private static final LatLng defaultLocation = new LatLng(30.2864802, -97.74116620000001); //UT Austin ^___^
+    private LatLng myLoc;
+    private Vector<Marker> markers;
 
     private FragmentActivity myContext;
     private List<Event> posts;
@@ -43,10 +58,6 @@ public class FragmentMap extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        // Receive data passed in
-        //Bundle eventData = getArguments();
-
         // Get Views
         if (myInflatedView != null) {
             ViewGroup parent = (ViewGroup) myInflatedView.getParent();
@@ -59,13 +70,17 @@ public class FragmentMap extends Fragment {
         /* map is already there, just return view as it is */
         }
 
+        //intialize so it is not null
+        markers = new Vector<Marker>();
+
         vScrollView = (ScrollView) myInflatedView.findViewById(R.id.fragMap_scrollView);
 
-        ScrollableMapFragment mf = (ScrollableMapFragment) myContext.getSupportFragmentManager().findFragmentById(R.id.fragEventDetail_location_map);
+        ScrollableMapFragment mf = (ScrollableMapFragment) myContext.getSupportFragmentManager().findFragmentById(R.id.fragMap_map);
         vMap = mf.getMap();
 
-        ((ScrollableMapFragment) myContext.getSupportFragmentManager().findFragmentById(R.id.fragEventDetail_location_map))
+        ((ScrollableMapFragment) myContext.getSupportFragmentManager().findFragmentById(R.id.fragMap_map))
                 .setListener(new ScrollableMapFragment.OnTouchListener() {
+
 
                     @Override
                     public void onTouch() {
@@ -77,6 +92,8 @@ public class FragmentMap extends Fragment {
         // Gets query for the event streams
         ImpromptuUser currentUser = (ImpromptuUser) ParseUser.getCurrentUser();
         List<Event> events = currentUser.getStreamEvents();
+        addEventsToMap(events);
+
         listStream = (LinearLayout) myInflatedView.findViewById(R.id.fragMap_linearLayout_listStream);
 
         listStream.setOnClickListener(new View.OnClickListener() {
@@ -90,7 +107,7 @@ public class FragmentMap extends Fragment {
         });
 
 
-
+/*
         ParseObject.fetchAllIfNeededInBackground(events, new FindCallback<Event>() {
 
             @Override
@@ -122,9 +139,25 @@ public class FragmentMap extends Fragment {
                     e.printStackTrace();
                 }
             }
-        });
+        }); */
 
         return myInflatedView;
+    }
+
+    private void addEventsToMap(List<Event> events) {
+
+        clearPosts();
+        Hashtable<String, Boolean> filtersMap = ActivityMain.getFiltersMap();
+
+        for(Event event : events) {
+            if(filtersMap.get(event.getType()) != null) {
+                if(filtersMap.get(event.getType())) {
+                    posts.add(event);
+                }
+            }
+        }
+
+        addMarkers();
     }
 
     private void clearPosts() {
@@ -142,13 +175,53 @@ public class FragmentMap extends Fragment {
     private void addMarkers() {
         clearMarkers();
 
-        if(posts != null) {
-
+        if(posts == null) {
+            posts = new ArrayList<Event>();
         }
+
+        for (Event event : posts) {
+
+            markers.add(vMap.addMarker(new MarkerOptions().title(event.getTitle())
+                    .snippet(event.getLocationName())
+                    .position(new LatLng(event.getLatitude(), event.getLongitude()))));
+        }
+
+        LocationManager locationManager = (LocationManager) this.getActivity().getSystemService(Context.LOCATION_SERVICE);
+        String locationProvider = LocationManager.NETWORK_PROVIDER;
+        //Or use LocationManager.GPS_PROVIDER
+        Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
+
+        if(lastKnownLocation == null)
+        {
+            myLoc = defaultLocation;
+        }
+        else
+        {
+            myLoc = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+        }
+
+        if(vMap != null) {
+
+            vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLoc, DEFAULTZOOM));
+        }
+
+
+
     }
 
     private void clearMarkers() {
-        //TODO: implement
+        if(markers != null) {
+            for(int i = 0; i < markers.size(); i++) {
+                markers.get(i).remove();
+            }
+            markers.clear();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        clearMarkers();
+        super.onStop();
     }
 
     @Override
