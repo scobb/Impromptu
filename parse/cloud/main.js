@@ -14,12 +14,45 @@ Parse.Cloud.define("destroyFriendship", function(request, response) {
 	var q1 = new Parse.Query(Parse.User);
 	var q2 = new Parse.Query(Parse.User);
 	
+	q1.include('groups');
+	q2.include('groups');
+	
 	// execute both queries in parallel. When they complete...
 	Parse.Promise.when([q1.get(fromId), q2.get(toId)]).then(function(from, to) {
 		console.log("from: " + from);
 		console.log("to: " + to);
 		var fromFriends = from.get('friends');
 		var toFriends = to.get('friends');
+		var fromGroups = from.get('groups');
+		var toGroups = to.get('groups');
+		
+		fromGroups.forEach(function(group) {
+			// find 'to' in any of 'from's groups, remove
+			var groupIds = _.map(group.get('friendsInGroup'), function(friend) {
+				return friend.id;
+			})
+			console.log('from, groupIds: ' + groupIds);
+			if (groupIds.indexOf(to.id) > -1) {
+				console.log('Found friend ' + to.id + ' in group ' + group.id);
+				group.get('friendsInGroup').splice(groupIds.indexOf(to.id), 1);
+			} else {
+				console.log('This friend not in group ' + group.id);
+			}
+		})
+		toGroups.forEach(function(group) {
+			// find 'from' in any of 'to's groups, remove
+			var groupIds = _.map(group.get('friendsInGroup'), function(friend) {
+				return friend.id;
+			})
+			console.log('to, groupIds: ' + groupIds);
+			if (groupIds.indexOf(from.id) > -1) {
+				console.log('Found friend ' + from.id + ' in group ' + group.id);
+				group.get('friendsInGroup').splice(groupIds.indexOf(from.id), 1);
+			} else {
+				console.log('This friend not in group ' + group.id);
+			}
+		})
+		
 		var fromFriendIds = _.map(fromFriends, function(friend) {
 			return friend.id;
 		})
@@ -156,12 +189,14 @@ Parse.Cloud.job("cleanAllEvents", function(request, response) {
 		// look for events more than 24 hours old
 		var toDelete = []
 		var now = new Date().getTime() / 1000;
+		console.log("now: " + now);
 		var targetTime = now - 3600 * 24;
 		for (var i = 0; i < events.length; i++) {
 			var event = events[i];
+			console.log('eventTime: ' + event.get("eventTime").getTime());
 			if (!event.get("pushed")) {
 				toDelete.push(event);
-			} else if (event.get("eventTime").getTime() < targetTime) {
+			} else if (event.get("eventTime").getTime() / 1000 < targetTime) {
 				toDelete.push(event);
 			}
 		}
