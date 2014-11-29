@@ -67,12 +67,23 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
 
         // Get the root view
         final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_stream, container, false);
-        View fragmentView = inflater.inflate(R.layout.fragment_stream, container, false);
 
 
         // Gets query for the event streams
         ImpromptuUser currentUser = (ImpromptuUser) ParseUser.getCurrentUser();
         List<Event> events = currentUser.getStreamEvents();
+
+        mapStream = (LinearLayout) rootView.findViewById(R.id.map_bar);
+
+        mapStream.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                FragmentMap nextFrag = new FragmentMap();
+                getFragmentManager().beginTransaction().replace(R.id.activityMain_frameLayout_shell, nextFrag).addToBackStack(null).commit();
+            }
+        });
+
 
 
         ParseObject.fetchAllIfNeededInBackground(events, new FindCallback<Event>() {

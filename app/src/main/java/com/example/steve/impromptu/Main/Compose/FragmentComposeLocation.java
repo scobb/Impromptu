@@ -478,4 +478,9 @@ public class FragmentComposeLocation extends Fragment {
 
         return ans.toString();
     }
+
+    @Override
+    public void onStop() {
+        clearSearchResultMarkers();
+    }
 }

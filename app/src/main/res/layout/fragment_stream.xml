@@ -19,7 +19,6 @@
         android:drawSelectorOnTop="false" />
 
     <LinearLayout
-        android:id="@+id/filter_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/filter_bar_height"
         android:layout_gravity="bottom"
@@ -28,8 +27,9 @@
         android:orientation="horizontal" >
 
         <LinearLayout
+            android:id="@+id/filter_bar"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:background="@color/impromptu_complementary_green"
@@ -44,8 +44,9 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/map_bar"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:background="@color/impromptu_complementary_green">

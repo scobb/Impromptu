@@ -121,13 +121,11 @@ public class FragmentComposeTime extends Fragment {
             startTime.hour = currentTime.hour;
             absoluteStartHour = startTime.hour;
             startTime.minute = currentTime.minute;
-//used to have find views by ids
-
 
             startMorning = true;
-            if (roundUpToNearest5(startTime.minute) >= 60) {
+            if ((startTime.minute >= 60) || (roundUpToNearest5(startTime.minute) >= 60)) {
                 startTime.hour += 1;
-                // absoluteStartHour += 1;
+                absoluteStartHour += 1;
                 startTime.minute = 0;
             }
             if (startTime.hour == 12) {
@@ -135,7 +133,13 @@ public class FragmentComposeTime extends Fragment {
             }
             if (startTime.hour > 12) {
                 startTime.hour = startTime.hour - 12;
+                //startMorning = false;
+            }
+            if(absoluteStartHour > 12) {
                 startMorning = false;
+            }
+            if(absoluteStartHour >= 24) {
+                startMorning = true;
             }
 
             if (startTime.hour == 0) {
@@ -171,6 +175,9 @@ public class FragmentComposeTime extends Fragment {
                     int addTime = progress;
                     addTime *= 5;
                     int addHours = addTime / 60;
+
+                    System.out.println("Hours to add is" + addHours);
+
                     int addMinutes = addTime % 60;
                     boolean morning = true;
                     String newStartTime;
@@ -180,26 +187,31 @@ public class FragmentComposeTime extends Fragment {
                     absoluteStartHour = currentTime.hour + addHours;
                     startTime.minute = (currentTime.minute + addMinutes) % 60;
 
+                    System.out.println("Initial start time is" + startTime.hour + ":" + startTime.minute);
 
-                    if (roundUpToNearest5(startTime.minute) >= 60) {
+                   // if ((startTime.minute >= 60) || (roundUpToNearest5(startTime.minute) >= 60)) {
+                        if (roundUpToNearest5(startTime.minute) >= 60) {
                         startTime.hour += 1;
-                        // absoluteStartHour += 1;
+                        absoluteStartHour += 1;
                         startTime.minute = 0;
                     }
 
-                    if (startTime.hour == 12) {
+                    if (absoluteStartHour == 12) {
                         morning = false;
                     }
                     if (startTime.hour > 12) {
                         startTime.hour = startTime.hour - 12;
+                    }
+                    if(absoluteStartHour > 12) {
                         morning = false;
                     }
-
-                    if (startTime.hour == 0) {
+                    if(absoluteStartHour >= 24) {
+                        morning = true;
+                    }
+                    if (absoluteStartHour == 0) {
                         startTime.hour = 12;
                         morning = true;
                     }
-
 
                     if (morning) {
 
@@ -208,7 +220,7 @@ public class FragmentComposeTime extends Fragment {
                         newStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", roundUpToNearest5(startTime.minute)) + "pm";
 
                     }
-
+                    System.out.println(absoluteStartHour + " " + startTime.minute);
                     vTextStartTime.setText(newStartTime);
 
                     String newEndTime = getEndTime();
