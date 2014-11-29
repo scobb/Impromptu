@@ -283,8 +283,14 @@ public class FragmentComposeMain extends Fragment {
 
                 String prompt = "Stream: ";
 
+                String prefix = " ";
+                String withComma = ", ";
+
                 for(ImpromptuUser person : friends) {
-                    prompt += " " + person.getName();
+
+                    prompt += prefix + person.getName();
+
+                    prefix = withComma;
                 }
 
                 vStreamPrompt.setText(prompt);
@@ -296,8 +302,12 @@ public class FragmentComposeMain extends Fragment {
 
                 String prompt = "Push: ";
 
+                String prefix = " ";
+                String withComma = ", ";
+
                 for(ImpromptuUser person : friends) {
-                    prompt += " " + person.getName();
+                    prompt += prefix + person.getName();
+                    prefix = withComma;
                 }
 
                 vPushPrompt.setText(prompt);

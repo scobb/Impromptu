@@ -11,10 +11,10 @@
         android:layout_gravity="center"
         android:visibility="gone" />
 
-    <ListView
-        android:id="@android:id/list"
+    <ListView android:id="@id/android:list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_weight="1"
         android:cacheColorHint="@android:color/white"
         android:drawSelectorOnTop="false" />
 
@@ -25,14 +25,38 @@
         android:layout_gravity="bottom"
         android:background="@color/impromptu_complementary_green"
         android:gravity="center"
-        android:orientation="horizontal"
-        android:onClick="filter" >
+        android:orientation="horizontal" >
 
-        <TextView
+        <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/filter_bar" />
+            android:background="@color/impromptu_complementary_green"
+            android:onClick="filter" >
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/filter_bar" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:background="@color/impromptu_complementary_green">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/map_bar" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

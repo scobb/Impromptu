@@ -10,11 +10,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.widget.AbsListView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.ImpromptuLocation;
@@ -48,8 +47,6 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
             R.id.fragStream_textView_content, R.id.fragStream_textView_date};
 
 
-    private List<Event> posts;
-
     // New things for the quick return thing
     private ObjectAnimator filterBarReturnAnimator;
     private ObjectAnimator filterBarHideAnimator;
@@ -61,6 +58,8 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
     /** Tracks the last seen first visible child */
     private int _last_first_child;
 
+    List<Event> posts;
+    LinearLayout mapStream;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -68,10 +67,13 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
 
         // Get the root view
         final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_stream, container, false);
+        View fragmentView = inflater.inflate(R.layout.fragment_stream, container, false);
+
 
         // Gets query for the event streams
         ImpromptuUser currentUser = (ImpromptuUser) ParseUser.getCurrentUser();
         List<Event> events = currentUser.getStreamEvents();
+
 
         ParseObject.fetchAllIfNeededInBackground(events, new FindCallback<Event>() {
 
