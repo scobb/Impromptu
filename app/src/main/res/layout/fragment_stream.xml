@@ -39,13 +39,13 @@
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-        <!--android:background="#00FF00" -->
+        android:layout_height="wrap_content"
+        android:background="#00FF00">
 
         <TextView android:id="@+id/android_filter"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-            <!--android:text="Filters" /-->
+            android:layout_height="match_parent"
+            android:text="Filters" />
 
     </LinearLayout>
 </LinearLayout>
