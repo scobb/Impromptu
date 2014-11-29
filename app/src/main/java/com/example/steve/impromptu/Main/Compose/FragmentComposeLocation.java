@@ -482,5 +482,6 @@ public class FragmentComposeLocation extends Fragment {
     @Override
     public void onStop() {
         clearSearchResultMarkers();
+        super.onStop();
     }
 }
