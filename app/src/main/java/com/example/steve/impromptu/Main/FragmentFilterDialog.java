@@ -3,6 +3,8 @@ package com.example.steve.impromptu.Main;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -157,10 +159,19 @@ public class FragmentFilterDialog extends DialogFragment{
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 ActivityMain.updateFilters(currentFilters);
+                                FragmentManager fragmentManager = getActivity().getFragmentManager();
+
+                                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+                                FragmentStream stream = new FragmentStream();
+                                fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, stream).addToBackStack(null);
+                                fragmentTransaction.commit();
                             }
                         }
                 )
         ;
+
+        initializeImages();
         return builder.create();
     }
 
@@ -180,6 +191,28 @@ public class FragmentFilterDialog extends DialogFragment{
 
         // And then on your imageview
         filter.startAnimation(alpha);
+    }
+
+    // Initialize images to either be faded in or faded out
+    private void initializeImages(){
+        if(!currentFilters.get("Drinking")){
+            fadeFilterOut(drinkingFilter);
+        }
+        if(!currentFilters.get("Eating")){
+            fadeFilterOut(foodFilter);
+        }
+        if(!currentFilters.get("Sports")){
+            fadeFilterOut(sportFilter);
+        }
+        if(!currentFilters.get("Studying")){
+            fadeFilterOut(studyingFilter);
+        }
+        if(!currentFilters.get("TV")){
+            fadeFilterOut(tvFilter);
+        }
+        if(!currentFilters.get("Working Out")){
+            fadeFilterOut(workingOutFilter);
+        }
     }
 
 }

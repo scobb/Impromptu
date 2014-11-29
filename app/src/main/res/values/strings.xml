@@ -7,7 +7,8 @@
     <string name="app_id">1512234555691131</string>
     <string name="get_started">To get started, log in using Facebook</string>
 
-
+    <string name="filter_bar">Show Filters</string>
+    <string name="map_bar">Map Stream</string>
 
     <string name="fragComposeMain_hintTitle">Title</string>
     <string name="fragComposeMain_hintDescription">Enter description...</string>

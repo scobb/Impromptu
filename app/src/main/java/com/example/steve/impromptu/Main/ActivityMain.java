@@ -1,6 +1,7 @@
 package com.example.steve.impromptu.Main;
 
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -60,7 +61,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     TextView vLocationWithinApp;
 
     // Filters
-    private static Hashtable<String, Boolean> filters = new Hashtable<String, Boolean>();;
+    private static Hashtable<String, Boolean> filters = new Hashtable<String, Boolean>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -501,10 +502,11 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         fragmentTransaction.commit();
     }
 
-//    public void filter(View view){
-//        DialogFragment filterFragment = FragmentFilterDialog.newInstance();
-//        filterFragment.show(getFragmentManager(), "dialog");
-//    }
+    public void filter(View view){
+        DialogFragment filterFragment = FragmentFilterDialog.newInstance();
+        filterFragment.show(getFragmentManager(), "dialog");
+    }
+
 
     public Event getComposeEvent() {
         return composeEvent;
