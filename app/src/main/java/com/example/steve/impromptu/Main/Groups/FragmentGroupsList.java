@@ -51,7 +51,7 @@ public class FragmentGroupsList extends Fragment {
     ImageView vEdit;
     ImageView vAddToGroup;
 
-    //TODO: add X to remove groups, add done & cancel, demolishFriendship() to remove friend and me from groups, add cancel to compose type
+    //TODO: add done & cancel, demolishFriendship() to remove friend and me from groups, add cancel to compose type
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -82,7 +82,7 @@ public class FragmentGroupsList extends Fragment {
             filteredFriendsList.add(hld); // filteredFriendsList starts off with the same holders as masterFriendsList; will change with search
         }
 
-        groupsAdapter = new ArrayAdapterGroupsList(getActivity(), R.layout.template_group_item, groups);
+        groupsAdapter = new ArrayAdapterGroupsList(getActivity(), R.layout.template_group_item, groups, currentUser);
         vGroupsList.setAdapter(groupsAdapter);
 
         vFriendsInGroupList.setAdapter(null);
@@ -198,7 +198,7 @@ public class FragmentGroupsList extends Fragment {
         vFriendsInGroupList.setVisibility(View.GONE);
         vFriendsInGroupList.setAdapter(null);
         groups = (ArrayList<Group>) currentUser.getGroups();
-        groupsAdapter = new ArrayAdapterGroupsList(getActivity(), R.layout.template_group_item, groups);
+        groupsAdapter = new ArrayAdapterGroupsList(getActivity(), R.layout.template_group_item, groups, currentUser);
         vGroupsList.setAdapter(groupsAdapter);
     }
 

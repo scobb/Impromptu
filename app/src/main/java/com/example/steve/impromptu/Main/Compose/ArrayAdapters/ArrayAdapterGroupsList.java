@@ -6,9 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.steve.impromptu.Entity.Group;
+import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.R;
 
 import java.util.ArrayList;
@@ -19,15 +21,15 @@ import java.util.ArrayList;
 public class ArrayAdapterGroupsList extends ArrayAdapter<Group> {
 
     private ArrayList<Group> masterList;
-//    private ImpromptuUser currentUser;
+    private ImpromptuUser currentUser;
     private Context context;
 
     public ArrayAdapterGroupsList(Context context, int textViewResourceId,
-                                   ArrayList<Group> masterList) {
+                                   ArrayList<Group> masterList, ImpromptuUser currentUser) {
         super(context, textViewResourceId, masterList);
         this.context = context;
         this.masterList = masterList;
-//        this.currentUser = currentUser;
+        this.currentUser = currentUser;
     }
 
     @Override
@@ -62,8 +64,24 @@ public class ArrayAdapterGroupsList extends ArrayAdapter<Group> {
             Group group = masterList.get(position);
 //            ImageView vPicture = (ImageView) view.findViewById(R.id.templateFriendOrRequestItem_imageView_picture);
             TextView vName = (TextView) view.findViewById(R.id.templateGroupItem_textView_name);
+            final ImageView vRemove = (ImageView) view.findViewById(R.id.templateGroupItem_imageView_remove);
 
             vName.setText(group.getGroupName());
+            vRemove.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Group group = masterList.get(position);
+
+                    ArrayList<Group> groups = (ArrayList<Group>) currentUser.getGroups();
+                    groups.remove(group);
+                    currentUser.persist();
+
+                    int color = context.getResources().getColor(R.color.impromptu_remove_red);
+                    View parent = (View) view.getParent();
+                    parent.setBackgroundColor(color);
+                    vRemove.setVisibility(View.GONE);
+                }
+            });
 
         } else {
             view = convertView;
