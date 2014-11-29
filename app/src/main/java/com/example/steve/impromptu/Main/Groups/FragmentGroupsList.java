@@ -1,7 +1,9 @@
 package com.example.steve.impromptu.Main.Groups;
 
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -19,6 +21,7 @@ import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.Main.Compose.ArrayAdapters.ArrayAdapterEditGroup;
 import com.example.steve.impromptu.Main.Compose.ArrayAdapters.ArrayAdapterGroupsList;
 import com.example.steve.impromptu.R;
+import com.parse.ParseException;
 
 import java.util.ArrayList;
 
@@ -134,17 +137,10 @@ public class FragmentGroupsList extends Fragment {
                 if (!addingOrEditingGroups) { // transition to finding FB friends on impromptu
                     switchToAddOrEditGroup();
                 } else { // transition to current groups
-                    // TODO
                     currentGroup.setGroupName(vEditName.getText().toString());
-                    if (currentGroup.getGroupName() != null && currentGroup.getFriendsInGroup() != null) {
+                    if (currentGroup.getGroupName() != null && !currentGroup.getGroupName().isEmpty() && currentGroup.getFriendsInGroup() != null && !currentGroup.getFriendsInGroup().isEmpty()) {
 
-                        currentGroup.persist();
-                        if (!groups.contains(currentGroup)) {
-
-                            groups.add(currentGroup);
-                            currentUser.persist();
-                        }
-                        switchToAllGroups();
+                        new SaveNewGroup().execute();
 
                     } else {
                         Toast.makeText(getActivity(), "You must give the group a title and at least one member.", Toast.LENGTH_LONG).show();
@@ -278,6 +274,64 @@ public class FragmentGroupsList extends Fragment {
                 holder = new FriendHolder(friend);
                 masterFriendsList.add(holder);
             }
+        }
+    }
+
+    private class SaveNewGroup extends AsyncTask<Void, Void, Void> {
+
+        ProgressDialog progressDialog;
+        ImpromptuUser me;
+        Group asyncCurrentGroup;
+        ArrayList<Group> asyncGroups;
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            me = currentUser;
+            asyncCurrentGroup = currentGroup;
+            asyncGroups = groups;
+            progressDialog = new ProgressDialog(getActivity());
+            progressDialog.setTitle("Saving " + currentGroup.getGroupName() + "...");
+            progressDialog.setIndeterminate(false);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setCancelable(true);
+            progressDialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... vd) {
+
+            try {
+                asyncCurrentGroup.save();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            if (!asyncGroups.contains(asyncCurrentGroup)) {
+
+                asyncGroups.add(asyncCurrentGroup);
+                me.persist();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void vd) {
+            groups = asyncGroups;
+            currentGroup = asyncCurrentGroup;
+            currentUser = me;
+            switchToAllGroups();
+
+            progressDialog.dismiss();
+        }
+
+        @Override
+        protected void onCancelled() {
+            // TODO
+
+            progressDialog.dismiss();
         }
     }
 }

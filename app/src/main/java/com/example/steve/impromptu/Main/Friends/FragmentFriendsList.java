@@ -1,9 +1,7 @@
 package com.example.steve.impromptu.Main.Friends;
 
 import android.app.Fragment;
-import android.app.ProgressDialog;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -56,57 +54,57 @@ public class FragmentFriendsList extends Fragment {
 
         currentUser = (ImpromptuUser) ImpromptuUser.getCurrentUser();
 
-        new LoadData().execute();
+//        new LoadData().execute();
         // TODO *****
 
-//        friends = (ArrayList<ImpromptuUser>) currentUser.getFriends();
-//        requests = (ArrayList<FriendRequest>) FriendRequest.getPendingRequestToUser(currentUser);
-//        fBFriends = currentUser.getFacebookFriends();
-//
-//        // ******
-//
-//        FriendAndRequestHolder holder;
-//        Boolean isFriend;
-//        Boolean hasSentRequest;
-//        Boolean isAddFBFriend = false;
-//
-//        isAddFBFriend = false;
-//        isFriend = false;
-//        ImpromptuUser requestOwner;
-//        for (FriendRequest rqst : requests) {
-//            requestOwner = rqst.getFrom();
-//            if (!friends.contains(requestOwner)) { // TODO: won't be necessary when requests are made only from the app (i.e. not programatically)
-//                friendRequests.add(requestOwner);
-//                holder = new FriendAndRequestHolder(requestOwner, isFriend, isAddFBFriend);
-//                holder.setRequest(rqst);
-//                masterFriendsList.add(holder);
-//            }
-//        }
-//
-//        isAddFBFriend = false;
-//        isFriend = true;
-//        for (ImpromptuUser user : friends) {
-//            holder = new FriendAndRequestHolder(user, isFriend, isAddFBFriend);
-//            masterFriendsList.add(holder);
-//        }
-//
-//        isAddFBFriend = true;
-//        for (ImpromptuUser fBFriend : fBFriends) {
-//            isFriend = friends.contains(fBFriend); // is a current friend
-//            hasSentRequest = friendRequests.contains(fBFriend); // is sending a request
-//
-//            if (!isFriend && !hasSentRequest) {
-//                holder = new FriendAndRequestHolder(fBFriend, isFriend, isAddFBFriend);
-//                masterFacebookFriendsList.add(holder);
-//            }
-//        }
-//
-//        for (FriendAndRequestHolder hld : masterFriendsList) {
-//            filteredList.add(hld); // filteredList starts off with the same holders as masterFriendsList; will change with search
-//        }
-//
-//        adapter = new ArrayAdapterFriendsList(getActivity(), R.layout.template_friend_or_request_item, filteredList, currentUser);
-//        vList.setAdapter(adapter);
+        friends = (ArrayList<ImpromptuUser>) currentUser.getFriends();
+        requests = (ArrayList<FriendRequest>) FriendRequest.getPendingRequestToUser(currentUser);
+        fBFriends = currentUser.getFacebookFriends();
+
+        // ******
+
+        FriendAndRequestHolder holder;
+        Boolean isFriend;
+        Boolean hasSentRequest;
+        Boolean isAddFBFriend = false;
+
+        isAddFBFriend = false;
+        isFriend = false;
+        ImpromptuUser requestOwner;
+        for (FriendRequest rqst : requests) {
+            requestOwner = rqst.getFrom();
+            if (!friends.contains(requestOwner)) { // TODO: won't be necessary when requests are made only from the app (i.e. not programatically)
+                friendRequests.add(requestOwner);
+                holder = new FriendAndRequestHolder(requestOwner, isFriend, isAddFBFriend);
+                holder.setRequest(rqst);
+                masterFriendsList.add(holder);
+            }
+        }
+
+        isAddFBFriend = false;
+        isFriend = true;
+        for (ImpromptuUser user : friends) {
+            holder = new FriendAndRequestHolder(user, isFriend, isAddFBFriend);
+            masterFriendsList.add(holder);
+        }
+
+        isAddFBFriend = true;
+        for (ImpromptuUser fBFriend : fBFriends) {
+            isFriend = friends.contains(fBFriend); // is a current friend
+            hasSentRequest = friendRequests.contains(fBFriend); // is sending a request
+
+            if (!isFriend && !hasSentRequest) {
+                holder = new FriendAndRequestHolder(fBFriend, isFriend, isAddFBFriend);
+                masterFacebookFriendsList.add(holder);
+            }
+        }
+
+        for (FriendAndRequestHolder hld : masterFriendsList) {
+            filteredList.add(hld); // filteredList starts off with the same holders as masterFriendsList; will change with search
+        }
+
+        adapter = new ArrayAdapterFriendsList(getActivity(), R.layout.template_friend_or_request_item, filteredList, currentUser);
+        vList.setAdapter(adapter);
 
         vSearchBar.addTextChangedListener(new TextWatcher() {
             @Override
@@ -155,7 +153,7 @@ public class FragmentFriendsList extends Fragment {
                     initializeFilteredFriendsList();
                 } else { // transition to current friends and requests
                     vAddFriend.setImageResource(R.drawable.ic_action_back);
-                    addingFriends = true;
+                    generateMasterFBFriendsList();
                     initializeFilteredFBFriendsList();
                 }
 //                adapter.notifyDataSetChanged();
@@ -239,94 +237,113 @@ public class FragmentFriendsList extends Fragment {
         }
     }
 
-    private class LoadData extends AsyncTask<Void, Void, Void> {
+//    private class LoadData extends AsyncTask<Void, Void, Void> {
+//
+//        ProgressDialog progressDialog;
+//        ImpromptuUser me;
+//        ArrayList<ImpromptuUser> asyncFriends;
+//        ArrayList<FriendRequest> asyncRequests;
+//        ArrayList<ImpromptuUser> asyncFBFriends;
+//
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//            me = currentUser;
+//            progressDialog = new ProgressDialog(getActivity());
+//            progressDialog.setTitle("Retrieving your friends...");
+//            progressDialog.setIndeterminate(false);
+//            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+//            progressDialog.setCancelable(true);
+//            progressDialog.show();
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... vd) {
+//
+//            asyncFriends = (ArrayList<ImpromptuUser>) me.getFriends();
+//            asyncRequests = (ArrayList<FriendRequest>) FriendRequest.getPendingRequestToUser(me);
+//            asyncFBFriends = me.getFacebookFriends();
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void vd) {
+//
+//            friends = this.asyncFriends;
+//            requests = this.asyncRequests;
+//            fBFriends = this.asyncFBFriends;
+//
+//            FriendAndRequestHolder holder;
+//            Boolean isFriend;
+//            Boolean hasSentRequest;
+//            Boolean isAddFBFriend = false;
+//
+//            isAddFBFriend = false;
+//            isFriend = false;
+//            ImpromptuUser requestOwner;
+//            for (FriendRequest rqst : requests) {
+//                requestOwner = rqst.getFrom();
+//                if (!friends.contains(requestOwner)) { // TODO: won't be necessary when requests are made only from the app (i.e. not programatically)
+//                    friendRequests.add(requestOwner);
+//                    holder = new FriendAndRequestHolder(requestOwner, isFriend, isAddFBFriend);
+//                    holder.setRequest(rqst);
+//                    masterFriendsList.add(holder);
+//                }
+//            }
+//
+//            isAddFBFriend = false;
+//            isFriend = true;
+//            for (ImpromptuUser user : friends) {
+//                holder = new FriendAndRequestHolder(user, isFriend, isAddFBFriend);
+//                masterFriendsList.add(holder);
+//            }
+//
+//            isAddFBFriend = true;
+//            for (ImpromptuUser fBFriend : fBFriends) {
+//                isFriend = friends.contains(fBFriend); // is a current friend
+//                hasSentRequest = friendRequests.contains(fBFriend); // is sending a request
+//
+//                if (!isFriend && !hasSentRequest) {
+//                    holder = new FriendAndRequestHolder(fBFriend, isFriend, isAddFBFriend);
+//                    masterFacebookFriendsList.add(holder);
+//                }
+//            }
+//
+//            for (FriendAndRequestHolder hld : masterFriendsList) {
+//                filteredList.add(hld); // filteredList starts off with the same holders as masterFriendsList; will change with search
+//            }
+//
+//            adapter = new ArrayAdapterFriendsList(getActivity(), R.layout.template_friend_or_request_item, filteredList, currentUser);
+//            vList.setAdapter(adapter);
+//
+//            progressDialog.dismiss();
+//        }
+//
+//        @Override
+//        protected void onCancelled() {
+//            // TODO
+//
+//            progressDialog.dismiss();
+//        }
+//    }
 
-        ProgressDialog progressDialog;
-        ImpromptuUser me;
-        ArrayList<ImpromptuUser> asyncFriends;
-        ArrayList<FriendRequest> asyncRequests;
-        ArrayList<ImpromptuUser> asyncFBFriends;
+    public void generateMasterFBFriendsList() {
 
+        Boolean isAddFBFriend = true;
+        Boolean isFriend;
+        Boolean hasSentRequest;
+        FriendAndRequestHolder holder;
+        masterFacebookFriendsList.clear();
+        for (ImpromptuUser fBFriend : fBFriends) {
+            isFriend = friends.contains(fBFriend); // is a current friend
+            hasSentRequest = friendRequests.contains(fBFriend); // is sending a request
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            me = currentUser;
-            progressDialog = new ProgressDialog(getActivity());
-            progressDialog.setIndeterminate(false);
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setCancelable(true);
-            progressDialog.show();
-        }
-
-        @Override
-        protected Void doInBackground(Void... vd) {
-
-            asyncFriends = (ArrayList<ImpromptuUser>) me.getFriends();
-            asyncRequests = (ArrayList<FriendRequest>) FriendRequest.getPendingRequestToUser(me);
-            asyncFBFriends = me.getFacebookFriends();
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void vd) {
-
-            friends = this.asyncFriends;
-            requests = this.asyncRequests;
-            fBFriends = this.asyncFBFriends;
-
-            FriendAndRequestHolder holder;
-            Boolean isFriend;
-            Boolean hasSentRequest;
-            Boolean isAddFBFriend = false;
-
-            isAddFBFriend = false;
-            isFriend = false;
-            ImpromptuUser requestOwner;
-            for (FriendRequest rqst : requests) {
-                requestOwner = rqst.getFrom();
-                if (!friends.contains(requestOwner)) { // TODO: won't be necessary when requests are made only from the app (i.e. not programatically)
-                    friendRequests.add(requestOwner);
-                    holder = new FriendAndRequestHolder(requestOwner, isFriend, isAddFBFriend);
-                    holder.setRequest(rqst);
-                    masterFriendsList.add(holder);
-                }
+            if (!isFriend && !hasSentRequest) {
+                holder = new FriendAndRequestHolder(fBFriend, isFriend, isAddFBFriend);
+                masterFacebookFriendsList.add(holder);
             }
-
-            isAddFBFriend = false;
-            isFriend = true;
-            for (ImpromptuUser user : friends) {
-                holder = new FriendAndRequestHolder(user, isFriend, isAddFBFriend);
-                masterFriendsList.add(holder);
-            }
-
-            isAddFBFriend = true;
-            for (ImpromptuUser fBFriend : fBFriends) {
-                isFriend = friends.contains(fBFriend); // is a current friend
-                hasSentRequest = friendRequests.contains(fBFriend); // is sending a request
-
-                if (!isFriend && !hasSentRequest) {
-                    holder = new FriendAndRequestHolder(fBFriend, isFriend, isAddFBFriend);
-                    masterFacebookFriendsList.add(holder);
-                }
-            }
-
-            for (FriendAndRequestHolder hld : masterFriendsList) {
-                filteredList.add(hld); // filteredList starts off with the same holders as masterFriendsList; will change with search
-            }
-
-            adapter = new ArrayAdapterFriendsList(getActivity(), R.layout.template_friend_or_request_item, filteredList, currentUser);
-            vList.setAdapter(adapter);
-
-            progressDialog.dismiss();
-        }
-
-        @Override
-        protected void onCancelled() {
-            // TODO
-
-            progressDialog.dismiss();
         }
     }
 
