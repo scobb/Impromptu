@@ -34,6 +34,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     Boolean isSelected = false;
     private String groupKey = "groups";
     private String friendsKey = "friends";
+   // private String myEventsKey = "myEvents";
     private String visibleEventsKey = "events";
     private static String nameKey = "name";
     private static String facebookIdKey = "fbid";
@@ -131,6 +132,8 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
 
         return events;
     }
+
+
 
     public void destroyFriendship(ImpromptuUser friend) {
         HashMap<String, String> params = new HashMap<>();

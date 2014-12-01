@@ -35,6 +35,7 @@ public class Event extends ParseObject implements Comparable<Event> {
     private String seekStartKey = "startProgress";
     private String seekDurationKey = "durationProgress";
     private String eventTimeKey = "eventTime";
+    private String eventEndTimeKey = "eventEndTime";
     private String locationKey = "location";
     private String ownerKey = "owner";
     private String pushGroupsKey = "pushGroups";
@@ -459,7 +460,14 @@ public class Event extends ParseObject implements Comparable<Event> {
             localEventTime = eventTime;
         }
     }
+    public void setEventEndTime(Time eventTime) {
 
+        if (localPushed || getPushed()) {
+            this.put(eventEndTimeKey, eventTime);
+        } else {
+            localEventTime = eventTime;
+        }
+    }
     public void setEventTimeMorning(Boolean morning) {
 
         if (localPushed || getPushed()) {
@@ -672,7 +680,21 @@ public class Event extends ParseObject implements Comparable<Event> {
             return localEventTime;
         }
     }
+    public Time getEventEndTime() {
 
+        if (localPushed || getPushed()) {
+            try {
+                this.fetch();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching Event:", exc);
+            }
+            Time eventEndTime = new Time();
+            eventEndTime.set(this.getDate(eventEndTimeKey).getTime());
+            return eventEndTime;
+        } else {
+            return localEventTime;
+        }
+    }
     public Time getCreationTime() {
 
         if (localPushed || getPushed()) {
