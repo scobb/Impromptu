@@ -116,7 +116,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         inst.saveInBackground();
 
         FragmentStream fragment = new FragmentStream();
-        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment);
         fragmentTransaction.commit();
     }
 
@@ -366,6 +366,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
             myEvent.persist();
 
             updateLocationWithinApp("Stream");
+            setHighlightedButton("Stream");
 
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -581,7 +582,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         if(getFragmentManager().getBackStackEntryCount() != 0) {
             getFragmentManager().popBackStack();
         } else {
-            super.onBackPressed();
+//            super.onBackPressed();
         }
     }
 }
