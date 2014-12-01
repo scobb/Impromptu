@@ -31,8 +31,6 @@ public class EventTest extends InstrumentationTestCase {
 
     public void testBuild() throws Exception {
         // slight dependence on ImpromptuUser
-        ImpromptuUser stephen = ImpromptuUser.getUserById("mQMe4SHJNe");
-
         Event e = new Event();
 
         // test clear functionality -- instantiates all arrays
@@ -54,18 +52,23 @@ public class EventTest extends InstrumentationTestCase {
         int testInt = 0;
         List<ImpromptuUser> testFriends = new ArrayList<ImpromptuUser>();
         List<Group> testGroups = new ArrayList<Group>();
-        ImpromptuUser testFriend = new ImpromptuUser();
+        ImpromptuUser testFriend = ImpromptuUser.getUserById("mQMe4SHJNe");
 
-        // run through setters
+        // run through setters, getters (pre save)
 
         // strings
+        e.setTitle(testString);
         e.setDescription(testString);
         e.setFormattedAddress(testString);
         e.setType(testString);
+        e.setLocationName(testString);
 
+        assertEquals(e.getTitle(), testString);
         assertEquals(e.getDescription(), testString);
         assertEquals(e.getFormattedAddress(), testString);
         assertEquals(e.getType(), testString);
+        assertEquals(e.getLocationName(), testString);
+
 
         // bools
         e.setPushed(testBool);
@@ -91,9 +94,13 @@ public class EventTest extends InstrumentationTestCase {
         // ints
         e.setDurationHour(testInt);
         e.setDurationMinute(testInt);
+        e.setSeekDuration(testInt);
+        e.setSeekStart(testInt);
 
         assertEquals(e.getDurationHour(), testInt);
         assertEquals(e.getDurationMinute(), testInt);
+        assertEquals(e.getSeekDuration(), testInt);
+        assertEquals(e.getSeekStart(), testInt);
 
         // lists
         e.setAllFriends(testFriends);
@@ -102,20 +109,46 @@ public class EventTest extends InstrumentationTestCase {
         assertEquals(e.getAllFriends(), testFriends);
         assertEquals(e.getAllGroups(), testGroups);
 
-
         // impromptu User
-//        e.addPushFriend(testFriend);
-//        e.addStreamFriend(testFriend);
-//        e.addUserGoing(testFriend);
+        e.setOwner(testFriend);
+        e.addPushFriend(testFriend);
+        e.addStreamFriend(testFriend);
+        e.addUserGoing(testFriend);
 
-//        assertEquals(e.getPushFriends().get(0), testFriend);
-//        assertEquals(e.getStreamFriends().get(0), testFriend);
-//        assertEquals(e.getUsersGoing().get(0), testFriend);
+        testFriend.getObjectId();
+        e.getOwner();
+        e.getOwner().getObjectId();
+        assertEquals(testFriend, e.getOwner());
+        assertEquals(testFriend.getObjectId(), e.getOwner().getObjectId());
+        assertEquals(e.getPushFriends().get(0), testFriend);
+        assertEquals(e.getStreamFriends().get(0), testFriend);
+        assertEquals(e.getUsersGoing().get(0), testFriend);
 
 
+        e.persist();
 
-        // assertEquals();
+        Thread.sleep(2000);
 
+        // post-save getters--access parse
+        assertEquals(e.getDescription(), testString);
+        assertEquals(e.getTitle(), testString);
+        assertEquals(e.getFormattedAddress(), testString);
+        assertEquals(e.getType(), testString);
+        assertEquals(e.getPushed(), testBool);
+        assertEquals((boolean)e.getEventTimeMorning(), testBool);
+        assertEquals(e.getEventTime(), testTime);
+        assertEquals(e.getCreationTime(), testTime);
+        assertEquals(e.getLatitude(), testDouble);
+        assertEquals(e.getLongitude(), testDouble);
+        assertEquals(e.getDurationHour(), testInt);
+        assertEquals(e.getDurationMinute(), testInt);
+        assertEquals(e.getSeekDuration(), testInt);
+        assertEquals(e.getSeekStart(), testInt);
+        assertEquals(e.getAllFriends(), testFriends);
+        assertEquals(e.getAllGroups(), testGroups);
+        assertEquals(e.getPushFriends().get(0), testFriend);
+        assertEquals(e.getStreamFriends().get(0), testFriend);
+        assertEquals(e.getUsersGoing().get(0), testFriend);
 
 
     }
