@@ -287,7 +287,11 @@ public class Event extends ParseObject implements Comparable<Event> {
         Date currentDate = new Date();
         Date eventDate = this.getDate(eventTimeKey);
 
-        long timeDifference = currentDate.getTime() - eventDate.getTime();
+        Log.d("Impromptu", "Event " + eventDate);
+        Log.d("Impromptu", "Current " + currentDate);
+
+
+        long timeDifference = eventDate.getTime() - currentDate.getTime();
         long hourDifference = TimeUnit.MILLISECONDS.toHours(timeDifference);
 
         int difference = (int) Math.ceil(hourDifference);
@@ -671,6 +675,10 @@ public class Event extends ParseObject implements Comparable<Event> {
         } else {
             return localEventTime;
         }
+    }
+
+    public Date getEventDate(){
+        return this.getDate(eventTimeKey);
     }
 
     public Time getCreationTime() {

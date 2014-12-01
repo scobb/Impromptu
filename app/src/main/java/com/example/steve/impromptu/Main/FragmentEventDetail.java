@@ -120,7 +120,7 @@ public class FragmentEventDetail extends Fragment {
                 FragmentProfile fragment = new FragmentProfile();
                 fragment.setArguments(userData);
                 transaction.replace(R.id.activityMain_frameLayout_shell, fragment);
-                transaction.commit();
+                transaction.addToBackStack(null).commit();
             }
         });
 
