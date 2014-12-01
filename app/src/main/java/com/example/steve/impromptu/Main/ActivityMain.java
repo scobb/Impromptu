@@ -116,7 +116,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         inst.saveInBackground();
 
         FragmentStream fragment = new FragmentStream();
-        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment);
         fragmentTransaction.commit();
     }
 
@@ -148,7 +148,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 
         FragmentProfile fragment = new FragmentProfile();
         fragment.setArguments(userData);
-        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment);
         fragmentTransaction.commit();
 
     }
@@ -296,7 +296,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         FragmentComposeMain fragment = new FragmentComposeMain();
-        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment);
         fragmentTransaction.commit();
     }
 
@@ -307,7 +307,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         FragmentComposeMain fragment = new FragmentComposeMain();
-        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment);
         fragmentTransaction.commit();
 
     }
@@ -319,7 +319,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         FragmentComposeMain fragment = new FragmentComposeMain();
-        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment);
         fragmentTransaction.commit();
 
     }
@@ -351,7 +351,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
                 frag = new FragmentComposeMain();
         }
 
-        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, frag).addToBackStack(null);
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, frag);
         fragmentTransaction.commit();
 
     }
@@ -366,12 +366,13 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
             myEvent.persist();
 
             updateLocationWithinApp("Stream");
+            setHighlightedButton("Stream");
 
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
             FragmentStream fragment = new FragmentStream();
-            fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+            fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment);
             fragmentTransaction.commit();
 
         } else {
@@ -388,7 +389,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         FragmentComposeMain fragment = new FragmentComposeMain();
-        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment);
         fragmentTransaction.commit();
 
     }
@@ -399,7 +400,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         FragmentComposePushGroups fragment = new FragmentComposePushGroups();
-        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment);
         fragmentTransaction.commit();
     }
 
@@ -409,7 +410,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         FragmentComposePush fragment = new FragmentComposePush();
-        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment);
         fragmentTransaction.commit();
     }
 
@@ -419,7 +420,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         FragmentComposeStream fragment = new FragmentComposeStream();
-        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment);
         fragmentTransaction.commit();
     }
 
@@ -429,7 +430,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         FragmentComposeStreamGroups fragment = new FragmentComposeStreamGroups();
-        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment);
         fragmentTransaction.commit();
     }
 
@@ -439,7 +440,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         FragmentComposeMain fragment = new FragmentComposeMain();
-        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment);
         fragmentTransaction.commit();
     }
 
@@ -459,7 +460,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         FragmentStream fragment = new FragmentStream();
-        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment);
         fragmentTransaction.commit();
     }
 
@@ -481,7 +482,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         FragmentFriendsList fragment = new FragmentFriendsList();
-        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment);
         fragmentTransaction.commit();
     }
 
@@ -492,7 +493,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         FragmentGroupsList fragment = new FragmentGroupsList();
-        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment);
         fragmentTransaction.commit();
     }
 
@@ -518,7 +519,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         FragmentComposeMain fragment = new FragmentComposeMain();
-        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment).addToBackStack(null);
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment);
         fragmentTransaction.commit();
     }
 
@@ -581,7 +582,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         if(getFragmentManager().getBackStackEntryCount() != 0) {
             getFragmentManager().popBackStack();
         } else {
-            super.onBackPressed();
+//            super.onBackPressed();
         }
     }
 }
