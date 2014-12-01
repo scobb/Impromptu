@@ -14,12 +14,14 @@ import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
@@ -62,6 +64,7 @@ public class FragmentEventDetail extends Fragment {
     // Variables for people attending
     ArrayAdapterPeopleAttending userAdapter = null;
     ListView userAttendingList;
+    ArrayList<ImpromptuUser> usersAttending;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -183,6 +186,9 @@ public class FragmentEventDetail extends Fragment {
             public void done(List<ImpromptuUser> users, ParseException e) {
                 if (e == null) {
 
+                    // set the arraylist
+                    usersAttending = new ArrayList<ImpromptuUser>(users);
+
                     userAdapter = new ArrayAdapterPeopleAttending(getActivity(),
                             R.layout.template_friend_attending_item, users);
                     userAttendingList.setAdapter(userAdapter);
@@ -195,6 +201,27 @@ public class FragmentEventDetail extends Fragment {
                     // Error in query
                     e.printStackTrace();
                 }
+            }
+        });
+
+        userAttendingList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                // Bundle up the data getting passed
+                Bundle userData = new Bundle();
+
+                // TODO need to make this check if it is the current user
+                userData.putString("ownerId", usersAttending.get(i).getObjectId());
+
+
+                // Set up the fragment transaction
+                FragmentTransaction transaction = getActivity().getFragmentManager().beginTransaction();
+                FragmentProfile fragment = new FragmentProfile();
+                fragment.setArguments(userData);
+                transaction.replace(R.id.activityMain_frameLayout_shell, fragment);
+                transaction.addToBackStack(null).commit();
+
             }
         });
 
