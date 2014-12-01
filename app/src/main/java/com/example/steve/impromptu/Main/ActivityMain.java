@@ -160,6 +160,16 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     }
 
     public void debug(View v) {
+
+        try {
+            ImpromptuUser.test();
+            Log.d("Impromptu", "ImpromptuUser tests passed!");
+        }
+        catch (Exception e) {
+            Log.d("Impromptu", "ImpromptuUser tests failed!");
+            e.printStackTrace();
+        }
+
 //        ImpromptuUser currentUser = (ImpromptuUser)ParseUser.getCurrentUser();
 //        Bitmap profilePic = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
 //        currentUser.setPicture(profilePic);
@@ -498,6 +508,8 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     }
 
     public void profile(View view) {
+        //(view);
+
         setHighlightedButton("Profile");
         updateLocationWithinApp("Profile");
         forwardToProfileFragment();
