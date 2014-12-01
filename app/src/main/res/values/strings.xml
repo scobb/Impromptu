@@ -11,6 +11,7 @@
     <string name="map_bar">Map Stream</string>
 
     <string name="people_invited_event_detail">People Attending</string>
+    <string name="join_event_detail">Join</string>
 
     <string name="fragComposeMain_hintTitle">Title</string>
     <string name="fragComposeMain_hintDescription">Enter description...</string>
