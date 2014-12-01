@@ -107,6 +107,9 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         ParseObject.registerSubclass(FriendRequest.class);
         Parse.initialize(this, "sP5YdlJxg1WiwfKgSXX4KdrgpZzAV5g69dV8ryY0", "houV8Brg8oIuBKSLheR7qAW4AJfGq1QZmH62Spgk");
 
+        setHighlightedButton("Stream");
+        updateLocationWithinApp("Stream");
+
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
