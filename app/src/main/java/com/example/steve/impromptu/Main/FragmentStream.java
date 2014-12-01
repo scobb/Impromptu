@@ -25,6 +25,7 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -93,13 +94,15 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
                                                List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
                                                for(Event post : posts){
 
-                                                   Log.d("Impromptu", post.getObjectId() + " " + post.getType());
-
                                                    // Check for the filters
                                                    if(ActivityMain.getFiltersMap().get(post.getType()) != null) {
                                                        if (ActivityMain.getFiltersMap().get(post.getType())) {
-                                                           Log.d("Impromptu", post.getType());
-                                                           aList.add(post.getHashMap());
+
+                                                           // Check the time if it has passed already
+                                                           if(new Date().after(post.getEventDate())){
+                                                               aList.add(post.getHashMap());
+                                                           }
+
                                                        }
                                                    }
                                                }
@@ -309,7 +312,7 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
         FragmentEventDetail fragment = new FragmentEventDetail();
         fragment.setArguments(eventData);
         transaction.replace(R.id.activityMain_frameLayout_shell, fragment);
-        transaction.commit();
+        transaction.addToBackStack(null).commit();
     }
 
 

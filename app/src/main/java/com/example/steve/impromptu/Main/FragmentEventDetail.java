@@ -16,11 +16,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ScrollView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
+import com.example.steve.impromptu.Main.Compose.ArrayAdapters.ArrayAdapterComposeType;
+import com.example.steve.impromptu.Main.Compose.ArrayAdapters.ArrayAdapterPeopleAttending;
 import com.example.steve.impromptu.Main.Profile.FragmentProfile;
 import com.example.steve.impromptu.R;
 import com.example.steve.impromptu.UI.ScrollableMapFragment;
@@ -28,6 +32,15 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseUser;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Stephen Arifin on 10/16/14.
@@ -45,6 +58,10 @@ public class FragmentEventDetail extends Fragment {
     private LinearLayout vOpenInGMaps;
 
     private static final LatLng defaultLocation = new LatLng(30.2864802, -97.74116620000001); //UT Austin ^___^
+
+    // Variables for people attending
+    ArrayAdapterPeopleAttending userAdapter = null;
+    ListView userAttendingList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,9 +89,11 @@ public class FragmentEventDetail extends Fragment {
         TextView descriptionTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_description);
         ImageView profilePictureView = (ImageView) myInflatedView.findViewById(R.id.fragEventDetail_imageView_profilePic);
         scrollView = (ScrollView) myInflatedView.findViewById(R.id.fragEventDetail_scrollView);
+
         vOpenInGMaps = (LinearLayout) myInflatedView.findViewById(R.id.fragEventDetail_linearLayout_openInGMaps);
 
-        //MapFragment mf = (MapFragment) getFragmentManager().findFragmentById(R.id.fragEventDetail_location_map);
+        userAttendingList = (ListView) myInflatedView.findViewById(R.id.fragEventDetail_listView_peopleAttending);
+        LinearLayout joinLayout = (LinearLayout) myInflatedView.findViewById(R.id.fragEventDetail_linearLayout_join);
 
         // Replace map
         ScrollableMapFragment mf = (ScrollableMapFragment) myContext.getSupportFragmentManager().findFragmentById(R.id.fragEventDetail_location_map);
@@ -120,7 +139,7 @@ public class FragmentEventDetail extends Fragment {
                 FragmentProfile fragment = new FragmentProfile();
                 fragment.setArguments(userData);
                 transaction.replace(R.id.activityMain_frameLayout_shell, fragment);
-                transaction.commit();
+                transaction.addToBackStack(null).commit();
             }
         });
 
@@ -152,6 +171,46 @@ public class FragmentEventDetail extends Fragment {
             }
         });
 
+
+        // Set up the people attending the event
+
+        List<ImpromptuUser> users = event.getUsersGoing();
+
+        // Parse query shit
+        ParseObject.fetchAllIfNeededInBackground(users, new FindCallback<ImpromptuUser>() {
+
+            @Override
+            public void done(List<ImpromptuUser> users, ParseException e) {
+                if (e == null) {
+
+                    userAdapter = new ArrayAdapterPeopleAttending(getActivity(),
+                            R.layout.template_friend_attending_item, users);
+                    userAttendingList.setAdapter(userAdapter);
+
+
+                    // Update the list adapter
+                    userAdapter.notifyDataSetChanged();
+
+                } else {
+                    // Error in query
+                    e.printStackTrace();
+                }
+            }
+        });
+
+
+
+        joinLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                ImpromptuUser currentUser = (ImpromptuUser)ParseUser.getCurrentUser();
+                event.addUserGoing(currentUser);
+
+                // Update the list adapter
+                userAdapter.notifyDataSetChanged();
+            }
+        });
 
 
         return myInflatedView;

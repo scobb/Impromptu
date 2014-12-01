@@ -1,10 +1,14 @@
-package com.example.steve.impromptu.Entity;
+package com.example.steve.impromptu.Tests;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.test.InstrumentationTestCase;
 import android.util.Log;
 
+import com.example.steve.impromptu.Entity.Event;
+import com.example.steve.impromptu.Entity.FriendRequest;
+import com.example.steve.impromptu.Entity.Group;
+import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.parse.FunctionCallback;
@@ -12,6 +16,7 @@ import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseFile;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -26,29 +31,92 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-
 /**
- * ImpromptuUser object
- * Created by scobb on 10/19/14.
+ * Created by Sean on 11/30/2014.
  */
-public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser> {
-    Boolean isSelected = false;
-    private String groupKey = "groups";
-    private String friendsKey = "friends";
-   // private String myEventsKey = "myEvents";
-    private String visibleEventsKey = "events";
-    private static String nameKey = "name";
-    private static String facebookIdKey = "fbid";
+public class ImpromptuUserTest extends InstrumentationTestCase {
 
-    public ImpromptuUser() {
-        super();
+    @Override
+    protected void setUp() throws Exception {
+
+        ParseUser.registerSubclass(ImpromptuUser.class);
+        ParseObject.registerSubclass(Event.class);
+        ParseObject.registerSubclass(Group.class);
+        ParseObject.registerSubclass(FriendRequest.class);
+        // Parse.initialize(getActivity(), "sP5YdlJxg1WiwfKgSXX4KdrgpZzAV5g69dV8ryY0", "houV8Brg8oIuBKSLheR7qAW4AJfGq1QZmH62Spgk");
     }
 
-    public ImpromptuUser(String username) {
-        super();
-        this.setUsername(username);
+    public void testConstructors() throws Exception {
+        //test default constructor vs parameterized constructor
+
+
+        ImpromptuUser u1 = new ImpromptuUser();
+        ImpromptuUser u2 = new ImpromptuUser();
+        u1.save();
+        u2.save();
+
+        assertFalse(u1.equals(u2));
+
+        u2.deleteEventually();
+        u2 = new ImpromptuUser("angelBoyX31", "iLikeDoves", "wingT@heaven.com");
+        u2.save();
+
+        assertFalse(u1.equals(u2));
+
+        u1.setUsername("angelBoyX31");
+        u1.setEmail("wingT@heaven.com");
+        assertEquals(u1.getUsername(), u2.getUsername());
+        assertEquals(u1.getEmail(), u2.getEmail());
+
+        u1.deleteEventually();
+        u1 = new ImpromptuUser("angelBoyX31");
+        u1.setEmail("wingT@heaven.com");
+
+        u1.save();
+        assertEquals(u1.getUsername(), u2.getUsername());
+        assertEquals(u1.getEmail(), u2.getEmail());
+
+        u1.deleteEventually();
+        u2.deleteEventually();
     }
 
+    public void testGetSet() throws Exception {
+
+        ImpromptuUser u1 = new ImpromptuUser();
+        ImpromptuUser u2 = new ImpromptuUser();
+        u1.save();
+        u2.save();
+
+        u1.setEmail("thedamnthing@gmail.com");
+        u2.setEmail("thedamnthing@gmail.com");
+        u1.setFacebookId("123");
+        u2.setFacebookId("123");
+        u1.setFriends(new ArrayList<ImpromptuUser>());
+        u2.setFriends(new ArrayList<ImpromptuUser>());
+        u1.setGroups(new ArrayList<Group>());
+        u2.setGroups(new ArrayList<Group>());
+        u1.setName("fU");
+        u2.setName("fU");
+        //TODO: bitmaps u1.setPicture(new Bitmap());
+        u1.setSelected(true);
+        u2.setSelected(true);
+        u1.setStreamEvents(new ArrayList<Event>());
+        u2.setStreamEvents(new ArrayList<Event>());
+
+        assertEquals(u1.getEmail(), u2.getEmail());
+        assertEquals(u1.getFacebookId(), u2.getFacebookId());
+        assertEquals(u1.getFriends(), u2.getFriends());
+        assertEquals(u1.getGroups(), u2.getGroups());
+        assertEquals(u1.getName(), u2.getName());
+        assertEquals(u1.isSelected(), u2.isSelected());
+        assertEquals(u1.getStreamEvents(), u2.getStreamEvents());
+
+
+        u1.deleteEventually();
+        u2.deleteEventually();
+    }
+
+    /*
     @Override
     public int compareTo(ImpromptuUser other) {
         return this.getObjectId().compareTo(other.getObjectId());
@@ -74,10 +142,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         this.put(visibleEventsKey, events);
     }
 
-    /**
-     *
-     * @return - a list of events owned by this user.
-     */
+
     public List<Event> getOwnedEvents() {
         ParseQuery<Event> q = new ParseQuery<>(Event.class);
         q.whereEqualTo("owner", this);
@@ -89,11 +154,6 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         return new ArrayList<>();
     }
 
-    /**
-     * generates and persists a friend request from this user to friend
-     * @param friend - friend to create a request to
-     * @return - true if request successfully created, false otherwise.
-     */
     public boolean createFriendRequest(ImpromptuUser friend) {
         ParseQuery<FriendRequest> q = new ParseQuery<>(FriendRequest.class);
         q.whereEqualTo("from", this);
@@ -134,8 +194,6 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         return events;
     }
 
-
-
     public void destroyFriendship(ImpromptuUser friend) {
         HashMap<String, String> params = new HashMap<>();
         params.put("fromId", this.getObjectId());
@@ -151,11 +209,6 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         });
     }
 
-    /**
-     * NOTE - only verifies existence, not that we're within timing
-     *
-     * @param events - list of events to confirm existence on DB
-     */
     public void verifyEvents(List<Event> events) {
         Iterator<Event> it = events.iterator();
         boolean needPersist = false;
@@ -172,10 +225,6 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     }
 
     public static ImpromptuUser getUserById(String id) {
-        /**
-         * method - gets existing user given their id
-         * Returns null if ID not found
-         */
         ParseQuery<ParseUser> query = ParseQuery.getQuery("_User");
         ParseUser user = null;
         try {
@@ -189,10 +238,6 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     }
 
     public static List<ImpromptuUser> getUserByName(String name) {
-        /**
-         * method - gets existing user given their id
-         * Returns null if ID not found
-         */
         ParseQuery<ImpromptuUser> query = ParseQuery.getQuery("_User");
         query.whereContains(ImpromptuUser.nameKey, name);
         try {
@@ -406,9 +451,6 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         }
     }
 
-    /**
-     * method - setPicture - saves user's profile picture to parse. Note, filename must end in .png
-     */
     public void setPicture(Bitmap pic) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         pic.compress(Bitmap.CompressFormat.PNG, 100, stream);
@@ -421,9 +463,6 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         this.saveInBackground();
     }
 
-    /**
-     * method - getPicture - returns bitmap for profile picture, null if user doesn't have one.
-     */
     public Bitmap getPicture() {
         try {
             this.fetchIfNeeded();
@@ -554,60 +593,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         return hc;
     }
 
-    public static void test() throws Exception {
-
-        ImpromptuUser u1 = new ImpromptuUser("angelBoyX31", "iLikeDoves", "wingT@heaven.com");
-        ImpromptuUser u2 = new ImpromptuUser("angelBoyX311", "iLikeDoves", "wingTT@heaven.com");
-        u1.signUp();
-        u1.save();
-        u2.signUp();
-        u2.save();
-
-        InstrumentationTestCase.assertFalse(u1.equals(u2));
-        InstrumentationTestCase.assertFalse(u1.getUsername().equals(u2.getUsername()));
-        //InstrumentationTestCase.assertEquals(u1.getEmail(), u2.getEmail());
-
-        /*
-        boolean flag = false;
-
-        try {
-            u1.setEmail("thedamnthing@gmail.com");
-            u2.setEmail("thedamnthing@gmail.com");
-            flag = true;
-        }
-        catch (Exception e) {
-            Log.d("Impromptu", "Good, exception caught, assigning same email to two users.");
-        }
-
-        if(flag) {
-            //throw new Exception("Didn't catch same email exception");
-        }*/
-
-        u1.setFacebookId("123");
-        u2.setFacebookId("123");
-        u1.setFriends(new ArrayList<ImpromptuUser>());
-        u2.setFriends(new ArrayList<ImpromptuUser>());
-        u1.setGroups(new ArrayList<Group>());
-        u2.setGroups(new ArrayList<Group>());
-        u1.setName("fU");
-        u2.setName("fU");
-        //TODO: bitmaps u1.setPicture(new Bitmap());
-        u1.setSelected(true);
-        u2.setSelected(true);
-        u1.setStreamEvents(new ArrayList<Event>());
-        u2.setStreamEvents(new ArrayList<Event>());
-
-        //InstrumentationTestCase.assertEquals(u1.getEmail(), u2.getEmail());
-        InstrumentationTestCase.assertEquals(u1.getFacebookId(), u2.getFacebookId());
-        InstrumentationTestCase.assertEquals(u1.getFriends(), u2.getFriends());
-        InstrumentationTestCase.assertEquals(u1.getGroups(), u2.getGroups());
-        InstrumentationTestCase.assertEquals(u1.getName(), u2.getName());
-        InstrumentationTestCase.assertEquals(u1.isSelected(), u2.isSelected());
-        InstrumentationTestCase.assertEquals(u1.getStreamEvents(), u2.getStreamEvents());
-
-        //TODO: faulting b/c "cannot delete a ParseUser that is not authenticated???
-        //u1.deleteEventually();
-        //u2.deleteEventually();
-    }
+}
+     */
 
 }
