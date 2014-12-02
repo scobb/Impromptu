@@ -42,7 +42,7 @@
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:gravity="center_vertical"
-            android:background="@drawable/event_detail_descrip_bg">
+            android:background="@drawable/event_detail_owner_bg">
 
             <ImageView
                 android:layout_width="40dp"
@@ -62,25 +62,112 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/fragEventDetail_linearLayout_time"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:gravity="center_vertical"
+            android:background="@drawable/event_detail_time">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_action_time"
+                android:id="@+id/fragEventDetail_imageView_time" />
+
+            <TextView
+                android:id="@+id/fragEventDetail_textView_time"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginLeft="20dp"
+                android:textSize="@dimen/text_size_description_event_detail"
+                android:text="time" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:orientation="vertical"
+            android:background="@drawable/event_detail_location">
+
+            <LinearLayout
+                android:id="@+id/fragEventDetail_linearLayout_location"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_action_directions"
+                    android:id="@+id/fragEventDetail_imageView_location" />
+
+                <TextView
+                    android:id="@+id/fragEventDetail_textView_location"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginLeft="20dp"
+                    android:textSize="@dimen/text_size_description_event_detail"
+                    android:text="location" />
+
+            </LinearLayout>
+
+
+
+            <fragment
+                android:id="@+id/fragEventDetail_location_map"
+                android:layout_width="match_parent"
+                android:layout_height="350dp"
+                android:scaleType="fitCenter"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:visibility="gone"
+                class="com.example.steve.impromptu.UI.ScrollableMapFragment" />
+
+        </LinearLayout>
+
+
+
+
+        <LinearLayout
             android:id="@+id/fragEventDetail_linearLayout_description"
             android:orientation="vertical"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:padding="@dimen/text_padding_event_detail"
             android:gravity="center_vertical"
-            android:background="#FFFFFF">
+            android:background="@drawable/event_detail_description">
 
+
+            <TextView
+                android:id="@+id/fragEventDetail_textView_description_title"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:gravity="left"
+                android:textColor="#000000"
+                android:textSize="@dimen/text_size_description_event_detail"
+                android:text="Description"/>
 
             <TextView
                 android:id="@+id/fragEventDetail_textView_description"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
-                android:gravity="center"
-                android:textColor="#000000"
+                android:gravity="left"
+                android:textColor="#7A7A7A"
                 android:textSize="@dimen/text_size_description_event_detail" />
 
         </LinearLayout>
@@ -92,7 +179,6 @@
             android:layout_width="match_parent"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:gravity="center_vertical"
             android:background="@drawable/event_detail_title_bg">
@@ -116,16 +202,6 @@
 
         </LinearLayout>
 
-
-        <fragment
-            android:id="@+id/fragEventDetail_location_map"
-            android:layout_width="match_parent"
-            android:layout_height="350dp"
-            android:scaleType="fitCenter"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            class="com.example.steve.impromptu.UI.ScrollableMapFragment" />
-        <!-- android:name="com.google.android.gms.maps.MapFragment" -->
 
         <LinearLayout
             android:id="@+id/fragEventDetail_linearLayout_openInGMaps"

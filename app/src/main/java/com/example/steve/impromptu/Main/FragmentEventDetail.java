@@ -53,7 +53,9 @@ public class FragmentEventDetail extends Fragment {
     private ScrollView scrollView;
     private FragmentActivity myContext;
 
+    ScrollableMapFragment mf;
     private GoogleMap vMap;
+    private boolean mapVisibility = false;
 
     private ImpromptuUser owner;
     private Event event;
@@ -98,18 +100,10 @@ public class FragmentEventDetail extends Fragment {
         userAttendingList = (ListView) myInflatedView.findViewById(R.id.fragEventDetail_listView_peopleAttending);
         LinearLayout joinLayout = (LinearLayout) myInflatedView.findViewById(R.id.fragEventDetail_linearLayout_join);
 
-        // Replace map
-        ScrollableMapFragment mf = (ScrollableMapFragment) myContext.getSupportFragmentManager().findFragmentById(R.id.fragEventDetail_location_map);
-        vMap = mf.getMap();
+        TextView timeTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_time);
+        TextView locationTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_location);
+        LinearLayout locationLayout = (LinearLayout) myInflatedView.findViewById(R.id.fragEventDetail_linearLayout_location);
 
-        ((ScrollableMapFragment) myContext.getSupportFragmentManager().findFragmentById(R.id.fragEventDetail_location_map))
-                .setListener(new ScrollableMapFragment.OnTouchListener() {
-
-            @Override
-            public void onTouch() {
-                scrollView.requestDisallowInterceptTouchEvent(true);
-            }
-        });
 
         // Get the owner and event
         owner = ImpromptuUser.getUserById(eventData.getString("ownerKey"));
@@ -120,13 +114,11 @@ public class FragmentEventDetail extends Fragment {
         ownerTextView.setText(owner.getName());
         descriptionTextView.setText(event.getDescription());
         profilePictureView.setImageBitmap(owner.getPicture());
+        timeTextView.setText(event.getEventDate().toString());
+        locationTextView.setText(event.getLocationName());
 
-        // Sets the map location
-        vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(event.getLatitude(), event.getLongitude()), 16.0f));
 
-        // Places marker
-        vMap.addMarker(new MarkerOptions().position(new LatLng(event.getLatitude(), event.getLongitude()))
-            .title(event.getTitle()));
+       initiateMap();
 
         ownerLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,6 +135,32 @@ public class FragmentEventDetail extends Fragment {
                 fragment.setArguments(userData);
                 transaction.replace(R.id.activityMain_frameLayout_shell, fragment);
                 transaction.addToBackStack(null).commit();
+            }
+        });
+
+        locationLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(!mapVisibility){
+                    // if not visibile
+                    // Sets the map location
+                    vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(event.getLatitude(), event.getLongitude()), 16.0f));
+
+                    // Places marker
+                    vMap.addMarker(new MarkerOptions().position(new LatLng(event.getLatitude(), event.getLongitude()))
+                            .title(event.getTitle()));
+
+                    // Show map
+                    mf.getView().setVisibility(View.VISIBLE);
+                    mapVisibility = true;
+                }
+                else{
+                    // Hide map
+                    mf.getView().setVisibility(View.GONE);
+                    mapVisibility = false;
+                }
+
             }
         });
 
@@ -248,5 +266,24 @@ public class FragmentEventDetail extends Fragment {
     public void onAttach(Activity activity) {
         myContext=(FragmentActivity) activity;
         super.onAttach(activity);
+    }
+
+    public void initiateMap(){
+
+        // Replace map
+        mf = (ScrollableMapFragment) myContext.getSupportFragmentManager()
+                .findFragmentById(R.id.fragEventDetail_location_map);
+        vMap = mf.getMap();
+
+        mf.getView().setVisibility(View.GONE);
+
+        ((ScrollableMapFragment) myContext.getSupportFragmentManager().findFragmentById(R.id.fragEventDetail_location_map))
+                .setListener(new ScrollableMapFragment.OnTouchListener() {
+
+                    @Override
+                    public void onTouch() {
+                        scrollView.requestDisallowInterceptTouchEvent(true);
+                    }
+                });
     }
 }
