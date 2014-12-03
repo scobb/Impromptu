@@ -2,11 +2,9 @@ package com.example.steve.impromptu.Main;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
-import android.app.DialogFragment;
 import android.app.FragmentTransaction;
 import android.app.ListFragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +16,6 @@ import android.widget.SimpleAdapter;
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.R;
-import com.example.steve.impromptu.UI.ObservableScrollView;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -69,16 +66,16 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
         ImpromptuUser currentUser = (ImpromptuUser) ParseUser.getCurrentUser();
         List<Event> events = currentUser.getStreamEvents();
 
-        mapStream = (LinearLayout) rootView.findViewById(R.id.map_bar);
-
-        mapStream.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                FragmentMap nextFrag = new FragmentMap();
-                getFragmentManager().beginTransaction().replace(R.id.activityMain_frameLayout_shell, nextFrag).addToBackStack(null).commit();
-            }
-        });
+//        mapStream = (LinearLayout) rootView.findViewById(R.id.map_bar);
+//
+//        mapStream.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                FragmentMap nextFrag = new FragmentMap();
+//                getFragmentManager().beginTransaction().replace(R.id.activityMain_frameLayout_shell, nextFrag).addToBackStack(null).commit();
+//            }
+//        });
 
 
 
@@ -109,7 +106,7 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
 
                                                // Initialize the adapter
                                                SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList,
-                                                       R.layout.fragment_stream_listview, from, to);
+                                                       R.layout.template_stream_event_item2, from, to);
 
 
                                                // Setting the list adapter for the ListFragment
@@ -312,7 +309,7 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
         FragmentEventDetail fragment = new FragmentEventDetail();
         fragment.setArguments(eventData);
         transaction.replace(R.id.activityMain_frameLayout_shell, fragment);
-        transaction.addToBackStack(null).commit();
+        transaction.commit();
     }
 
 

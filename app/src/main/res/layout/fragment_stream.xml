@@ -12,6 +12,10 @@
         android:visibility="gone" />
 
     <ListView android:id="@id/android:list"
+        android:divider="@android:color/transparent"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:dividerHeight="8dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -44,21 +48,21 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/map_bar"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:background="@color/impromptu_complementary_green">
+        <!--<LinearLayout-->
+            <!--android:id="@+id/map_bar"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="fill_parent"-->
+            <!--android:layout_weight="1"-->
+            <!--android:gravity="center"-->
+            <!--android:background="@color/impromptu_complementary_green">-->
 
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/map_bar" />
+            <!--<TextView-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:gravity="center"-->
+                <!--android:text="@string/map_bar" />-->
 
-        </LinearLayout>
+        <!--</LinearLayout>-->
 
 
     </LinearLayout>
