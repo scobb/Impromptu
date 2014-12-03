@@ -66,9 +66,12 @@ public class FragmentEventDetail extends Fragment{
     private static final LatLng defaultLocation = new LatLng(30.2864802, -97.74116620000001); //UT Austin ^___^
 
     // Variables for people attending
-    ArrayAdapterPeopleAttending userAdapter = null;
-    ListView userAttendingList;
-    ArrayList<ImpromptuUser> usersAttending;
+    private ArrayAdapterPeopleAttending userAdapter = null;
+    private ListView userAttendingList;
+    private ArrayList<ImpromptuUser> usersAttending;
+    private boolean currentUserAttending;
+    TextView joinTextView;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -99,11 +102,15 @@ public class FragmentEventDetail extends Fragment{
         //vOpenInGMaps = (LinearLayout) myInflatedView.findViewById(R.id.fragEventDetail_linearLayout_openInGMaps);
 
         userAttendingList = (ListView) myInflatedView.findViewById(R.id.fragEventDetail_listView_peopleAttending);
-        //LinearLayout joinLayout = (LinearLayout) myInflatedView.findViewById(R.id.fragEventDetail_linearLayout_join);
+        LinearLayout joinLayout = (LinearLayout) myInflatedView.findViewById(R.id.fragEventDetail_linearLayout_join);
+        joinTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_join);
 
         TextView timeTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_time);
         TextView locationTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_location);
         LinearLayout locationLayout = (LinearLayout) myInflatedView.findViewById(R.id.fragEventDetail_linearLayout_location);
+
+        // Set up the quick return layout bar
+        mObservableScrollView = (ObservableScrollView) myInflatedView.findViewById(R.id.scroll_view);
 
 
         // Get the owner and event
@@ -118,12 +125,21 @@ public class FragmentEventDetail extends Fragment{
         timeTextView.setText(event.getEventDate().toString());
         locationTextView.setText(event.getLocationName());
 
+        // Is the current user attending the event?
+        ImpromptuUser currentUser = (ImpromptuUser) ParseUser.getCurrentUser();
+        currentUserAttending = event.userIsGoing(currentUser);
+
+        // Initialize the join button
+        if(currentUserAttending){
+            joinTextView.setText("Leave");
+        }
+        else{
+            joinTextView.setText("Join");
+        }
+
 
         initiateMap();
-
-        // Set up the quick return layout bar
-        mObservableScrollView = (ObservableScrollView) myInflatedView.findViewById(R.id.scroll_view);
-
+        refreshPeopleAttendingList();
 
 
         ownerLayout.setOnClickListener(new View.OnClickListener() {
@@ -194,36 +210,6 @@ public class FragmentEventDetail extends Fragment{
             }
         });*/
 
-
-        // Set up the people attending the event
-
-        List<ImpromptuUser> users = event.getUsersGoing();
-
-        // Parse query shit
-        ParseObject.fetchAllIfNeededInBackground(users, new FindCallback<ImpromptuUser>() {
-
-            @Override
-            public void done(List<ImpromptuUser> users, ParseException e) {
-                if (e == null) {
-
-                    // set the arraylist
-                    usersAttending = new ArrayList<ImpromptuUser>(users);
-
-                    userAdapter = new ArrayAdapterPeopleAttending(getActivity(),
-                            R.layout.template_friend_attending_item, users);
-                    userAttendingList.setAdapter(userAdapter);
-
-
-                    // Update the list adapter
-                    userAdapter.notifyDataSetChanged();
-
-                } else {
-                    // Error in query
-                    e.printStackTrace();
-                }
-            }
-        });
-
         userAttendingList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -247,17 +233,27 @@ public class FragmentEventDetail extends Fragment{
 
 
 
-        /*joinLayout.setOnClickListener(new View.OnClickListener() {
+        joinLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 ImpromptuUser currentUser = (ImpromptuUser)ParseUser.getCurrentUser();
-                event.addUserGoing(currentUser);
 
-                // Update the list adapter
-                userAdapter.notifyDataSetChanged();
+                if(currentUserAttending){
+                    event.removeUserGoing(currentUser);
+                    refreshPeopleAttendingList();
+                    joinTextView.setText("Join");
+                    currentUserAttending = false;
+                }
+                else{
+                    event.addUserGoing(currentUser);
+                    refreshPeopleAttendingList();
+                    joinTextView.setText("Leave");
+                    currentUserAttending = true;
+                }
+
             }
-        });*/
+        });
 
 
         return myInflatedView;
@@ -307,6 +303,37 @@ public class FragmentEventDetail extends Fragment{
             // Places marker
             marker = vMap.addMarker(new MarkerOptions().position(new LatLng(event.getLatitude(), event.getLongitude()))
                     .title(event.getTitle()).snippet(event.getDescription()));
+    }
+
+    private void refreshPeopleAttendingList(){
+        // Set up the people attending the event
+
+        List<ImpromptuUser> users = event.getUsersGoing();
+
+        // Parse query shit
+        ParseObject.fetchAllIfNeededInBackground(users, new FindCallback<ImpromptuUser>() {
+
+            @Override
+            public void done(List<ImpromptuUser> users, ParseException e) {
+                if (e == null) {
+
+                    // set the arraylist
+                    usersAttending = new ArrayList<ImpromptuUser>(users);
+
+                    userAdapter = new ArrayAdapterPeopleAttending(getActivity(),
+                            R.layout.template_friend_attending_item, users);
+                    userAttendingList.setAdapter(userAdapter);
+
+
+                    // Update the list adapter
+                    userAdapter.notifyDataSetChanged();
+
+                } else {
+                    // Error in query
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
 }
