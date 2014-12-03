@@ -19,6 +19,7 @@
         android:drawSelectorOnTop="false" />
 
     <LinearLayout
+        android:id="@+id/stream_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/filter_bar_height"
         android:layout_gravity="bottom"

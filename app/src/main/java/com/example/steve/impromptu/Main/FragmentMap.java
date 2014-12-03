@@ -48,7 +48,7 @@ public class FragmentMap extends Fragment {
     private static final LatLng defaultLocation = new LatLng(30.2864802, -97.74116620000001); //UT Austin ^___^
     private LatLng myLoc;
     private Vector<Marker> markers;
-    private Marker selectedMarker;
+    private Event selectedEvent;
 
     private FragmentActivity myContext;
     private Vector<Event> posts;
@@ -58,6 +58,7 @@ public class FragmentMap extends Fragment {
     private ScrollView vScrollView;
 
     private static View myInflatedView;
+    private boolean markersDisplayed;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -104,6 +105,7 @@ public class FragmentMap extends Fragment {
 
         ImpromptuUser currentUser = (ImpromptuUser) ParseUser.getCurrentUser();
         List<Event> events = currentUser.getStreamEvents();
+        markersDisplayed = false;
         addEventsToMap(events);
 
         listStream = (LinearLayout) myInflatedView.findViewById(R.id.fragMap_linearLayout_listStream);
@@ -225,7 +227,7 @@ public class FragmentMap extends Fragment {
             vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLoc, DEFAULTZOOM));
         }
 
-
+        markersDisplayed = true;
 
     }
 
@@ -236,35 +238,56 @@ public class FragmentMap extends Fragment {
             }
             markers.clear();
         }
+
+        markersDisplayed = false;
+    }
+
+    private void removeMarkers() {
+        if(markers != null) {
+            for(int i = 0; i < markers.size(); i++) {
+                markers.get(i).remove();
+            }
+        }
+
+        markersDisplayed = false;
+    }
+
+    private void mapMarkers() {
+        if(markers != null && vMap != null) {
+
+            Vector<Marker> oldMarkers = markers;
+            markers = new Vector<Marker>(oldMarkers.size());
+
+            for(int i = 0; i < oldMarkers.size(); i++) {
+                Marker m = oldMarkers.get(i);
+                markers.add(vMap.addMarker(new MarkerOptions().title(m.getTitle())
+                        .snippet(m.getSnippet()).position(m.getPosition())));
+
+                //TODO: possible add way to "reclick" on previously selected marker?
+            }
+        }
+
+        markersDisplayed = true;
     }
 
     private void markerClick(Marker m) {
 
-        /*if(markers != null) {
-            for (Marker mark : markers)
-            {
-                if(mark.getPosition().equals(m.getPosition()))
-            }
-        }*/
+        selectedEvent = null;
 
-        selectedMarker = m;
-    }
-
-
-    private void toEventDetail() {
-        Event e = null;
-
-        //dependent on the fact that posts contains only the displayed events, and are inserted
-        //into vector in same order as markers
-
-        if(selectedMarker != null && markers != null && posts != null) {
-            for(int i = 0; i < markers.size(); i++) {
-                if(markers.get(i).equals(selectedMarker) && i < posts.size()){
-                    e = posts.get(i);
+        if(posts != null) {
+            for(int i = 0; i < posts.size(); i++) {
+                LatLng eventLoc = new LatLng(posts.get(i).getLatitude(), posts.get(i).getLongitude());
+                if(eventLoc.equals(m.getPosition())) {
+                    selectedEvent = posts.get(i);
                     break;
                 }
             }
         }
+    }
+
+
+    private void toEventDetail() {
+        Event e = selectedEvent;
 
         if(e != null) {
 
@@ -286,9 +309,20 @@ public class FragmentMap extends Fragment {
     }
 
     @Override
-    public void onStop() {
-        clearMarkers();
-        super.onStop();
+    public void onPause() {
+        super.onPause();
+
+        removeMarkers();
+    }
+
+    public void onResume() {
+        super.onResume();
+
+        //TODO: currently adding, removing, when creating fragment instance. Fix this
+
+        if(!markersDisplayed) {
+            mapMarkers();
+        }
     }
 
     @Override
