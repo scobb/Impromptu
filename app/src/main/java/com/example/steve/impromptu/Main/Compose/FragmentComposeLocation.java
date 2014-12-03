@@ -132,8 +132,6 @@ public class FragmentComposeLocation extends Fragment {
             @Override
             public void onClick(View v) {
 
-                //TODO: MAKE SURE I ERROR CHECK.
-
                 if(returnVal == null)
                 {
                     Toast.makeText(getActivity(), "No location selected", Toast.LENGTH_SHORT).show();
@@ -257,15 +255,6 @@ public class FragmentComposeLocation extends Fragment {
 
         return fragmentView;
     }
-
-
-
-
-    /*
-    //TODO: master list:
-    -take care of other todos
-    -make it zoom to your location AND event location in same picture? (low priority)
-     */
 
 
 
@@ -419,10 +408,40 @@ public class FragmentComposeLocation extends Fragment {
     }
 
     private void clearSearchResultMarkers(){
-        for(int i = 0; i < searchResultMarkers.size(); i++) {
-            searchResultMarkers.get(i).remove(); //remove marker from map
+
+        if(searchResultMarkers != null) {
+            for (int i = 0; i < searchResultMarkers.size(); i++) {
+                searchResultMarkers.get(i).remove(); //remove marker from map
+            }
+            searchResultMarkers.clear();
         }
-        searchResultMarkers.clear();
+    }
+
+    private void removeSearchResultMarkers() {
+        if(searchResultMarkers != null) {
+            for(int i = 0; i < searchResultMarkers.size(); i++) {
+                searchResultMarkers.get(i).remove(); //remove from map
+            }
+        }
+    }
+
+    private void mapSearchResultMarkers() {
+
+        //stupid, but can't add existing markers to the map. So, create add new ones with same info as old ones
+
+        if(searchResultMarkers != null && vMap != null) {
+
+            Vector<Marker> oldMarkers = searchResultMarkers;
+            searchResultMarkers = new Vector<Marker>(oldMarkers.size());
+
+            for(int i = 0; i < oldMarkers.size(); i++) {
+                Marker m = oldMarkers.get(i);
+                searchResultMarkers.add(vMap.addMarker(new MarkerOptions().title(m.getTitle())
+                        .snippet(m.getSnippet()).position(m.getPosition())));
+
+                //TODO: possible add way to "reclick" on previously selected marker?
+            }
+        }
     }
 
     private void selectLoc(ImpromptuLocation il){
@@ -480,8 +499,16 @@ public class FragmentComposeLocation extends Fragment {
     }
 
     @Override
-    public void onStop() {
-        clearSearchResultMarkers();
-        super.onStop();
+    public void onPause() {
+        super.onPause();
+
+        removeSearchResultMarkers();
+    }
+
+    public void onResume() {
+
+        super.onResume();
+
+        mapSearchResultMarkers();
     }
 }
