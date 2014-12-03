@@ -65,7 +65,6 @@ public class FragmentComposeType extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 type = types.get(i).getName();
-                Toast.makeText(getActivity(), type, Toast.LENGTH_SHORT).show();
             }
         });
 

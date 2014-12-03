@@ -9,28 +9,32 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
-import com.example.steve.impromptu.Main.Compose.ArrayAdapters.ArrayAdapterComposeType;
 import com.example.steve.impromptu.Main.Compose.ArrayAdapters.ArrayAdapterPeopleAttending;
 import com.example.steve.impromptu.Main.Profile.FragmentProfile;
 import com.example.steve.impromptu.R;
+import com.example.steve.impromptu.UI.ObservableScrollView;
 import com.example.steve.impromptu.UI.ScrollableMapFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -38,30 +42,36 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 /**
  * Created by Stephen Arifin on 10/16/14.
  */
-public class FragmentEventDetail extends Fragment {
+public class FragmentEventDetail extends Fragment{
+
+    private ObservableScrollView mObservableScrollView;
 
     private static View myInflatedView;
-    private ScrollView scrollView;
     private FragmentActivity myContext;
 
+    ScrollableMapFragment mf;
     private GoogleMap vMap;
+    private boolean mapVisibility = false;
 
     private ImpromptuUser owner;
     private Event event;
+    private Marker marker;
     private LinearLayout vOpenInGMaps;
 
     private static final LatLng defaultLocation = new LatLng(30.2864802, -97.74116620000001); //UT Austin ^___^
 
     // Variables for people attending
-    ArrayAdapterPeopleAttending userAdapter = null;
-    ListView userAttendingList;
+    private ArrayAdapterPeopleAttending userAdapter = null;
+    private ListView userAttendingList;
+    private ArrayList<ImpromptuUser> usersAttending;
+    private boolean currentUserAttending;
+    TextView joinTextView;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -88,25 +98,20 @@ public class FragmentEventDetail extends Fragment {
         TextView ownerTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_owner);
         TextView descriptionTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_description);
         ImageView profilePictureView = (ImageView) myInflatedView.findViewById(R.id.fragEventDetail_imageView_profilePic);
-        scrollView = (ScrollView) myInflatedView.findViewById(R.id.fragEventDetail_scrollView);
 
-        vOpenInGMaps = (LinearLayout) myInflatedView.findViewById(R.id.fragEventDetail_linearLayout_openInGMaps);
+        //vOpenInGMaps = (LinearLayout) myInflatedView.findViewById(R.id.fragEventDetail_linearLayout_openInGMaps);
 
         userAttendingList = (ListView) myInflatedView.findViewById(R.id.fragEventDetail_listView_peopleAttending);
         LinearLayout joinLayout = (LinearLayout) myInflatedView.findViewById(R.id.fragEventDetail_linearLayout_join);
+        joinTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_join);
 
-        // Replace map
-        ScrollableMapFragment mf = (ScrollableMapFragment) myContext.getSupportFragmentManager().findFragmentById(R.id.fragEventDetail_location_map);
-        vMap = mf.getMap();
+        TextView timeTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_time);
+        TextView locationTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_location);
+        LinearLayout locationLayout = (LinearLayout) myInflatedView.findViewById(R.id.fragEventDetail_linearLayout_location);
 
-        ((ScrollableMapFragment) myContext.getSupportFragmentManager().findFragmentById(R.id.fragEventDetail_location_map))
-                .setListener(new ScrollableMapFragment.OnTouchListener() {
+        // Set up the quick return layout bar
+        mObservableScrollView = (ObservableScrollView) myInflatedView.findViewById(R.id.scroll_view);
 
-            @Override
-            public void onTouch() {
-                scrollView.requestDisallowInterceptTouchEvent(true);
-            }
-        });
 
         // Get the owner and event
         owner = ImpromptuUser.getUserById(eventData.getString("ownerKey"));
@@ -117,13 +122,25 @@ public class FragmentEventDetail extends Fragment {
         ownerTextView.setText(owner.getName());
         descriptionTextView.setText(event.getDescription());
         profilePictureView.setImageBitmap(owner.getPicture());
+        timeTextView.setText(event.getEventDate().toString());
+        locationTextView.setText(event.getLocationName());
 
-        // Sets the map location
-        vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(event.getLatitude(), event.getLongitude()), 16.0f));
+        // Is the current user attending the event?
+        ImpromptuUser currentUser = (ImpromptuUser) ParseUser.getCurrentUser();
+        currentUserAttending = event.userIsGoing(currentUser);
 
-        // Places marker
-        vMap.addMarker(new MarkerOptions().position(new LatLng(event.getLatitude(), event.getLongitude()))
-            .title(event.getTitle()));
+        // Initialize the join button
+        if(currentUserAttending){
+            joinTextView.setText("Leave");
+        }
+        else{
+            joinTextView.setText("Join");
+        }
+
+
+        initiateMap();
+        refreshPeopleAttendingList();
+
 
         ownerLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,7 +160,29 @@ public class FragmentEventDetail extends Fragment {
             }
         });
 
-        vOpenInGMaps.setOnClickListener(new View.OnClickListener() {
+        locationLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(!mapVisibility){
+                    // if not visibile
+                    // Sets the map location
+                    vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(event.getLatitude(), event.getLongitude()), 16.0f));
+
+                    // Show map
+                    mf.getView().setVisibility(View.VISIBLE);
+                    mapVisibility = true;
+                }
+                else{
+                    // Hide map
+                    mf.getView().setVisibility(View.GONE);
+                    mapVisibility = false;
+                }
+
+            }
+        });
+
+        /*vOpenInGMaps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //TODO: implement
@@ -169,9 +208,104 @@ public class FragmentEventDetail extends Fragment {
                 intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
                 startActivity(intent);
             }
+        });*/
+
+        userAttendingList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                // Bundle up the data getting passed
+                Bundle userData = new Bundle();
+
+                // TODO need to make this check if it is the current user
+                userData.putString("ownerId", usersAttending.get(i).getObjectId());
+
+
+                // Set up the fragment transaction
+                FragmentTransaction transaction = getActivity().getFragmentManager().beginTransaction();
+                FragmentProfile fragment = new FragmentProfile();
+                fragment.setArguments(userData);
+                transaction.replace(R.id.activityMain_frameLayout_shell, fragment);
+                transaction.addToBackStack(null).commit();
+
+            }
         });
 
 
+
+        joinLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                ImpromptuUser currentUser = (ImpromptuUser)ParseUser.getCurrentUser();
+
+                if(currentUserAttending){
+                    event.removeUserGoing(currentUser);
+                    refreshPeopleAttendingList();
+                    joinTextView.setText("Join");
+                    currentUserAttending = false;
+                }
+                else{
+                    event.addUserGoing(currentUser);
+                    refreshPeopleAttendingList();
+                    joinTextView.setText("Leave");
+                    currentUserAttending = true;
+                }
+
+            }
+        });
+
+
+        return myInflatedView;
+
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        myContext=(FragmentActivity) activity;
+        super.onAttach(activity);
+    }
+
+
+
+    public void initiateMap(){
+
+        // Replace map
+        mf = (ScrollableMapFragment) myContext.getSupportFragmentManager()
+                .findFragmentById(R.id.fragEventDetail_location_map);
+        vMap = mf.getMap();
+
+        mf.getView().setVisibility(View.GONE);
+
+        ((ScrollableMapFragment) myContext.getSupportFragmentManager().findFragmentById(R.id.fragEventDetail_location_map))
+                .setListener(new ScrollableMapFragment.OnTouchListener() {
+
+                    @Override
+                    public void onTouch() {
+                        mObservableScrollView.requestDisallowInterceptTouchEvent(true);
+                    }
+                });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        marker.remove();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        boolean flag = true;
+
+            // Places marker
+            marker = vMap.addMarker(new MarkerOptions().position(new LatLng(event.getLatitude(), event.getLongitude()))
+                    .title(event.getTitle()).snippet(event.getDescription()));
+    }
+
+    private void refreshPeopleAttendingList(){
         // Set up the people attending the event
 
         List<ImpromptuUser> users = event.getUsersGoing();
@@ -182,6 +316,9 @@ public class FragmentEventDetail extends Fragment {
             @Override
             public void done(List<ImpromptuUser> users, ParseException e) {
                 if (e == null) {
+
+                    // set the arraylist
+                    usersAttending = new ArrayList<ImpromptuUser>(users);
 
                     userAdapter = new ArrayAdapterPeopleAttending(getActivity(),
                             R.layout.template_friend_attending_item, users);
@@ -197,29 +334,6 @@ public class FragmentEventDetail extends Fragment {
                 }
             }
         });
-
-
-
-        joinLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                ImpromptuUser currentUser = (ImpromptuUser)ParseUser.getCurrentUser();
-                event.addUserGoing(currentUser);
-
-                // Update the list adapter
-                userAdapter.notifyDataSetChanged();
-            }
-        });
-
-
-        return myInflatedView;
-
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        myContext=(FragmentActivity) activity;
-        super.onAttach(activity);
-    }
 }
