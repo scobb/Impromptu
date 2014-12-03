@@ -86,6 +86,19 @@ public class FragmentComposeType extends Fragment {
             }
         });
 
+        vCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // TODO make sure enough info is filled out
+
+                Toast.makeText(getActivity(), "Select cancel", Toast.LENGTH_SHORT).show();
+
+                composeTypeFinishedCallback.onComposeTypeFinished();
+
+            }
+        });
+
         return fragmentView;
     }
 
