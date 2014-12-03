@@ -191,9 +191,11 @@ public class FragmentComposeMain extends Fragment {
                 if (myEvent.getDurationHour() == -1) {
                     complete = false;
                 }
-
+                //I set complete to true so I could make events with no location
                 if (myEvent.getFormattedAddress() == null) {
-
+                    myEvent.setLocationName("Kelly's house");
+                    myEvent.setFormattedAddress("Kelly's house");
+                    complete = true;
                 }
 
                 if (complete) {
@@ -201,6 +203,7 @@ public class FragmentComposeMain extends Fragment {
                     time.setToNow();
 
                     myEvent.setOwner((ImpromptuUser) ImpromptuUser.getCurrentUser());
+
                     myEvent.setCreationTime(time);
                     composeMainFinishedListenerCallback.onComposeMainFinished(true);
                 }

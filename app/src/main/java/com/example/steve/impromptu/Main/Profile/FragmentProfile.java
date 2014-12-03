@@ -12,7 +12,33 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
+import android.app.DialogFragment;
+import android.app.FragmentTransaction;
+import android.app.ListFragment;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
+import com.example.steve.impromptu.Entity.Event;
+import com.example.steve.impromptu.Entity.ImpromptuUser;
+import com.example.steve.impromptu.R;
+import com.example.steve.impromptu.UI.ObservableScrollView;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseUser;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.Login.ActivityLogin;
 import com.example.steve.impromptu.R;
@@ -30,7 +56,7 @@ import org.json.JSONObject;
 /**
  * Created by jonreynolds on 10/16/14.
  */
-public class FragmentProfile extends Fragment {
+public class FragmentProfile extends ListFragment{
 
     private ImpromptuUser user;
 
@@ -47,7 +73,7 @@ public class FragmentProfile extends Fragment {
         final TextView nameView = (TextView) myInflatedView.findViewById(R.id.fragProfile_textView_name);
         final TextView emailView = (TextView) myInflatedView.findViewById(R.id.fragProfile_textView_email);
         final ImageView profileView = (ImageView) myInflatedView.findViewById(R.id.fragProfile_imageView_profilePic);
-
+        List<Event> posts;
 
 
         // Get the user
@@ -70,6 +96,9 @@ public class FragmentProfile extends Fragment {
         nameView.setText(targetUser.getName());
         emailView.setText(targetUser.getEmail());
         profileView.setImageBitmap(targetUser.getPicture());
+
+        List<Event> events = targetUser.getOwnedEvents();
+
 
         return myInflatedView;
     }
