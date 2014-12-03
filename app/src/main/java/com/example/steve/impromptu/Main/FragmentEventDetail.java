@@ -34,6 +34,7 @@ import com.example.steve.impromptu.UI.ScrollableMapFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -59,6 +60,7 @@ public class FragmentEventDetail extends Fragment{
 
     private ImpromptuUser owner;
     private Event event;
+    private Marker marker;
     private LinearLayout vOpenInGMaps;
 
     private static final LatLng defaultLocation = new LatLng(30.2864802, -97.74116620000001); //UT Austin ^___^
@@ -150,10 +152,6 @@ public class FragmentEventDetail extends Fragment{
                     // if not visibile
                     // Sets the map location
                     vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(event.getLatitude(), event.getLongitude()), 16.0f));
-
-                    // Places marker
-                    vMap.addMarker(new MarkerOptions().position(new LatLng(event.getLatitude(), event.getLongitude()))
-                            .title(event.getTitle()));
 
                     // Show map
                     mf.getView().setVisibility(View.VISIBLE);
@@ -291,6 +289,24 @@ public class FragmentEventDetail extends Fragment{
                         mObservableScrollView.requestDisallowInterceptTouchEvent(true);
                     }
                 });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        marker.remove();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        boolean flag = true;
+
+            // Places marker
+            marker = vMap.addMarker(new MarkerOptions().position(new LatLng(event.getLatitude(), event.getLongitude()))
+                    .title(event.getTitle()).snippet(event.getDescription()));
     }
 
 }
