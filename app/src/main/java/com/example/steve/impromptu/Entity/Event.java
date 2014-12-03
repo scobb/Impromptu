@@ -322,6 +322,23 @@ public class Event extends ParseObject implements Comparable<Event> {
 
     }
 
+    /**
+     *
+     * @param user User to determine "going" status
+     * @return true if user is going, false otherwise
+     */
+    public boolean userIsGoing(ImpromptuUser user) {
+        ParseRelation<ImpromptuUser> rel = this.getRelation(usersGoingKey);
+        ParseQuery<ImpromptuUser> query = rel.getQuery();
+        try {
+            List<ImpromptuUser> result = query.find();
+            return result.contains(user);
+        } catch (ParseException e) {
+            Log.e("Impromptu", "error getting relation query", e);
+        }
+        return false;
+    }
+
     public static Event getEventById(String id) {
         /**
          * method - gets existing user given their id

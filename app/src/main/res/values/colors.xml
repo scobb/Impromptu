@@ -7,4 +7,5 @@
     <color name="transparent">#00FFFFFF</color>
     <color name="list_item_selected">#33B5E5</color>
     <color name="list_item_unselected">#FFFFFF</color>
+    <color name="impromptu_list_gray">#DDDDDD</color>
 </resources>

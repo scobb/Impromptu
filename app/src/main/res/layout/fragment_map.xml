@@ -1,44 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
 android:id="@+id/fragMap_scrollView"
-android:layout_width="fill_parent"
-android:layout_height="fill_parent">
+    android:fillViewport="true"
+android:layout_width="match_parent"
+android:layout_height="match_parent">
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragMap_linearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="8dp"
     android:orientation="vertical"
     tools:context="com.example.steve.impromptu.Main.FragmentMap">
 
-    <LinearLayout
-        android:id="@+id/fragMap_linearLayout_listStream"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:orientation="vertical"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:gravity="center_vertical|center_horizontal"
-        android:layout_gravity="center"
-        android:background="@drawable/template_rounded_box">
-        <TextView
-            android:id="@+id/fragMap_textView_listStream"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="List Stream"
-            android:textSize="24sp"/>
-    </LinearLayout>
+    <!--<LinearLayout-->
+        <!--android:id="@+id/fragMap_linearLayout_listStream"-->
+        <!--android:layout_marginLeft="@dimen/activity_horizontal_margin"-->
+        <!--android:layout_marginRight="@dimen/activity_horizontal_margin"-->
+        <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
+        <!--android:orientation="vertical"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:gravity="center_vertical|center_horizontal"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:background="@drawable/template_rounded_box">-->
+        <!--<TextView-->
+            <!--android:id="@+id/fragMap_textView_listStream"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:text="List Stream"-->
+            <!--android:textSize="24sp"/>-->
+    <!--</LinearLayout>-->
 
     <fragment
+        android:fillViewport="true"
         android:id="@+id/fragMap_map"
         android:layout_width="match_parent"
-        android:layout_height="550dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:scaleType="fitCenter"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
         class="com.example.steve.impromptu.UI.ScrollableMapFragment" />
 
     <LinearLayout
@@ -46,10 +49,7 @@ android:layout_height="fill_parent">
         android:orientation="vertical"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginTop="8dp"
         android:gravity="center_vertical|center_horizontal"
         android:layout_gravity="center"
         android:background="@drawable/template_rounded_box">
