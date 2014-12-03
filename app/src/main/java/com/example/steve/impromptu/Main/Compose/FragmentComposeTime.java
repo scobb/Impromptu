@@ -18,6 +18,9 @@ import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Main.ActivityMain;
 import com.example.steve.impromptu.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 /**
  * Created by jonreynolds on 10/16/14.
@@ -33,9 +36,9 @@ public class FragmentComposeTime extends Fragment {
     LinearLayout vCancel;
 
     public Event myEvent;
-    Time currentTime = new Time();
-    Time startTime = new Time();
-    Time endTime = new Time();
+    Date currentTime = new Date();
+    Date startTime = new Date();
+    Date endTime = new Date();
     int durationHour = 0;
     int durationMinute = 0;
     int absoluteStartHour;
@@ -45,6 +48,7 @@ public class FragmentComposeTime extends Fragment {
     int startTimeSeekBarProgress;
     String newEndTime;
     String initialStartTime;
+    SimpleDateFormat dateString = new SimpleDateFormat("h:mm a");
 
     OnComposeTimeFinishedListener mCallback;
 
@@ -82,11 +86,8 @@ public class FragmentComposeTime extends Fragment {
             durationSeekBarProgress = myEvent.getSeekDuration();
 
             if (startTime != null) {
-                if (startMorning) {
-                    initialStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", roundUpToNearest5(startTime.minute)) + "am";
-                } else {
-                    initialStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", roundUpToNearest5(startTime.minute)) + "pm";
-                }
+
+                initialStartTime = dateString.format(startTime);
                 vTextStartTime.setText(initialStartTime);
                 vSeekStartTime.setProgress(startTimeSeekBarProgress);
             }
@@ -105,55 +106,16 @@ public class FragmentComposeTime extends Fragment {
                 vTextDuration.setText(newDuration);
                 vSeekDuration.setProgress(durationSeekBarProgress);
             }
-            //need to find workaround for absolute start time
+
             String newEndTime = getEndTime();
             vTextEndTime.setText(newEndTime);
 
         } else {
-            currentTime = new Time();
-            startTime = new Time();
-            endTime = new Time();
+            startTime = new Date();
+            endTime = new Date();
 
-            currentTime.setToNow();
-            startTime.setToNow();
-            endTime.setToNow();
             Log.d("Impromptu", "startTime: " + startTime);
-            startTime.hour = currentTime.hour;
-            absoluteStartHour = startTime.hour;
-            startTime.minute = currentTime.minute;
-
-            startMorning = true;
-            if ((startTime.minute >= 60) || (roundUpToNearest5(startTime.minute) >= 60)) {
-                startTime.hour += 1;
-                absoluteStartHour += 1;
-                startTime.minute = 0;
-            }
-            if (startTime.hour == 12) {
-                startMorning = false;
-            }
-            if (startTime.hour > 12) {
-                startTime.hour = startTime.hour - 12;
-                //startMorning = false;
-            }
-            if(absoluteStartHour > 12) {
-                startMorning = false;
-            }
-            if(absoluteStartHour >= 24) {
-                startMorning = true;
-            }
-
-            if (startTime.hour == 0) {
-                startTime.hour = 12;
-                startMorning = true;
-            }
-            //String correctMin = String.format("%02d", startTime.minute);
-
-            if (startMorning) {
-                initialStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", roundUpToNearest5(startTime.minute)) + "am";
-            } else {
-                initialStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", roundUpToNearest5(startTime.minute)) + "pm";
-            }
-
+            initialStartTime = dateString.format(startTime);
             vTextStartTime.setText(initialStartTime);
 
             String initialEndTime = getEndTime();
@@ -174,55 +136,11 @@ public class FragmentComposeTime extends Fragment {
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                     int addTime = progress;
                     addTime *= 5;
-                    int addHours = addTime / 60;
-
-                    System.out.println("Hours to add is" + addHours);
-
-                    int addMinutes = addTime % 60;
-                    boolean morning = true;
-                    String newStartTime;
-                    startTimeSeekBarProgress = progress;
-
-                    startTime.hour = currentTime.hour + addHours;
-                    absoluteStartHour = currentTime.hour + addHours;
-                    startTime.minute = (currentTime.minute + addMinutes) % 60;
-
-                    System.out.println("Initial start time is" + startTime.hour + ":" + startTime.minute);
-
-                   // if ((startTime.minute >= 60) || (roundUpToNearest5(startTime.minute) >= 60)) {
-                        if (roundUpToNearest5(startTime.minute) >= 60) {
-                        startTime.hour += 1;
-                        absoluteStartHour += 1;
-                        startTime.minute = 0;
-                    }
-
-                    if (absoluteStartHour == 12) {
-                        morning = false;
-                    }
-                    if (startTime.hour > 12) {
-                        startTime.hour = startTime.hour - 12;
-                    }
-                    if(absoluteStartHour > 12) {
-                        morning = false;
-                    }
-                    if(absoluteStartHour >= 24) {
-                        morning = true;
-                    }
-                    if (absoluteStartHour == 0) {
-                        startTime.hour = 12;
-                        morning = true;
-                    }
-
-                    if (morning) {
-
-                        newStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", roundUpToNearest5(startTime.minute)) + "am";
-                    } else {
-                        newStartTime = Integer.toString(startTime.hour) + ":" + String.format("%02d", roundUpToNearest5(startTime.minute)) + "pm";
-
-                    }
-                    System.out.println(absoluteStartHour + " " + startTime.minute);
+                    currentTime.setMinutes(roundUpToNearest5(currentTime.getMinutes()));
+                    startTime.setTime(currentTime.getTime() + (addTime * 60000));
+                    SimpleDateFormat dateString = new SimpleDateFormat("h:mm a");
+                    String newStartTime = dateString.format(startTime);
                     vTextStartTime.setText(newStartTime);
-
                     String newEndTime = getEndTime();
                     vTextEndTime.setText(newEndTime);
                 }
@@ -283,7 +201,7 @@ public class FragmentComposeTime extends Fragment {
 
                     ActivityMain myActivity = (ActivityMain) getActivity();
                     myEvent = myActivity.getComposeEvent();
-                    Log.d("Impromptu", "Onclick listener! startTime: " + startTime.toMillis(false));
+                    Log.d("Impromptu", "Onclick listener! startTime: " + startTime);
                     myEvent.setEventTime(startTime);
                     myEvent.setEventTimeMorning(startMorning);
                     myEvent.setDurationHour(durationHour);
@@ -313,44 +231,9 @@ public class FragmentComposeTime extends Fragment {
     }
 
     public String getEndTime() {
-
-        endTimeMorning = true;
-        int absoluteEndHour = absoluteStartHour + durationHour;
-        endTime.hour = startTime.hour + durationHour;
-        endTime.minute = (startTime.minute + durationMinute) % 60;
-        if(((startTime.minute + durationMinute) >= 60) || ((startTime.minute + roundUpToNearest5(durationMinute)) >= 60)) {
-            absoluteEndHour += 1;
-            endTime.hour += 1;
-            endTime.minute = 0;
-        }
-
-        if(absoluteEndHour == 12 ) {
-            endTimeMorning = false;
-        }
-        if(endTime.hour > 12) {
-            endTime.hour = endTime.hour -12;
-        }
-
-        if(absoluteEndHour > 12) {
-            endTimeMorning = false;
-        }
-        if(absoluteEndHour >= 24 ) {
-            endTimeMorning = true;
-        }
-        if(absoluteEndHour == 0) {
-            endTime.hour = 12;
-            endTimeMorning = true;
-        }
-
-        if(endTimeMorning) {
-
-            newEndTime = Integer.toString(endTime.hour) + ":" + String.format("%02d", roundUpToNearest5(endTime.minute)) + "am";
-        }
-        else {
-            newEndTime = Integer.toString(endTime.hour) + ":" + String.format("%02d", roundUpToNearest5(endTime.minute)) + "pm";
-
-        }
-
+        endTime.setTime(startTime.getTime() + (durationMinute * 60000) + (durationHour * 3600000));
+        SimpleDateFormat dateString = new SimpleDateFormat("h:mm a");
+        String newEndTime = dateString.format(endTime);
         return newEndTime;
     }
 

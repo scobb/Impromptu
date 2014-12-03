@@ -50,14 +50,14 @@ public class Event extends ParseObject implements Comparable<Event> {
     private String pushedKey = "pushed";
 
     private String localTitle = null;
-    private Time localCreationTime;
+    private Date localCreationTime;
     private String localDescription = null;
     private int localDurationHour;
     private int localDurationMinute;
     private int localSeekStart;
     private int localSeekDuration;
     private ImpromptuUser localOwner;
-    private Time localEventTime;
+    private Date localEventTime;
     private String localLocation = null;
     private String localType = null;
     private double localLatitude;
@@ -244,11 +244,11 @@ public class Event extends ParseObject implements Comparable<Event> {
         ImpromptuUser stephen = ImpromptuUser.getUserById("mQMe4SHJNe");
         ImpromptuUser jon = ImpromptuUser.getUserById("tqaTgngvn2");
         this.setOwner(stephen);
-        this.setCreationTime(new Time());
+        this.setCreationTime(new Date());
         this.setDescription("my awesome test event");
         this.setDurationHour(1);
         this.setDurationMinute(27);
-        this.setEventTime(new Time());
+        this.setEventTime(new Date());
         this.setTitle("awesome");
         this.setType("awesomeType");
         this.setLatitude(30.25);
@@ -455,10 +455,10 @@ public class Event extends ParseObject implements Comparable<Event> {
 //    }
 
 
-    public void setEventTime(Time eventTime) {
+    public void setEventTime(Date eventTime) {
 
         if (localPushed || getPushed()) {
-            this.put(eventTimeKey, new Date(eventTime.toMillis(false)));
+            this.put(eventTimeKey, new Date(eventTime.getTime()));
         } else {
             localEventTime = eventTime;
         }
@@ -489,10 +489,10 @@ public class Event extends ParseObject implements Comparable<Event> {
         }
     }
 
-    public void setCreationTime(Time creationTime) {
+    public void setCreationTime(Date creationTime) {
 
         if (localPushed || getPushed()) {
-            this.put(creationTimeKey, new Date(creationTime.toMillis(false)));
+            this.put(creationTimeKey, new Date(creationTime.getTime()));
         } else {
             localCreationTime = creationTime;
         }
@@ -661,7 +661,7 @@ public class Event extends ParseObject implements Comparable<Event> {
         }
     }
 
-    public Time getEventTime() {
+    public Date getEventTime() {
 
         if (localPushed || getPushed()) {
             try {
@@ -669,8 +669,8 @@ public class Event extends ParseObject implements Comparable<Event> {
             } catch (Exception exc) {
                 Log.e("Impromptu", "Error fetching Event:", exc);
             }
-            Time eventTime = new Time();
-            eventTime.set(this.getDate(eventTimeKey).getTime());
+            Date eventTime = new Date();
+            eventTime.setTime(this.getDate(eventTimeKey).getTime());
             return eventTime;
         } else {
             return localEventTime;
@@ -681,7 +681,7 @@ public class Event extends ParseObject implements Comparable<Event> {
         return this.getDate(eventTimeKey);
     }
 
-    public Time getCreationTime() {
+    public Date getCreationTime() {
 
         if (localPushed || getPushed()) {
             try {
@@ -689,8 +689,8 @@ public class Event extends ParseObject implements Comparable<Event> {
             } catch (Exception exc) {
                 Log.e("Impromptu", "Error fetching Event:", exc);
             }
-            Time creationTime = new Time();
-            creationTime.set(this.getDate(creationTimeKey).getTime());
+            Date creationTime = new Date();
+            creationTime.setTime(this.getDate(creationTimeKey).getTime());
             return creationTime;
         } else {
             return localCreationTime;
@@ -898,8 +898,8 @@ public class Event extends ParseObject implements Comparable<Event> {
 
     @Override
     public int compareTo(Event other) {
-        Long myMillis = this.getEventTime().toMillis(true);
-        Long otherMillis = other.getEventTime().toMillis(true);
+        Long myMillis = this.getEventTime().getTime();
+        Long otherMillis = other.getEventTime().getTime();
         return myMillis.compareTo(otherMillis);
     }
 }
