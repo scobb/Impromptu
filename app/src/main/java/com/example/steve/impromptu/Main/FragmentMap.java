@@ -8,14 +8,12 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
@@ -27,13 +25,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseUser;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
@@ -52,7 +45,7 @@ public class FragmentMap extends Fragment {
 
     private FragmentActivity myContext;
     private Vector<Event> posts;
-    private LinearLayout listStream;
+//    private LinearLayout listStream;
     private LinearLayout vEventDetail;
     private GoogleMap vMap;
     private ScrollView vScrollView;
@@ -107,20 +100,18 @@ public class FragmentMap extends Fragment {
         List<Event> events = currentUser.getStreamEvents();
         markersDisplayed = false;
         addEventsToMap(events);
-
-        listStream = (LinearLayout) myInflatedView.findViewById(R.id.fragMap_linearLayout_listStream);
         vScrollView = (ScrollView) myInflatedView.findViewById(R.id.fragMap_scrollView);
         vEventDetail = (LinearLayout) myInflatedView.findViewById(R.id.fragMap_linearLayout_eventDetail);
 
-        listStream.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO: this might not be the best way. also, move this to a green bar on the bottom like FragmentStream
-                getFragmentManager().popBackStackImmediate();
-                //FragmentMap nextFrag = new FragmentMap();
-                //getFragmentManager().beginTransaction().replace(R.id.activityMain_frameLayout_shell, nextFrag).addToBackStack(null).commit();
-            }
-        });
+//        listStream.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //TODO: this might not be the best way. also, move this to a green bar on the bottom like FragmentStream
+//                getFragmentManager().popBackStackImmediate();
+//                //FragmentMap nextFrag = new FragmentMap();
+//                //getFragmentManager().beginTransaction().replace(R.id.activityMain_frameLayout_shell, nextFrag).addToBackStack(null).commit();
+//            }
+//        });
 
         vEventDetail.setOnClickListener(new View.OnClickListener() {
             @Override

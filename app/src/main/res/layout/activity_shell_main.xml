@@ -105,6 +105,27 @@
         </LinearLayout>
 
         <Space
+            android:id="@+id/activityMain_space_extra_5"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"></Space>
+
+        <LinearLayout
+            android:id="@+id/activityMain_linearLayout_map"
+            android:onClick="map"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:background="@drawable/selector_main_icons">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_action_map" />
+
+        </LinearLayout>
+
+        <Space
             android:id="@+id/activityMain_space_extra_3"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -143,27 +164,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_action_group" />
-        </LinearLayout>
-
-        <Space
-            android:id="@+id/activityMain_space_extra_5"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"></Space>
-
-        <LinearLayout
-            android:id="@+id/activityMain_linearLayout_updates"
-            android:onClick="updates"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:gravity="center"
-            android:background="@drawable/selector_main_icons">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_action_warning" />
-
         </LinearLayout>
 
     </LinearLayout>

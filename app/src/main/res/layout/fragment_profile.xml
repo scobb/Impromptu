@@ -4,13 +4,6 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-<!--
-    <com.facebook.widget.ProfilePictureView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:id="@+id/fragProfile_imageView_profilePic" /> -->
-
     <ImageView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -37,4 +30,12 @@
         android:text="Log out"
         android:onClick="onLogoutClicked"
         android:id="@+id/fragProfile_button_logout" />
+
+    <ListView android:id="@id/android:list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:cacheColorHint="@android:color/white"
+        android:drawSelectorOnTop="false" />
+
 </LinearLayout>
