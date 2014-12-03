@@ -122,7 +122,7 @@ public class FragmentEventDetail extends Fragment{
         // Set up the quick return layout bar
         mObservableScrollView = (ObservableScrollView) myInflatedView.findViewById(R.id.scroll_view);
 
-        
+
 
         ownerLayout.setOnClickListener(new View.OnClickListener() {
             @Override
