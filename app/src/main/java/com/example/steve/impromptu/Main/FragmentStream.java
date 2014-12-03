@@ -54,8 +54,8 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
     /** Tracks the last seen first visible child */
     private int _last_first_child;
 
-    List<Event> posts;
-    LinearLayout mapStream;
+    private List<Event> posts;
+    private LinearLayout mapStream;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

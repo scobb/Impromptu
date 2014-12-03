@@ -99,7 +99,7 @@ public class FragmentEventDetail extends Fragment{
         TextView descriptionTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_description);
         ImageView profilePictureView = (ImageView) myInflatedView.findViewById(R.id.fragEventDetail_imageView_profilePic);
 
-        //vOpenInGMaps = (LinearLayout) myInflatedView.findViewById(R.id.fragEventDetail_linearLayout_openInGMaps);
+        vOpenInGMaps = (LinearLayout) myInflatedView.findViewById(R.id.fragEventDetail_linearLayout_openInGMaps);
 
         userAttendingList = (ListView) myInflatedView.findViewById(R.id.fragEventDetail_listView_peopleAttending);
         LinearLayout joinLayout = (LinearLayout) myInflatedView.findViewById(R.id.fragEventDetail_linearLayout_join);
@@ -171,18 +171,21 @@ public class FragmentEventDetail extends Fragment{
 
                     // Show map
                     mf.getView().setVisibility(View.VISIBLE);
+                    vOpenInGMaps.setVisibility(View.VISIBLE);
+
                     mapVisibility = true;
                 }
                 else{
                     // Hide map
                     mf.getView().setVisibility(View.GONE);
+                    vOpenInGMaps.setVisibility(View.GONE);
                     mapVisibility = false;
                 }
 
             }
         });
 
-        /*vOpenInGMaps.setOnClickListener(new View.OnClickListener() {
+        vOpenInGMaps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //TODO: implement
@@ -208,7 +211,7 @@ public class FragmentEventDetail extends Fragment{
                 intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
                 startActivity(intent);
             }
-        });*/
+        });
 
         userAttendingList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
