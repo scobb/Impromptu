@@ -64,7 +64,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     LinearLayout vStream;
     LinearLayout vFriends;
     LinearLayout vGroups;
-    LinearLayout vUpdates;
+    LinearLayout vMap;
 
     // Filters
     private static Hashtable<String, Boolean> filters = new Hashtable<String, Boolean>();
@@ -83,7 +83,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         vStream = (LinearLayout) findViewById(R.id.activityMain_linearLayout_stream);
         vFriends = (LinearLayout) findViewById(R.id.activityMain_linearLayout_friends);
         vGroups = (LinearLayout) findViewById(R.id.activityMain_linearLayout_groups);
-        vUpdates = (LinearLayout) findViewById(R.id.activityMain_linearLayout_updates);
+        vMap = (LinearLayout) findViewById(R.id.activityMain_linearLayout_map);
         vTopMenu = (LinearLayout) findViewById(R.id.activityMain_linearLayout_topMenu);
         vBottomMenu = (LinearLayout) findViewById(R.id.activityMain_linearLayout_bottomMenu);
         vLocationWithinApp = (TextView) findViewById(R.id.activityMain_textView_locationWithinApp);
@@ -137,7 +137,6 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     }
 
 
-
     public void forwardToProfileFragment() {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -167,8 +166,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         try {
             ImpromptuUser.test();
             Log.d("Impromptu", "ImpromptuUser tests passed!");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Log.d("Impromptu", "ImpromptuUser tests failed!");
             e.printStackTrace();
         }
@@ -376,6 +374,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
             Toast.makeText(this, "create new event", Toast.LENGTH_SHORT).show();
 
             Event myEvent = getComposeEvent();
+            myEvent.addUserGoing((ImpromptuUser) ImpromptuUser.getCurrentUser());
             myEvent.persist();
 
             updateLocationWithinApp("Stream");
@@ -481,11 +480,12 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 //        Toast.makeText(this, "show map", Toast.LENGTH_SHORT).show();
 //    }
 
-    public void updates(View view) {
-        setHighlightedButton("Updates");
-        updateLocationWithinApp("Updates");
-        vLocationWithinApp.setText(locationWithinApp);
-        Toast.makeText(this, "show updates", Toast.LENGTH_SHORT).show();
+    public void map(View view) {
+        setHighlightedButton("Map");
+        updateLocationWithinApp("Map");
+
+        FragmentMap nextFrag = new FragmentMap();
+        getFragmentManager().beginTransaction().replace(R.id.activityMain_frameLayout_shell, nextFrag).commit();
     }
 
     public void friends(View view) {
@@ -538,7 +538,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         fragmentTransaction.commit();
     }
 
-    public void filter(View view){
+    public void filter(View view) {
         DialogFragment filterFragment = FragmentFilterDialog.newInstance();
         filterFragment.show(getFragmentManager(), "dialog");
     }
@@ -548,11 +548,11 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         return composeEvent;
     }
 
-    public static Hashtable<String, Boolean> getFiltersMap(){
+    public static Hashtable<String, Boolean> getFiltersMap() {
         return filters;
     }
 
-    public static void updateFilters(Hashtable<String, Boolean> updatedMap){
+    public static void updateFilters(Hashtable<String, Boolean> updatedMap) {
         filters = new Hashtable<String, Boolean>(updatedMap);
     }
 
@@ -568,9 +568,9 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         vStream.setBackgroundResource(R.color.transparent);
         vFriends.setBackgroundResource(R.color.transparent);
         vGroups.setBackgroundResource(R.color.transparent);
-        vUpdates.setBackgroundResource(R.color.transparent);
+        vMap.setBackgroundResource(R.color.transparent);
 
-        switch(button) {
+        switch (button) {
             case "Profile":
                 vProfile.setBackgroundResource(R.color.impromptu_complementary_green);
                 break;
@@ -586,15 +586,15 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
             case "Groups":
                 vGroups.setBackgroundResource(R.color.impromptu_complementary_green);
                 break;
-            case "Updates":
-                vUpdates.setBackgroundResource(R.color.impromptu_complementary_green);
+            case "Map":
+                vMap.setBackgroundResource(R.color.impromptu_complementary_green);
                 break;
         }
     }
 
     @Override
     public void onBackPressed() {
-        if(getFragmentManager().getBackStackEntryCount() != 0) {
+        if (getFragmentManager().getBackStackEntryCount() != 0) {
             getFragmentManager().popBackStack();
         } else {
 //            super.onBackPressed();

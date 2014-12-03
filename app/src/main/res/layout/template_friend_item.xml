@@ -3,6 +3,7 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:minHeight="@dimen/picture_width_and_height"
     android:gravity="center_vertical">
 
     <CheckBox
