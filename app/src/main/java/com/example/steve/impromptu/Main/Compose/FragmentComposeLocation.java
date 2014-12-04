@@ -176,7 +176,7 @@ public class FragmentComposeLocation extends Fragment {
             }
         });
 
-        vSelectedLocation.setOnClickListener(new View.OnClickListener() {
+        vMyLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 centerMapMyLocation();
