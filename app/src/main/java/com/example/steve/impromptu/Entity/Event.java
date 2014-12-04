@@ -298,6 +298,7 @@ public class Event extends ParseObject implements Comparable<Event> {
         int difference = (int) Math.ceil(hourDifference);
 
         map.put("date", "In about " + difference + " hours");
+        map.put("title", this.getTitle());
         map.put("content", this.getDescription());
         return map;
     }

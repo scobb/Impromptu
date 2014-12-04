@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:gravity="center_vertical"
-        android:background="@drawable/template_rounded_box">
+        android:background="@drawable/gray_square_background">
 
         <TextView
             android:id="@+id/fragComposeStream_textView_groupsPrompt"
@@ -49,7 +49,7 @@
         android:layout_weight="2"
         android:layout_width="match_parent"
         android:gravity="center_vertical"
-        android:background="@drawable/template_rounded_box">
+        android:background="@drawable/gray_square_background">
 
         <TextView
             android:id="@+id/fragComposeStream_textView_friendsPrompt"
@@ -81,7 +81,7 @@
             android:layout_width="wrap_content"
             android:gravity="center_vertical"
             android:layout_gravity="right"
-            android:background="@drawable/template_rounded_box">
+            android:background="@drawable/gray_square_background">
 
             <TextView
                 android:id="@+id/fragComposeStream_textView_cancelPrompt"
@@ -108,7 +108,7 @@
             android:layout_width="wrap_content"
             android:gravity="center_vertical|right"
             android:layout_gravity="right"
-            android:background="@drawable/template_rounded_box">
+            android:background="@drawable/gray_square_background">
 
             <TextView
                 android:id="@+id/fragComposeStream_textView_okPrompt"

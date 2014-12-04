@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     android:paddingRight="16dp"
     android:paddingLeft="16dp"
-    android:paddingTop="4dp"
-    android:paddingBottom="4dp">
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,41 +15,70 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/fragComposeMain_imageView_type"
-            android:layout_height="wrap_content"
+            android:id="@+id/fragComposeMain_imageView_create"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_accept" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:id="@+id/fragComposeMain_imageView_discard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_discard" />
+
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+
+        <ImageView
+            android:id="@+id/fragComposeMain_imageView_type"
+            android:layout_height="40dp"
+            android:layout_width="40dp"
             android:src="@drawable/ic_launcher"/>
 
         <EditText
             android:id="@+id/fragComposeMain_editText_title"
+            android:layout_marginLeft="8dp"
             android:layout_width="0dp"
             android:layout_weight="1"
+            android:textSize="16sp"
             android:layout_height="match_parent"
             android:gravity="center"
+            android:maxLength="50"
             android:hint="@string/fragComposeMain_hintTitle"/>
 
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/fragComposeMain_linearLayout_description"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="24dp"
         android:orientation="vertical"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:gravity="center_vertical"
-        android:background="@drawable/template_rounded_box">
+        android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/fragComposeMain_textView_descriptionPrompt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textStyle="bold"
             android:text="Description"
-            android:textSize="24sp"/>
+            android:textSize="16dp"/>
 
         <EditText
             android:id="@+id/fragComposeMain_editText_description"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:textSize="16dp"
             android:maxLength="140"
             android:hint="@string/fragComposeMain_hintDescription"/>
 
@@ -57,107 +86,146 @@
 
     <LinearLayout
         android:id="@+id/fragComposeMain_linearLayout_stream"
-        android:layout_marginTop="8dp"
-        android:orientation="vertical"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:gravity="center_vertical"
-        android:background="@drawable/template_rounded_box">
+        android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/fragComposeMain_textView_streamPrompt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Stream"
-            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textSize="16sp"
+             />
 
-            android:ellipsize="end"
+        <TextView
+            android:id="@+id/fragComposeMain_textView_streamList"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="8dp"
+            android:textSize="12sp"
+            android:textColor="@color/impromptu_list_gray"
+            android:text="Friend 1, Friend 2, Friend 3, ..."
             android:maxLines="1"
-            android:scrollHorizontally="false"/>
+            android:scrollHorizontally="false"
+            android:ellipsize="end"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_next_item"/>
 
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/fragComposeMain_linearLayout_push"
-        android:layout_marginTop="8dp"
-        android:orientation="vertical"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:gravity="center_vertical"
-        android:background="@drawable/template_rounded_box">
+        android:gravity="center_vertical">
+
         <TextView
             android:id="@+id/fragComposeMain_textView_pushPrompt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Push"
-            android:textSize="24sp"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
 
-            android:ellipsize="end"
+        <TextView
+            android:id="@+id/fragComposeMain_textView_pushList"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="8dp"
+            android:textSize="12sp"
+            android:textColor="@color/impromptu_list_gray"
+            android:text="Friend 1, Friend 2, Friend 3, ..."
             android:maxLines="1"
-            android:scrollHorizontally="false"/>
+            android:scrollHorizontally="false"
+            android:ellipsize="end"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_next_item"/>
 
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/fragComposeMain_linearLayout_time"
-        android:layout_marginTop="8dp"
-        android:orientation="vertical"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:gravity="center_vertical"
-        android:background="@drawable/template_rounded_box">
+        android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/fragComposeMain_textView_timePrompt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Time"
-            android:textSize="24sp"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
 
-            android:ellipsize="end"
+        <TextView
+            android:id="@+id/fragComposeMain_textView_time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="8dp"
+            android:textSize="12sp"
+            android:textColor="@color/impromptu_list_gray"
+            android:text="Begins at 12:15 pm, Ends at 3:30 pm"
             android:maxLines="1"
-            android:scrollHorizontally="false"/>
+            android:scrollHorizontally="false"
+            android:ellipsize="end"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_next_item"/>
 
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/fragComposeMain_linearLayout_location"
-        android:layout_marginTop="8dp"
-        android:orientation="vertical"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:gravity="center_vertical"
-        android:background="@drawable/template_rounded_box">
+        android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/fragComposeMain_textView_locationPrompt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Location"
-            android:textSize="24sp"
-
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:scrollHorizontally="false"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/fragComposeMain_linearLayout_create"
-        android:layout_marginTop="8dp"
-        android:orientation="vertical"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:gravity="center_vertical"
-        android:layout_gravity="right"
-        android:background="@drawable/template_rounded_box">
+            android:textSize="16sp"
+            android:textStyle="bold"/>
 
         <TextView
-            android:id="@+id/fragComposeMain_textView_createPrompt"
+            android:id="@+id/fragComposeMain_textView_location"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="8dp"
+            android:textSize="12sp"
+            android:textColor="@color/impromptu_list_gray"
+            android:text="Qdoba"
+            android:maxLines="1"
+            android:scrollHorizontally="false"
+            android:ellipsize="end"/>
+
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Create"
-            android:textSize="24sp"/>
+            android:src="@drawable/ic_action_next_item"/>
 
     </LinearLayout>
 

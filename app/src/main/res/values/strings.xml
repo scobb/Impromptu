@@ -20,6 +20,6 @@
 
     <string name="fragComposeMain_hintTitle">Title</string>
     <string name="fragComposeMain_hintDescription">Enter description...</string>
-    <string name="fragComposeLocation_hintLocation">Enter query...</string>
+    <string name="fragComposeLocation_hintLocation">Enter location...</string>
 
 </resources>

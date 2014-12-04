@@ -12,41 +12,32 @@
         android:visibility="gone" />
 
     <ListView android:id="@id/android:list"
-        android:divider="@android:color/transparent"
-        android:paddingLeft="8dp"
+        android:divider="#DDDDDD"
         android:paddingRight="8dp"
-        android:dividerHeight="8dp"
+        android:paddingLeft="8dp"
+        android:dividerHeight="1dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:cacheColorHint="@android:color/white"
-        android:drawSelectorOnTop="false" />
+        android:drawSelectorOnTop="false"
+        android:choiceMode="singleChoice" />
 
     <LinearLayout
-        android:id="@+id/stream_bar"
+        android:id="@+id/filter_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/filter_bar_height"
         android:layout_gravity="bottom"
         android:background="@color/impromptu_complementary_green"
-        android:gravity="center"
-        android:orientation="horizontal" >
+        android:gravity="center" >
 
-        <LinearLayout
-            android:id="@+id/filter_bar"
+        <TextView
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:gravity="center"
-            android:background="@color/impromptu_complementary_green"
-            android:onClick="filter" >
+            android:text="@string/filter_bar" />
 
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/filter_bar" />
-
-        </LinearLayout>
+    </LinearLayout>
 
         <!--<LinearLayout-->
             <!--android:id="@+id/map_bar"-->
@@ -63,8 +54,5 @@
                 <!--android:text="@string/map_bar" />-->
 
         <!--</LinearLayout>-->
-
-
-    </LinearLayout>
 
 </FrameLayout>

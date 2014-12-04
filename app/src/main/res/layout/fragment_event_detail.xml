@@ -134,6 +134,34 @@
                 android:visibility="gone"
                 class="com.example.steve.impromptu.UI.ScrollableMapFragment" />
 
+            <LinearLayout
+                android:id="@+id/fragEventDetail_linearLayout_openInGMaps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:padding="@dimen/text_padding_event_detail"
+                android:layout_gravity="center"
+                android:background="@drawable/event_detail_join"
+                android:visibility="gone"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/fragEventDetail_textView_openInGMaps"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp"
+                    android:paddingLeft="@dimen/text_padding_event_detail"
+                    android:paddingRight="@dimen/text_padding_event_detail"
+                    android:fontFamily="sans-serif"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/text_size_description_event_detail"
+                    android:text="Directions"/>
+
+
+            </LinearLayout>
+
         </LinearLayout>
 
 
@@ -229,54 +257,6 @@
                 android:layout_gravity="center" />
 
         </LinearLayout>
-
-        <!--
-        <LinearLayout
-            android:id="@+id/fragEventDetail_linearLayout_openInGMaps"
-            android:orientation="vertical"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:gravity="center_vertical"
-            android:background="@drawable/template_rounded_box">
-
-
-            <TextView
-                android:id="@+id/fragEventDetail_textView_OpenInGmaps"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textSize="26sp"
-                android:text="Open in Google Maps"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/fragEventDetail_linearLayout_join"
-            android:orientation="vertical"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:gravity="center_vertical"
-            android:background="@drawable/template_rounded_box">
-
-
-            <TextView
-                android:id="@+id/fragEventDetail_textView_join"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textSize="26sp"
-                android:text="@string/join_event_detail"/>
-
-        </LinearLayout>
-        -->
 
     </LinearLayout>
 

@@ -377,21 +377,18 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
             myEvent.addUserGoing((ImpromptuUser) ImpromptuUser.getCurrentUser());
             myEvent.persist();
 
-            updateLocationWithinApp("Stream");
-            setHighlightedButton("Stream");
-
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-            FragmentStream fragment = new FragmentStream();
-            fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment);
-            fragmentTransaction.commit();
-
-        } else {
-
-            Toast.makeText(this, "cancel new event", Toast.LENGTH_SHORT).show();
-
         }
+
+        updateLocationWithinApp("Stream");
+        setHighlightedButton("Stream");
+
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        FragmentStream fragment = new FragmentStream();
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment);
+        fragmentTransaction.commit();
+
     }
 
     @Override
