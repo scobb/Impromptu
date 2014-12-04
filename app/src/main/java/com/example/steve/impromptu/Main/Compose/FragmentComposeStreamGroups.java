@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.example.steve.impromptu.Entity.Event;
@@ -27,8 +27,8 @@ public class FragmentComposeStreamGroups extends Fragment {
 
 
     ListView vGroupsList;
-    LinearLayout vOkay;
-    LinearLayout vCancel;
+    ImageView vOkay;
+    ImageView vCancel;
     ArrayList<Group> eventStreamGroupsList;
     ArrayList<Group> userGroupsList;
 
@@ -47,8 +47,8 @@ public class FragmentComposeStreamGroups extends Fragment {
         // Inflate the layout for this fragment
         View fragmentView = inflater.inflate(R.layout.fragment_compose_streamgroups, container, false);
         vGroupsList = (ListView) fragmentView.findViewById(R.id.fragComposeStreamGroups_listView_groupsList);
-        vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposeStreamGroups_linearLayout_okay);
-        vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposeStreamGroups_linearLayout_cancel);
+        vOkay = (ImageView) fragmentView.findViewById(R.id.fragComposeStreamGroups_imageView_accept);
+        vCancel = (ImageView) fragmentView.findViewById(R.id.fragComposeStreamGroups_imageView_cancel);
         ActivityMain myActivity = (ActivityMain) getActivity();
         Event myEvent = myActivity.getComposeEvent();
 

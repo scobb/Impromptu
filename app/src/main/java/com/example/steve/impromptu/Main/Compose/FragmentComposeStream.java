@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -29,8 +30,8 @@ public class FragmentComposeStream extends Fragment {
     ListView vFriendsList;
     TextView vGroupsText;
     LinearLayout vGroups;
-    LinearLayout vOkay;
-    LinearLayout vCancel;
+    ImageView vOkay;
+    ImageView vCancel;
     ArrayList<ImpromptuUser> eventStreamFriendsList;
     ArrayList<Group> eventStreamGroupsList;
 
@@ -38,6 +39,7 @@ public class FragmentComposeStream extends Fragment {
     ArrayList<Group> userGroupsList;
 
     ArrayAdapterComposeStreamFriends friendsAdapter = null;
+    ImpromptuUser currentUser;
 
     OnComposeStreamFinishedListener mCallback;
     OnComposeStreamChooseGroupsListener mGroupsCallback;
@@ -57,11 +59,13 @@ public class FragmentComposeStream extends Fragment {
         // Inflate the layout for this fragment
         View fragmentView = inflater.inflate(R.layout.fragment_compose_stream, container, false);
 
+        currentUser = (ImpromptuUser) ImpromptuUser.getCurrentUser();
+
         vFriendsList = (ListView) fragmentView.findViewById(R.id.fragComposeStream_listView_friendsList);
         vGroups = (LinearLayout) fragmentView.findViewById(R.id.fragComposeStream_linearLayout_groups);
         vGroupsText = (TextView) fragmentView.findViewById(R.id.fragComposeStream_textView_groupsList);
-        vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposeStream_linearLayout_okay);
-        vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposeStream_linearLayout_cancel);
+        vOkay = (ImageView) fragmentView.findViewById(R.id.fragComposeStream_imageView_accept);
+        vCancel = (ImageView) fragmentView.findViewById(R.id.fragComposeStream_imageView_cancel);
 
 //        ImpromptuUser currentUser = (ImpromptuUser) ImpromptuUser.getCurrentUser();
         ActivityMain myActivity = (ActivityMain) getActivity();
@@ -69,7 +73,7 @@ public class FragmentComposeStream extends Fragment {
 
 //        test();
 
-        userFriendsList = (ArrayList<ImpromptuUser>) myEvent.getAllFriends();
+        userFriendsList = (ArrayList<ImpromptuUser>) currentUser.getFriends();
         userGroupsList = (ArrayList<Group>) myEvent.getAllGroups();
 
 

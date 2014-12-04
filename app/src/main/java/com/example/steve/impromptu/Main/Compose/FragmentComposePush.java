@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -29,8 +30,8 @@ public class FragmentComposePush extends Fragment {
     ListView vFriendsList;
     TextView vGroupsText;
     LinearLayout vGroups;
-    LinearLayout vOkay;
-    LinearLayout vCancel;
+    ImageView vOkay;
+    ImageView vCancel;
     ArrayList<ImpromptuUser> eventPushFriendsList;
     ArrayList<Group> eventPushGroupsList;
 
@@ -38,6 +39,7 @@ public class FragmentComposePush extends Fragment {
     ArrayList<Group> userGroupsList;
 
     ArrayAdapterComposePushFriends friendsAdapter = null;
+    ImpromptuUser currentUser;
 
     OnComposePushFinishedListener mCallback;
     OnComposePushChooseGroupsListener mGroupsCallback;
@@ -57,18 +59,20 @@ public class FragmentComposePush extends Fragment {
         // Inflate the layout for this fragment
         View fragmentView = inflater.inflate(R.layout.fragment_compose_push, container, false);
 
+        currentUser = (ImpromptuUser)ImpromptuUser.getCurrentUser();
+
         vFriendsList = (ListView) fragmentView.findViewById(R.id.fragComposePush_listView_friendsList);
         vGroups = (LinearLayout) fragmentView.findViewById(R.id.fragComposePush_linearLayout_groups);
         vGroupsText = (TextView) fragmentView.findViewById(R.id.fragComposePush_textView_groupsList);
-        vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposePush_linearLayout_okay);
-        vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposePush_linearLayout_cancel);
+        vOkay = (ImageView) fragmentView.findViewById(R.id.fragComposePush_imageView_accept);
+        vCancel = (ImageView) fragmentView.findViewById(R.id.fragComposePush_imageView_cancel);
 
         ActivityMain myActivity = (ActivityMain) getActivity();
         Event myEvent = myActivity.getComposeEvent();
 
 //        test();
 
-        userFriendsList = (ArrayList<ImpromptuUser>) myEvent.getAllFriends();
+        userFriendsList = (ArrayList<ImpromptuUser>) currentUser.getFriends();
         userGroupsList = (ArrayList<Group>) myEvent.getAllGroups();
 
 
