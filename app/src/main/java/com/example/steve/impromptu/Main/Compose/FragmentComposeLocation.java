@@ -68,6 +68,7 @@ public class FragmentComposeLocation extends Fragment {
     private ImpromptuLocation returnVal;
     private TextView vSelectedLocation;
     private ScrollView vScrollView;
+    private ImageView vMyLocation;
 
     private static View fragmentView;
     private FragmentActivity myContext;
@@ -108,6 +109,7 @@ public class FragmentComposeLocation extends Fragment {
         vCancel = (ImageView) fragmentView.findViewById(R.id.fragComposeLocation_imageView_cancel);
         vSelectedLocation = (TextView) fragmentView.findViewById(R.id.fragComposeLocation_textView_selectedLocation);
         vScrollView = (ScrollView) fragmentView.findViewById(R.id.fragComposeLocation_scrollView);
+        vMyLocation = (ImageView) fragmentView.findViewById(R.id.fragComposeLocation_imageView_myLocation);
 
         //set on-click listeners
         vSearchPlace.setOnClickListener(new View.OnClickListener() {
@@ -174,6 +176,13 @@ public class FragmentComposeLocation extends Fragment {
             }
         });
 
+        vSelectedLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                centerMapMyLocation();
+            }
+        });
+
 
         ((ScrollableMapFragment) myContext.getSupportFragmentManager().findFragmentById(R.id.fragComposeLocation_map))
                 .setListener(new ScrollableMapFragment.OnTouchListener() {
@@ -220,10 +229,28 @@ public class FragmentComposeLocation extends Fragment {
             searchResultMarkers = new Vector<Marker>(MAXRESULTNUM);
         }
 
+        centerMapMyLocation();
+
+        vSelectedLocation.setText("");
+
+        //if a selection has already been made, start with it listed at the bottom
+        if(returnVal != null) {
+            selectLoc(returnVal); //set vSelectedLocation text
+        }
+
+
+
+        return fragmentView;
+    }
+
+
+    private void centerMapMyLocation() {
         LocationManager locationManager = (LocationManager) this.getActivity().getSystemService(Context.LOCATION_SERVICE);
         String locationProvider = LocationManager.NETWORK_PROVIDER;
         //Or use LocationManager.GPS_PROVIDER
         Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
+
+        LatLng myLoc;
 
         if(lastKnownLocation == null)
         {
@@ -239,22 +266,9 @@ public class FragmentComposeLocation extends Fragment {
             vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLoc, DEFAULTZOOM));
 
             mapType = 0;
-            toggleMapType();
+            //toggleMapType();
         }
-
-
-        vSelectedLocation.setText("");
-
-        //if a selection has already been made, start with it listed at the bottom
-        if(returnVal != null) {
-            selectLoc(returnVal); //set vSelectedLocation text
-        }
-
-
-
-        return fragmentView;
     }
-
 
 
     @Override
@@ -273,6 +287,7 @@ public class FragmentComposeLocation extends Fragment {
         }
     }
 
+    /*
     private void toggleMapType()
     {
         mapType++;
@@ -296,6 +311,7 @@ public class FragmentComposeLocation extends Fragment {
         }
 
     }
+    */
 
     private void searchPlace(){
         String query = vAddress.getText().toString();
