@@ -14,7 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,7 +26,6 @@ import com.example.steve.impromptu.R;
 import com.example.steve.impromptu.UI.ScrollableMapFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -58,11 +57,11 @@ public class FragmentComposeLocation extends Fragment {
     //private TextView vLocationPrompt;
     private EditText vAddress;
     //private TextView vSearchAddress;
-    private TextView vSearchPlace;
+    private ImageView vSearchPlace;
     private GoogleMap vMap;
     public Event myEvent;
-    private LinearLayout vOkay;
-    private LinearLayout vCancel;
+    private ImageView vOkay;
+    private ImageView vCancel;
     private int mapType;
     private LatLng myLoc;
     private Vector<Marker> searchResultMarkers;
@@ -104,9 +103,9 @@ public class FragmentComposeLocation extends Fragment {
 
         // get references to GUI widgets
         vAddress = (EditText) fragmentView.findViewById(R.id.fragComposeLocation_editText_address);
-        vSearchPlace = (TextView) fragmentView.findViewById(R.id.fragComposeLocation_textView_searchPlace);
-        vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposeLocation_linearLayout_okay);
-        vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposeLocation_linearLayout_cancel);
+        vSearchPlace = (ImageView) fragmentView.findViewById(R.id.fragComposeLocation_imageView_search);
+        vOkay = (ImageView) fragmentView.findViewById(R.id.fragComposeLocation_imageView_accept);
+        vCancel = (ImageView) fragmentView.findViewById(R.id.fragComposeLocation_imageView_cancel);
         vSelectedLocation = (TextView) fragmentView.findViewById(R.id.fragComposeLocation_textView_selectedLocation);
         vScrollView = (ScrollView) fragmentView.findViewById(R.id.fragComposeLocation_scrollView);
 

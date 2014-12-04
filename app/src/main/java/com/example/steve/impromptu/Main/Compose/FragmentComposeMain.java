@@ -35,11 +35,12 @@ public class FragmentComposeMain extends Fragment {
     LinearLayout vPush;
     LinearLayout vTime;
     LinearLayout vLocation;
-    LinearLayout vCreate;
-    TextView vLocationPrompt;
-    TextView vStreamPrompt;
-    TextView vPushPrompt;
-    TextView vTimePrompt;
+    ImageView vCreate;
+    ImageView vDiscard;
+    TextView vLocationText;
+    TextView vStreamText;
+    TextView vPushText;
+    TextView vTimeText;
     public Event myEvent;
 
     OnComposeMainFinishedListener composeMainFinishedListenerCallback;
@@ -68,19 +69,15 @@ public class FragmentComposeMain extends Fragment {
         vTitle = (EditText) fragmentView.findViewById(R.id.fragComposeMain_editText_title);
         vDescription = (EditText) fragmentView.findViewById(R.id.fragComposeMain_editText_description);
         vStream = (LinearLayout) fragmentView.findViewById(R.id.fragComposeMain_linearLayout_stream);
-        vStreamPrompt = (TextView) fragmentView.findViewById(R.id.fragComposeMain_textView_streamPrompt);
+        vStreamText = (TextView) fragmentView.findViewById(R.id.fragComposeMain_textView_streamList);
         vPush = (LinearLayout) fragmentView.findViewById(R.id.fragComposeMain_linearLayout_push);
-        vPushPrompt = (TextView) fragmentView.findViewById(R.id.fragComposeMain_textView_pushPrompt);
+        vPushText = (TextView) fragmentView.findViewById(R.id.fragComposeMain_textView_pushList);
         vTime = (LinearLayout) fragmentView.findViewById(R.id.fragComposeMain_linearLayout_time);
-        vTimePrompt = (TextView) fragmentView.findViewById(R.id.fragComposeMain_textView_timePrompt);
+        vTimeText = (TextView) fragmentView.findViewById(R.id.fragComposeMain_textView_time);
         vLocation = (LinearLayout) fragmentView.findViewById(R.id.fragComposeMain_linearLayout_location);
-        vLocationPrompt = (TextView) fragmentView.findViewById(R.id.fragComposeMain_textView_locationPrompt);
-        vCreate = (LinearLayout) fragmentView.findViewById(R.id.fragComposeMain_linearLayout_create);
-
-        vStreamPrompt.setText("Stream");
-        vPushPrompt.setText("Push");
-        vTimePrompt.setText("Time");
-        vLocationPrompt.setText("Location");
+        vLocationText = (TextView) fragmentView.findViewById(R.id.fragComposeMain_textView_location);
+        vCreate = (ImageView) fragmentView.findViewById(R.id.fragComposeMain_imageView_create);
+        vDiscard = (ImageView) fragmentView.findViewById(R.id.fragComposeMain_imageView_discard);
 
         if (myEvent != null) {
             String eventType = myEvent.getType();
@@ -170,6 +167,13 @@ public class FragmentComposeMain extends Fragment {
             }
         });
 
+        vDiscard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                composeMainFinishedListenerCallback.onComposeMainFinished(false);
+            }
+        });
+
         vCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -191,11 +195,9 @@ public class FragmentComposeMain extends Fragment {
                 if (myEvent.getDurationHour() == -1) {
                     complete = false;
                 }
-                //I set complete to true so I could make events with no location
+
                 if (myEvent.getFormattedAddress() == null) {
-                    myEvent.setLocationName("Kelly's house");
-                    myEvent.setFormattedAddress("Kelly's house");
-                    complete = true;
+                    complete = false;
                 }
 
                 if (complete) {
@@ -274,19 +276,14 @@ public class FragmentComposeMain extends Fragment {
     public void onResume() {
         super.onResume();
 
-        vStreamPrompt.setText("Stream");
-        vPushPrompt.setText("Push");
-        vTimePrompt.setText("Time");
-        vLocationPrompt.setText("Location");
-
         if(myEvent != null) {
             List<ImpromptuUser> friends = myEvent.getStreamFriends();
 
             if(friends != null && friends.size() > 0) {
 
-                String prompt = "Stream: ";
+                String prompt = "";
 
-                String prefix = " ";
+                String prefix = "";
                 String withComma = ", ";
 
                 for(ImpromptuUser person : friends) {
@@ -296,16 +293,16 @@ public class FragmentComposeMain extends Fragment {
                     prefix = withComma;
                 }
 
-                vStreamPrompt.setText(prompt);
+                vStreamText.setText(prompt);
             }
 
             friends = myEvent.getPushFriends();
 
             if(friends != null && friends.size() > 0) {
 
-                String prompt = "Push: ";
+                String prompt = "";
 
-                String prefix = " ";
+                String prefix = "";
                 String withComma = ", ";
 
                 for(ImpromptuUser person : friends) {
@@ -313,16 +310,19 @@ public class FragmentComposeMain extends Fragment {
                     prefix = withComma;
                 }
 
-                vPushPrompt.setText(prompt);
+                vPushText.setText(prompt);
             }
 
             //TODO: refactor this check? different way of asking "is location null"?? Add function to Event?
             if (myEvent.getLocationName() != null) {
-                vLocationPrompt.setText("Location:  " + myEvent.getLocationName());
+                vLocationText.setText(myEvent.getLocationName());
             }
 
             //TODO: do soemthing with time prompt???
-            //vTimePrompt.setText("Time: ?????????");
+            if (myEvent.getDurationHour() != -1) {
+                vTimeText.setText(myEvent.getEventTime().toString());
+            }
+
         }
     }
 

@@ -15,7 +15,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_width="match_parent"
-        android:background="@drawable/template_rounded_box">
+        android:background="@drawable/gray_square_background">
 
         <TextView
             android:id="@+id/fragComposeType_textView_typesPrompt"
@@ -48,7 +48,7 @@
             android:layout_width="wrap_content"
             android:gravity="center_vertical"
             android:layout_gravity="right"
-            android:background="@drawable/template_rounded_box">
+            android:background="@drawable/gray_square_background">
 
             <TextView
                 android:id="@+id/fragComposeType_textView_cancelPrompt"
@@ -74,7 +74,7 @@
             android:layout_width="wrap_content"
             android:gravity="center_vertical|right"
             android:layout_gravity="right"
-            android:background="@drawable/template_rounded_box">
+            android:background="@drawable/gray_square_background">
 
             <TextView
                 android:id="@+id/fragComposeType_textView_okPrompt"
