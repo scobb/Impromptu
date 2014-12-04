@@ -16,8 +16,8 @@
 
         <ImageView
             android:id="@+id/fragStream_imageView_picture"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/picture_width_and_height"
+            android:layout_height="@dimen/picture_width_and_height"
             android:src="@drawable/ic_launcher"
             android:gravity="center_vertical" />
 

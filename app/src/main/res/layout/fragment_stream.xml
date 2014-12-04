@@ -20,8 +20,8 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:cacheColorHint="@android:color/white"
-        android:drawSelectorOnTop="false"
-        android:choiceMode="singleChoice" />
+        android:choiceMode="singleChoice"
+        android:listSelector="@color/impromptu_complementary_green"/>
 
     <LinearLayout
         android:id="@+id/filter_bar"

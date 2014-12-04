@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -24,8 +24,8 @@ import java.util.Arrays;
  */
 public class FragmentComposeType extends Fragment {
 
-    LinearLayout vOkay;
-    LinearLayout vCancel;
+    ImageView vOkay;
+    ImageView vCancel;
     ListView vTypeList;
     public Event myEvent;
     ArrayAdapterComposeType typeAdapter = null;
@@ -55,8 +55,8 @@ public class FragmentComposeType extends Fragment {
 
         // get references to all the necessary GUI widgets
         vTypeList = (ListView) fragmentView.findViewById(R.id.fragComposeType_listView);
-        vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposeType_linearLayout_okay);
-        vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposeType_linearLayout_cancel);
+        vOkay = (ImageView) fragmentView.findViewById(R.id.fragComposeType_imageView_accept);
+        vCancel = (ImageView) fragmentView.findViewById(R.id.fragComposeType_imageView_cancel);
 
         typeAdapter = new ArrayAdapterComposeType(getActivity(), R.layout.template_type_item, types, myEvent);
         vTypeList.setAdapter(typeAdapter);
@@ -83,6 +83,13 @@ public class FragmentComposeType extends Fragment {
                 else {
                     Toast.makeText(getActivity(), "Please select a type.", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        vCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                composeTypeFinishedCallback.onComposeTypeFinished();
             }
         });
 
