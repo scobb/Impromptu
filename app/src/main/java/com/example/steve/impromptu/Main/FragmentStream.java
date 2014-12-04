@@ -30,13 +30,13 @@ import java.util.List;
  * Created by Stephen Arifin on 10/16/14.
  */
 
-public class FragmentStream extends ListFragment implements AbsListView.OnScrollListener{
+public class FragmentStream extends ListFragment implements AbsListView.OnScrollListener {
 
     // Keys used in HashMap
     private String[] from = {"picture", "user", "title", "content", "date"};
 
     // Ids of views in listview layout
-    private int[] to ={R.id.fragStream_imageView_picture, R.id.fragStream_textView_user,
+    private int[] to = {R.id.fragStream_imageView_picture, R.id.fragStream_textView_user,
             R.id.fragStream_textView_title, R.id.fragStream_textView_content,
             R.id.fragStream_textView_date};
 
@@ -47,9 +47,13 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
 
     private QuickReturnState state = QuickReturnState.ON_SCREEN;
 
-    /** Tracks the last seen y-position of the first visible child */
+    /**
+     * Tracks the last seen y-position of the first visible child
+     */
     private int _last_y;
-    /** Tracks the last seen first visible child */
+    /**
+     * Tracks the last seen first visible child
+     */
     private int _last_first_child;
 
     private List<Event> posts;
@@ -79,49 +83,48 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
 //        });
 
 
-
         ParseObject.fetchAllIfNeededInBackground(events, new FindCallback<Event>() {
 
-                                       @Override
-                                       public void done(List<Event> postsObjects, ParseException e) {
-                                           if (e == null) {
-                                               posts = new ArrayList<Event>(postsObjects);
+            @Override
+            public void done(List<Event> postsObjects, ParseException e) {
+                if (e == null) {
+                    posts = new ArrayList<Event>(postsObjects);
 
 
-                                               // Create the HashMap List
-                                               List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
-                                               for(Event post : posts){
+                    // Create the HashMap List
+                    List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
+                    for (Event post : posts) {
 
-                                                   // Check for the filters
-                                                   if(ActivityMain.getFiltersMap().get(post.getType()) != null) {
-                                                       if (ActivityMain.getFiltersMap().get(post.getType())) {
+                        // Check for the filters
+                        if (ActivityMain.getFiltersMap().get(post.getType()) != null) {
+                            if (ActivityMain.getFiltersMap().get(post.getType())) {
 
-                                                           // Check the time if it has passed already
-                                                           if(new Date().after(post.getEventDate())){
-                                                               aList.add(post.getHashMap());
-                                                           }
+                                // Check the time if it has passed already
+                                if (new Date().after(post.getEventDate())) {
+                                    aList.add(post.getHashMap());
+                                }
 
-                                                       }
-                                                   }
-                                               }
+                            }
+                        }
+                    }
 
-                                               // Initialize the adapter
-                                               SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList,
-                                                       R.layout.template_stream_event_item, from, to);
+                    // Initialize the adapter
+                    SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList,
+                            R.layout.template_stream_event_item, from, to);
 
 
-                                               // Setting the list adapter for the ListFragment
-                                               setListAdapter(adapter);
+                    // Setting the list adapter for the ListFragment
+                    setListAdapter(adapter);
 
-                                               // Update the list adapter
-                                               adapter.notifyDataSetChanged();
+                    // Update the list adapter
+                    adapter.notifyDataSetChanged();
 
-                                           } else {
-                                               // Error in query
-                                               e.printStackTrace();
-                                           }
-                                       }
-                                   });
+                } else {
+                    // Error in query
+                    e.printStackTrace();
+                }
+            }
+        });
 
 
         // Customize the stream layout
@@ -176,7 +179,8 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
                     }
 
                     @Override
-                    public void onAnimationRepeat(Animator animator) { }
+                    public void onAnimationRepeat(Animator animator) {
+                    }
                 }
         );
 
@@ -199,7 +203,7 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
 
         // Computes the scroll Y position
         final View first_child = list_view.getChildAt(first_visible_child);
-        int y_position = first_child == null? 0 : first_child.getTop();
+        int y_position = first_child == null ? 0 : first_child.getTop();
         switch (state) {
             case OFF_SCREEN:
 
@@ -246,12 +250,15 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
 
 
     @Override
-    public void onScrollStateChanged(AbsListView _, int __) { }
+    public void onScrollStateChanged(AbsListView _, int __) {
+    }
 
 
     /* Transition status checks */
+
     /**
      * <p>Checks if the quick return bar is transitioning back onto the screen.</p>
+     *
      * @return {@code true} indicates that the quick return bar is returning
      */
 
@@ -263,6 +270,7 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
 
     /**
      * <p>Checks if the quick return bar is transitioning off of the screen.</p>
+     *
      * @return {@code true} indicates that the quick return bar is going away
      */
 
@@ -291,7 +299,7 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
     }
 
     @Override
-    public void onListItemClick(ListView l, View v, int position, long id){
+    public void onListItemClick(ListView l, View v, int position, long id) {
 
         // Get the selected event
         Event event = posts.get(position);
@@ -315,13 +323,21 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
 
 
     private static enum QuickReturnState {
-        /** Stable state indicating that the quick return bar is visible on screen */
+        /**
+         * Stable state indicating that the quick return bar is visible on screen
+         */
         ON_SCREEN,
-        /** Stable state indicating that the quick return bar is hidden off screen */
+        /**
+         * Stable state indicating that the quick return bar is hidden off screen
+         */
         OFF_SCREEN,
-        /** Transitive state indicating that the quick return bar is coming onto the screen */
+        /**
+         * Transitive state indicating that the quick return bar is coming onto the screen
+         */
         RETURNING,
-        /** Transitive state indicating that the quick return bar is going off of the screen */
+        /**
+         * Transitive state indicating that the quick return bar is going off of the screen
+         */
         HIDING
     }
 
