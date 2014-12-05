@@ -12,14 +12,14 @@
         android:visibility="gone" />
 
     <ListView android:id="@id/android:list"
-        android:background="@color/impromptu_list_gray"
         android:divider="#00DDDDDD"
         android:paddingRight="8dp"
         android:paddingLeft="8dp"
         android:dividerHeight="16dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:cacheColorHint="@android:color/white"
+        android:cacheColorHint="#DDDDDD"
+        android:background="#DDDDDD"
         android:choiceMode="singleChoice"
         android:listSelector="@color/impromptu_complementary_green"/>
 
@@ -36,6 +36,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
             android:text="@string/filter_bar" />
 
     </LinearLayout>

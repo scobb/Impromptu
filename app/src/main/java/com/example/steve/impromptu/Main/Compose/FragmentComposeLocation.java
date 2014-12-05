@@ -244,13 +244,12 @@ public class FragmentComposeLocation extends Fragment {
     }
 
 
-    private void centerMapMyLocation() {
+    private void updateLocation() {
         LocationManager locationManager = (LocationManager) this.getActivity().getSystemService(Context.LOCATION_SERVICE);
         String locationProvider = LocationManager.NETWORK_PROVIDER;
         //Or use LocationManager.GPS_PROVIDER
         Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
 
-        LatLng myLoc;
 
         if(lastKnownLocation == null)
         {
@@ -260,6 +259,11 @@ public class FragmentComposeLocation extends Fragment {
         {
             myLoc = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
         }
+    }
+
+    private void centerMapMyLocation() {
+
+        updateLocation();
 
         if(vMap != null) {
 
@@ -327,6 +331,8 @@ public class FragmentComposeLocation extends Fragment {
         {
             httpQuery += "+" + queryChunks[i];
         }
+
+        updateLocation();
 
         if(myLoc != null) {
             httpQuery += "&location=" + myLoc.latitude + "," + myLoc.longitude + "&radius=" + SEARCHRADIUS;

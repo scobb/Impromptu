@@ -2,10 +2,10 @@
 <merger version="2" >
 
     <dataSet config="main" >
-        <source path="/home/stephen/461l/Impromptu/facebook/src/main/assets" />
+        <source path="C:\Users\Sean\Desktop\stuff\school\JUNIOR\EE_461L\impromptu_MasterFolder\impromptu\Impromptu\facebook\src\main\assets" />
     </dataSet>
     <dataSet config="debug" >
-        <source path="/home/stephen/461l/Impromptu/facebook/src/debug/assets" />
+        <source path="C:\Users\Sean\Desktop\stuff\school\JUNIOR\EE_461L\impromptu_MasterFolder\impromptu\Impromptu\facebook\src\debug\assets" />
     </dataSet>
 
 </merger>
