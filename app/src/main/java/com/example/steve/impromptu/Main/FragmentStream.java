@@ -100,9 +100,9 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
                             if (ActivityMain.getFiltersMap().get(post.getType())) {
 
                                 // Check the time if it has passed already
-                                if (new Date().after(post.getEventDate())) {
+//                                if (new Date().after(post.getEventDate())) {
                                     aList.add(post.getHashMap());
-                                }
+//                                }
 
                             }
                         }
