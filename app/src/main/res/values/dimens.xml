@@ -10,7 +10,7 @@
 
     <dimen name="filter_bar_height"> 40dp </dimen>
 
-    <dimen name="picture_width_and_height">60dp</dimen>
+    <dimen name="picture_width_and_height">50dp</dimen>
     <dimen name="list_vertical_padding">8dp</dimen>
 
 </resources>

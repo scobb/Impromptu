@@ -10,7 +10,7 @@
         android:id="@+id/fragMap_linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="8dp"
+        android:paddingBottom="16dp"
         android:orientation="vertical"
         tools:context="com.example.steve.impromptu.Main.FragmentMap">
 
@@ -24,7 +24,7 @@
         <!--android:layout_width="match_parent"-->
         <!--android:gravity="center_vertical|center_horizontal"-->
         <!--android:layout_gravity="center"-->
-        <!--android:background="@drawable/gray_square_background">-->
+        <!--android:background="@drawable/gray_round_background">-->
         <!--<TextView-->
         <!--android:id="@+id/fragMap_textView_listStream"-->
         <!--android:layout_width="wrap_content"-->
@@ -45,21 +45,41 @@
 
         <LinearLayout
             android:id="@+id/fragMap_linearLayout_eventDetail"
-            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:layout_marginTop="8dp"
-            android:gravity="center_vertical|center_horizontal"
-            android:layout_gravity="center"
-            android:background="@drawable/gray_square_background">
+            android:gravity="center_vertical"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/gray_round_background">
 
             <TextView
-                android:id="@+id/fragMap_textView_eventDetail"
+                android:id="@+id/fragMap_textView_streamPrompt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:text="Event Detail"
-                android:textSize="26sp" />
+                android:textStyle="bold"
+                android:textSize="16sp"
+                />
+
+            <TextView
+                android:id="@+id/fragMap_textView_streamList"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="8dp"
+                android:textSize="12sp"
+                android:textColor="@color/impromptu_list_gray"
+                android:maxLines="1"
+                android:scrollHorizontally="false"
+                android:ellipsize="end"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_action_next_item"/>
+
         </LinearLayout>
 
     </LinearLayout>

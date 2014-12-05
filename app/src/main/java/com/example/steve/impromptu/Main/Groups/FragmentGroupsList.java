@@ -204,7 +204,7 @@ public class FragmentGroupsList extends Fragment {
         filteredFriendsList.addAll(masterFriendsInGroupList);
         editGroupAdapter = new ArrayAdapterEditGroup(getActivity(), R.layout.template_add_to_group_item, filteredFriendsList, addToGroup, currentGroup);
         vFriendsInGroupList.setAdapter(editGroupAdapter);
-        vAddGroup.setImageResource(R.drawable.ic_action_back);
+        vAddGroup.setImageResource(R.drawable.ic_action_previous_item);
         addingOrEditingGroups = true;
         vAddToGroup.setVisibility(View.VISIBLE);
         vSearch.setVisibility(View.VISIBLE);

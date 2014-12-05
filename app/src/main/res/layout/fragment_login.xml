@@ -4,84 +4,101 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/fragLogin_linearLayout_main"
-    android:weightSum="1">
+    android:gravity="center">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:fontFamily="sans-serif-thin"
+        android:textSize="32sp"
+        android:text="Welcome to "
+        android:layout_gravity="center_horizontal" />
+
+    <ImageView
+        android:layout_marginTop="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_launcher" />
+
+    <TextView
+        android:layout_marginTop="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Impromptu"
+        android:fontFamily="sans-serif-thin"
+        android:textSize="32sp"
         android:id="@+id/fragLogin_textView_title"
         android:layout_gravity="center_horizontal" />
 
-    <LinearLayout
-        android:id="@+id/fragLogin_linearLayout_userNameContainer"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <!--<LinearLayout-->
+        <!--android:id="@+id/fragLogin_linearLayout_userNameContainer"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content">-->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Username:"
-            android:id="@+id/fragLogin_textView_userPrompt" />
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text="Username:"-->
+            <!--android:id="@+id/fragLogin_textView_userPrompt" />-->
 
-        <EditText
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/fragLogin_editText_user"
-            android:layout_weight="1" />
-    </LinearLayout>
+        <!--<EditText-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/fragLogin_editText_user"-->
+            <!--android:layout_weight="1" />-->
+    <!--</LinearLayout>-->
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/fragLogin_linearLayout_passwordContainer"
-        android:layout_gravity="center_horizontal">
+    <!--<LinearLayout-->
+        <!--android:orientation="horizontal"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/fragLogin_linearLayout_passwordContainer"-->
+        <!--android:layout_gravity="center_horizontal">-->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Password:"
-            android:id="@+id/fragLogin_textView_passwordPrompt" />
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text="Password:"-->
+            <!--android:id="@+id/fragLogin_textView_passwordPrompt" />-->
 
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:ems="10"
-            android:id="@+id/fragLogin_editText_password"
-            android:layout_weight="1" />
+        <!--<EditText-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:inputType="textPassword"-->
+            <!--android:ems="10"-->
+            <!--android:id="@+id/fragLogin_editText_password"-->
+            <!--android:layout_weight="1" />-->
 
-    </LinearLayout>
+    <!--</LinearLayout>-->
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Login"
-        android:onClick="loginOnClick"
-        android:id="@+id/fragLogin_button_login" />
+    <!--<Button-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Login"-->
+        <!--android:onClick="loginOnClick"-->
+        <!--android:id="@+id/fragLogin_button_login" />-->
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/fragLogin_linearLayout_newUserContainer"
-        android:layout_gravity="center_horizontal">
+    <!--<LinearLayout-->
+        <!--android:orientation="horizontal"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/fragLogin_linearLayout_newUserContainer"-->
+        <!--android:layout_gravity="center_horizontal">-->
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="New User"
-            android:onClick="newUserOnClick"
-            android:id="@+id/fragLogin_button_newUser" />
+        <!--<Button-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="New User"-->
+            <!--android:onClick="newUserOnClick"-->
+            <!--android:id="@+id/fragLogin_button_newUser" />-->
 
-    </LinearLayout>
+    <!--</LinearLayout>-->
 
     <com.facebook.widget.LoginButton
+        android:layout_marginTop="24dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Sign in using Facebook"

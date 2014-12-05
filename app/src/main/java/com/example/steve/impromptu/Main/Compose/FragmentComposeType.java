@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -24,14 +24,14 @@ import java.util.Arrays;
  */
 public class FragmentComposeType extends Fragment {
 
-    LinearLayout vOkay;
-    LinearLayout vCancel;
+    ImageView vOkay;
+    ImageView vCancel;
     ListView vTypeList;
     public Event myEvent;
     ArrayAdapterComposeType typeAdapter = null;
     String type = null;
 
-    ArrayList<Type> types = new ArrayList<Type>(Arrays.asList(new Type("Drinking", false),
+    ArrayList<FragmentComposeType.Type> types = new ArrayList<Type>(Arrays.asList(new Type("Drinking", false),
             new Type("Eating", false), new Type("Sports", false), new Type("Studying", false),
             new Type("TV", false), new Type("Working Out", false)));
 
@@ -55,8 +55,8 @@ public class FragmentComposeType extends Fragment {
 
         // get references to all the necessary GUI widgets
         vTypeList = (ListView) fragmentView.findViewById(R.id.fragComposeType_listView);
-        vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposeType_linearLayout_okay);
-        vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposeType_linearLayout_cancel);
+        vOkay = (ImageView) fragmentView.findViewById(R.id.fragComposeType_imageView_accept);
+        vCancel = (ImageView) fragmentView.findViewById(R.id.fragComposeType_imageView_cancel);
 
         typeAdapter = new ArrayAdapterComposeType(getActivity(), R.layout.template_type_item, types, myEvent);
         vTypeList.setAdapter(typeAdapter);
@@ -88,19 +88,14 @@ public class FragmentComposeType extends Fragment {
 
         vCancel.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-
-                // TODO make sure enough info is filled out
-
-                Toast.makeText(getActivity(), "Select cancel", Toast.LENGTH_SHORT).show();
-
+            public void onClick(View view) {
                 composeTypeFinishedCallback.onComposeTypeFinished();
-
             }
         });
 
         return fragmentView;
-    }
+
+        }
 
     @Override
     public void onAttach(Activity activity) {

@@ -43,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="32sp"
-            android:fontFamily="sans-serif-thin"
+            android:fontFamily="sans-serif-light"
             android:textColor="#FFFFFF"
             android:text="test"/>
 
