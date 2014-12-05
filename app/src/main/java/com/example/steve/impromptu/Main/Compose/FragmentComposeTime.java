@@ -49,7 +49,7 @@ public class FragmentComposeTime extends Fragment {
     Date currentTime = new Date();
     Date startTime = new Date();
     Date endTime = new Date();
-    int durationHour = 0;
+    int durationHour = -1;
     int durationMinute = 0;
     int absoluteStartHour;
     boolean startMorning;
@@ -75,10 +75,20 @@ public class FragmentComposeTime extends Fragment {
         View fragmentView = inflater.inflate(R.layout.fragment_compose_time, container, false);
 
         ActivityMain myActivity = (ActivityMain) getActivity();
+
         myEvent = myActivity.getComposeEvent();
         vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposeTime_linearLayout_okay);
         vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposeTime_linearLayout_cancel);
 
+        vSeekStartTime = (SeekBar) fragmentView.findViewById(R.id.fragComposeTime_seekbar_startTime);
+        vSeekDuration = (SeekBar) fragmentView.findViewById(R.id.fragComposeTime_seekbar_duration);
+        vTextStartTime = (TextView) fragmentView.findViewById(R.id.fragComposeTime_textView_startTime);
+        vTextDuration = (TextView) fragmentView.findViewById(R.id.fragComposeTime_textView_duration);
+        vTextEndTime = (TextView) fragmentView.findViewById(R.id.fragComposeTime_textView_endTime);
+        vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposeTime_linearLayout_okay);
+        vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposeTime_linearLayout_cancel);
+
+        System.out.println(myEvent.getDurationHour());
         int durationTest = myEvent.getDurationHour();
 
         if (durationTest != -1) {
@@ -95,10 +105,26 @@ public class FragmentComposeTime extends Fragment {
                 initialStartTime = dateString.format(startTime);
                 vTextStartTime.setText(initialStartTime);
                 vSeekStartTime.setProgress(startTimeSeekBarProgress);
+
             }
+            if (durationHour != 0 || durationMinute != 0) {
+                String hourString = "hrs";
+                String minString = "mins";
 
+                if (durationHour == 1) {
+                    hourString = "hr";
+                }
+                if (durationMinute == 1) {
+                    minString = "min";
+                }
+                vSeekDuration.setProgress(durationSeekBarProgress);
+                String newDuration = Integer.toString(durationHour) + " " + hourString + " " + Integer.toString(durationMinute) + " " + minString;
+                vTextDuration.setText(newDuration);
 
-
+                String newEndTime = getEndTime();
+                vTextEndTime.setText(newEndTime);
+            }
+        }
           else {
             startTime = new Date();
             endTime = new Date();
@@ -106,13 +132,12 @@ public class FragmentComposeTime extends Fragment {
             Log.d("Impromptu", "startTime: " + startTime);
             initialStartTime = dateString.format(startTime);
             vTextStartTime.setText(initialStartTime);
+            vTextEndTime.setText(initialStartTime);
 
 
             }
 
-        String newEndTime = getEndTime();
-        vTextEndTime.setText(newEndTime);
-        }
+
 
         vSeekStartTime.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
@@ -125,6 +150,7 @@ public class FragmentComposeTime extends Fragment {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                     int addTime = progress;
+                    startTimeSeekBarProgress = progress;
                     addTime *= 5;
                     currentTime.setMinutes(roundUpToNearest5(currentTime.getMinutes()));
                     startTime.setTime(currentTime.getTime() + (addTime * 60000));
@@ -221,7 +247,12 @@ public class FragmentComposeTime extends Fragment {
 
 
     public String getEndTime() {
-        endTime.setTime(startTime.getTime() + (durationMinute * 60000) + (durationHour * 3600000));
+        if(durationHour == -1) {
+            endTime.setTime(startTime.getTime() + (durationMinute * 60000));
+        }
+        else {
+            endTime.setTime(startTime.getTime() + (durationMinute * 60000) + (durationHour * 3600000));
+        }
         SimpleDateFormat dateString = new SimpleDateFormat("h:mm a");
         String newEndTime = dateString.format(endTime);
         return newEndTime;

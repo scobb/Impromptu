@@ -100,7 +100,7 @@ public class FragmentProfile extends ListFragment{
         final TextView emailView = (TextView) myInflatedView.findViewById(R.id.fragProfile_textView_email);
         final ImageView profileView = (ImageView) myInflatedView.findViewById(R.id.fragProfile_imageView_profilePic);
 
-        eventsList = (ListView) myInflatedView.findViewById(R.id.fragProfile_listView_eventsList);
+        eventsList = (ListView) myInflatedView.findViewById(android.R.id.list);
 
 
         // Get the user
@@ -152,7 +152,7 @@ public class FragmentProfile extends ListFragment{
 
                     // Initialize the adapter
                     SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList,
-                            R.layout.fragment_stream_listview, from, to);
+                            R.layout.template_stream_event_item, from, to);
 
 
                     // Setting the list adapter for the ListFragment
