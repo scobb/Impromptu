@@ -29,7 +29,8 @@
         android:layout_height="@dimen/filter_bar_height"
         android:layout_gravity="bottom"
         android:background="@color/impromptu_complementary_green"
-        android:gravity="center" >
+        android:gravity="center"
+        android:onClick="filter">
 
         <TextView
             android:layout_width="fill_parent"
