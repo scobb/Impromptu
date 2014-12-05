@@ -7,7 +7,7 @@
     android:paddingRight="8dp"
     android:paddingTop="16dp"
     android:paddingBottom="16dp"
-    android:background="#FFFFFF" >
+    android:background="@drawable/white_round_background" >
 
     <LinearLayout
         android:layout_width="match_parent"
