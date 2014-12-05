@@ -9,19 +9,15 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.example.steve.impromptu.Entity.Event;
@@ -53,6 +49,7 @@ public class FragmentEventDetail extends Fragment{
 
     private static View myInflatedView;
     private FragmentActivity myContext;
+    private ImageView vBack;
 
     ScrollableMapFragment mf;
     private GoogleMap vMap;
@@ -98,6 +95,7 @@ public class FragmentEventDetail extends Fragment{
         TextView ownerTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_owner);
         TextView descriptionTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_description);
         ImageView profilePictureView = (ImageView) myInflatedView.findViewById(R.id.fragEventDetail_imageView_profilePic);
+        vBack = (ImageView) myInflatedView.findViewById(R.id.fragEventDetail_imageView_back);
 
         vOpenInGMaps = (LinearLayout) myInflatedView.findViewById(R.id.fragEventDetail_linearLayout_openInGMaps);
 
@@ -210,6 +208,15 @@ public class FragmentEventDetail extends Fragment{
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                 intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
                 startActivity(intent);
+            }
+        });
+
+        vBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                // TODO implement!!!!
+
             }
         });
 
