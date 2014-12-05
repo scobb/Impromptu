@@ -31,11 +31,13 @@
         android:onClick="onLogoutClicked"
         android:id="@+id/fragProfile_button_logout" />
 
-    <ListView android:id="@id/android:list"
+
+    <ListView
+        android:id = "@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:cacheColorHint="@android:color/white"
         android:drawSelectorOnTop="false" />
-
 </LinearLayout>
+

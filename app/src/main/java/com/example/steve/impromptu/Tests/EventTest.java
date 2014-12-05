@@ -12,6 +12,7 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,7 +46,7 @@ public class EventTest extends InstrumentationTestCase {
         assertEquals(exp, act);
 
         // test setters - values
-        Time testTime = new Time();
+        Date testTime = new Date();
         String testString = "test";
         boolean testBool = false;
         double testDouble = 0.0;

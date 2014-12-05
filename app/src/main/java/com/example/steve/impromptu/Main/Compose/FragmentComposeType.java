@@ -31,7 +31,7 @@ public class FragmentComposeType extends Fragment {
     ArrayAdapterComposeType typeAdapter = null;
     String type = null;
 
-    ArrayList<Type> types = new ArrayList<Type>(Arrays.asList(new Type("Drinking", false),
+    ArrayList<FragmentComposeType.Type> types = new ArrayList<Type>(Arrays.asList(new Type("Drinking", false),
             new Type("Eating", false), new Type("Sports", false), new Type("Studying", false),
             new Type("TV", false), new Type("Working Out", false)));
 
@@ -94,7 +94,8 @@ public class FragmentComposeType extends Fragment {
         });
 
         return fragmentView;
-    }
+
+        }
 
     @Override
     public void onAttach(Activity activity) {

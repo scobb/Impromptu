@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.util.Date;
 
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
@@ -201,8 +202,8 @@ public class FragmentComposeMain extends Fragment {
                 }
 
                 if (complete) {
-                    Time time = new Time();
-                    time.setToNow();
+                    Date time = new Date();
+
 
                     myEvent.setOwner((ImpromptuUser) ImpromptuUser.getCurrentUser());
 

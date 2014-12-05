@@ -29,52 +29,109 @@
             android:layout_height="wrap_content"
             android:text="Start Time:"
             android:textSize="24sp"/>
-
+        <TextView
+            android:id="@+id/fragComposeTime_textView_startTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="36sp"/>
+            //android:text="10:30 am"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:id="@+id/fragComposeTime_linearLayout_startTimePrompts">
 
-
-            <EditText
-                android:id="@+id/fragComposeTime_editText_startHour"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="16sp"
-                android:hint="Enter hour"/>
             <TextView
-                android:id="@+id/fragComposeTime_textViewStartHourCheck"
-                android:textColor="#6E6368"
-                android:textStyle="bold"
-                android:textSize="8dp"
-                android:layout_width="match_parent"
+                android:id="@+id/fragComposeTime_textView_minimumRange"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text=""
-                android:layout_gravity="center_vertical"/>
-            <EditText
-                android:id="@+id/fragComposeTime_editText_startMinute"
-                android:layout_width="match_parent"
+                android:text="Right now!"
+                android:textSize="16sp"
+                android:textColor="#6E6368"/>
+
+            <TextView
+                android:id="@+id/fragComposeTime_textView_maximumRange"
+                android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:hint="Enter minute"
+                android:text="In 5 hours"
+                android:gravity="right"
+                android:textSize="16sp"
+                android:textColor="#6E6368"/>
+        </LinearLayout>
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/fragComposeTime_seekbar_startTime"
+            android:layout_gravity="center_horizontal"
+            android:max="60"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/fragComposeTime_linearLayout_duration"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:background="@drawable/gray_square_background">
+
+        <TextView
+            android:id="@+id/fragComposeTime_textView_durationPrompt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Duration:"
+            android:textSize="24sp"/>
+        <TextView
+            android:id="@+id/fragComposeTime_textView_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="36sp"
+            android:text="0.0 hours"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/fragComposeTime_textView_minimumDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 hrs"
+                android:textSize="16sp"
+                android:textColor="#6E6368"/>
+
+            <TextView
+                android:id="@+id/fragComposeTime_textView_maximumDuration"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="12 hrs"
                 android:gravity="right"
                 android:textSize="16sp"
                 android:textColor="#6E6368"/>
 
-
-                <Spinner
-                    android:id="@+id/spinnerStartTime"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:entries="@array/am_pm_array"
-                    android:prompt="@string/am_pm_prompt" />
-
         </LinearLayout>
 
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/fragComposeTime_seekbar_duration"
+            android:layout_gravity="center_horizontal"
+            android:max="48"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/fragComposeTime_linearLayout_endTime"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:background="@drawable/gray_square_background">
 
         <TextView
             android:id="@+id/fragComposeTime_textView_endTimePrompt"
@@ -82,50 +139,14 @@
             android:layout_height="wrap_content"
             android:text="End Time:"
             android:textSize="24sp"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/fragComposeTime_textView_endTime"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:id="@+id/fragComposeTime_linearLayout_endTimePrompts">
+            android:layout_gravity="center"
+            android:textSize="36sp"/>
+           />/ android:text="11:00 am"/>
 
-
-            <EditText
-                android:id="@+id/fragComposeTime_editText_endHour"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="16sp"
-                android:hint="Enter hour"/>
-            <TextView
-                android:id="@+id/fragComposeTime_textViewEndHourCheck"
-                android:textColor="#6E6368"
-                android:textStyle="bold"
-                android:textSize="8dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text=""
-                android:layout_gravity="center_vertical"/>
-            <EditText
-                android:id="@+id/fragComposeTime_editText_endMinute"
-                android:layout_width="match_parent"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:hint="Enter minute"
-                android:gravity="right"
-                android:textSize="16sp"
-                android:textColor="#6E6368"/>
-            <Spinner
-                android:id="@+id/spinnerEndTime"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:entries="@array/am_pm_array"
-                android:prompt="@string/am_pm_prompt" />
-
-
-        </LinearLayout>
     </LinearLayout>
 
 
