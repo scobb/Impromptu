@@ -3,30 +3,18 @@ package com.example.steve.impromptu.Main.Compose;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.SeekBar;
-import java.util.ArrayList;
-import java.util.List;
-import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.EditText;
-import android.widget.Button;
-import android.widget.Spinner;
-import android.widget.Toast;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
+
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Main.ActivityMain;
 import com.example.steve.impromptu.R;
-import com.example.steve.impromptu.Main.Compose.ArrayAdapters.ArrayAdapterComposeTime;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -42,8 +30,8 @@ public class FragmentComposeTime extends Fragment {
     TextView vTextStartTime;
     TextView vTextDuration;
     TextView vTextEndTime;
-    LinearLayout vOkay;
-    LinearLayout vCancel;
+    ImageView vOkay;
+    ImageView vCancel;
 
     public Event myEvent;
     Date currentTime = new Date();
@@ -77,16 +65,14 @@ public class FragmentComposeTime extends Fragment {
         ActivityMain myActivity = (ActivityMain) getActivity();
 
         myEvent = myActivity.getComposeEvent();
-        vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposeTime_linearLayout_okay);
-        vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposeTime_linearLayout_cancel);
 
         vSeekStartTime = (SeekBar) fragmentView.findViewById(R.id.fragComposeTime_seekbar_startTime);
         vSeekDuration = (SeekBar) fragmentView.findViewById(R.id.fragComposeTime_seekbar_duration);
         vTextStartTime = (TextView) fragmentView.findViewById(R.id.fragComposeTime_textView_startTime);
         vTextDuration = (TextView) fragmentView.findViewById(R.id.fragComposeTime_textView_duration);
         vTextEndTime = (TextView) fragmentView.findViewById(R.id.fragComposeTime_textView_endTime);
-        vOkay = (LinearLayout) fragmentView.findViewById(R.id.fragComposeTime_linearLayout_okay);
-        vCancel = (LinearLayout) fragmentView.findViewById(R.id.fragComposeTime_linearLayout_cancel);
+        vOkay = (ImageView) fragmentView.findViewById(R.id.fragComposeTime_imageView_accept);
+        vCancel = (ImageView) fragmentView.findViewById(R.id.fragComposeTime_imageView_cancel);
 
         System.out.println(myEvent.getDurationHour());
         int durationTest = myEvent.getDurationHour();
@@ -200,10 +186,6 @@ public class FragmentComposeTime extends Fragment {
         });
         vCancel.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
-
-        // TODO make sure enough info is filled out
-
-        Toast.makeText(getActivity(), "Select cancel", Toast.LENGTH_SHORT).show();
 
         mCallback.onComposeTimeFinished();
 
