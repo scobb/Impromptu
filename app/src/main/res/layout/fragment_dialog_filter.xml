@@ -2,88 +2,80 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/gray_round_background">
 
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:background="#FFFFBB33"
         android:text="Filters"
-        android:textSize="30sp"/>
+        android:textStyle="bold"
+        android:textSize="16sp"/>
 
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:background="#FFFFBB33"
-        android:layout_width="fill_parent"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:background="#DDDDDD"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/filter_drinking_imageView"
             android:src="@drawable/drinking"
-            android:layout_width="wrap_content"
-            android:layout_height="64dp"
-            android:layout_toLeftOf="@+id/filter_food_imageView"
-            android:scaleType="center"
-            android:contentDescription="@string/app_name" />
+            android:layout_margin="8dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="center" />
 
         <ImageView
             android:id="@+id/filter_food_imageView"
             android:src="@drawable/food"
-            android:layout_width="wrap_content"
-            android:layout_height="64dp"
-            android:layout_centerInParent="true"
-            android:scaleType="center"
-            android:contentDescription="@string/app_name" />
+            android:layout_margin="8dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="center" />
 
         <ImageView
             android:id="@+id/filter_sport_imageView"
             android:src="@drawable/sport_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="64dp"
-            android:layout_toRightOf="@+id/filter_food_imageView"
-            android:scaleType="center"
-            android:contentDescription="@string/app_name" />
-        </RelativeLayout>
+            android:layout_margin="8dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="center" />
+        </LinearLayout>
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:background="#FFFFBB33"
-        android:layout_width="fill_parent"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:background="#DDDDDD"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/filter_studying_imageView"
             android:src="@drawable/studying"
-            android:layout_width="wrap_content"
-            android:layout_height="64dp"
-            android:layout_toLeftOf="@+id/filter_tv_imageView"
-            android:layout_centerVertical="true"
-            android:scaleType="center"
-            android:contentDescription="@string/app_name" />
+            android:layout_margin="8dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="center" />
 
         <ImageView
             android:id="@+id/filter_tv_imageView"
             android:src="@drawable/tv"
-            android:layout_width="wrap_content"
-            android:layout_height="64dp"
-            android:layout_centerInParent="true"
-            android:scaleType="center"
-            android:contentDescription="@string/app_name" />
+            android:layout_margin="8dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="center" />
 
         <ImageView
             android:id="@+id/filter_workingOut_imageView"
             android:src="@drawable/working_out"
-            android:layout_width="wrap_content"
-            android:layout_height="64dp"
-            android:layout_toRightOf="@+id/filter_tv_imageView"
-            android:scaleType="center"
-            android:contentDescription="@string/app_name" />
+            android:layout_margin="8dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="center" />
 
-    </RelativeLayout>
+    </LinearLayout>
 
     </LinearLayout>
 

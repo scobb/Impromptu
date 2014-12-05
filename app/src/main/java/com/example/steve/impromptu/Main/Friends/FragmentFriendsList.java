@@ -152,7 +152,7 @@ public class FragmentFriendsList extends Fragment {
                     addingFriends = false;
                     initializeFilteredFriendsList();
                 } else { // transition to current friends and requests
-                    vAddFriend.setImageResource(R.drawable.ic_action_back);
+                    vAddFriend.setImageResource(R.drawable.ic_action_previous_item);
                     generateMasterFBFriendsList();
                     initializeFilteredFBFriendsList();
                 }
