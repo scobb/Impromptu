@@ -19,7 +19,6 @@
         android:dividerHeight="16dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
         android:cacheColorHint="@android:color/white"
         android:choiceMode="singleChoice"
         android:listSelector="@color/impromptu_complementary_green"/>

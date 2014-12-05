@@ -47,14 +47,14 @@ public class ActivityLogin extends FragmentActivity {
         finish();
     }
 
-    public void forwardToNewUserFragment() {
-
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        FragmentNewUser fragment = new FragmentNewUser();
-        fragmentTransaction.replace(R.id.loginShell, fragment).addToBackStack(null);
-        fragmentTransaction.commit();
-    }
+//    public void forwardToNewUserFragment() {
+//
+//        FragmentManager fragmentManager = getFragmentManager();
+//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//        FragmentNewUser fragment = new FragmentNewUser();
+//        fragmentTransaction.replace(R.id.loginShell, fragment).addToBackStack(null);
+//        fragmentTransaction.commit();
+//    }
 
     public void forwardToLoginFragment() {
         FragmentManager fragmentManager = getFragmentManager();
