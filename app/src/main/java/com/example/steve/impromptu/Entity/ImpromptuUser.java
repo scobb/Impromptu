@@ -7,7 +7,9 @@ import android.util.Log;
 
 import com.facebook.Request;
 import com.facebook.Response;
+import com.google.android.gms.games.GamesMetadata;
 import com.parse.FunctionCallback;
+import com.parse.Parse;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
@@ -22,6 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -128,6 +131,21 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
             Log.e("Impromptu", "Error fetching User:", exc);
         }
         List<Event> events = this.getList(visibleEventsKey);
+        long nowMillis = System.currentTimeMillis();
+        Iterator<Event> i = events.iterator();
+        while (i.hasNext()){
+            Event event = i.next();
+            HashMap<String, String> args = new HashMap<>();
+            long endMillis = event.getEventTime().getTime() + event.getDurationHour() * 3600 * 1000 + event.getDurationMinute() * 60 * 1000;
+            Log.d("Impromptu", "nowMillis: " + nowMillis + "\nendMillis: " + endMillis);
+            if (endMillis < nowMillis){
+                Log.d("Impromptu", "Would remove " + event.getObjectId());
+                args.clear();
+                args.put("eventId", event.getObjectId());
+                ParseCloud.callFunctionInBackground("eventCleanup", args, null);
+                i.remove();
+            }
+        }
 //        verifyEvents(events);
         Log.d("Impromptu", "List Size: " + events.size());
 
