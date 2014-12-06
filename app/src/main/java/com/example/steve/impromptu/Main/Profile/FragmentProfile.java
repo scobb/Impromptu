@@ -41,6 +41,7 @@ import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import android.widget.ListView;
@@ -133,9 +134,11 @@ public class FragmentProfile extends ListFragment{
                     posts = new ArrayList<Event>(postsObjects);
                     // Create the HashMap List
                     List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
-                    for(Event post : posts){
+                    Iterator<Event> i = posts.iterator();
+                    while (i.hasNext()){
+                        Event post = i.next();
                         if(post.getOwner() != targetUser) {
-                            posts.remove(post);
+                            i.remove();
                         }
                         // Check for the filters
                         if(ActivityMain.getFiltersMap().get(post.getType()) != null) {
