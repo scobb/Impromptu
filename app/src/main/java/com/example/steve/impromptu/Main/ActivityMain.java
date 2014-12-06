@@ -72,6 +72,11 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ImpromptuUser currentUser = (ImpromptuUser)ImpromptuUser.getCurrentUser();
+        currentUser.populateGroupsInBackground();
+        currentUser.populatePendingToRequestsInBackground();
+        currentUser.populateFriendsInBackground();
+        currentUser.populateFacebookFriendsInBackground();
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -98,14 +103,6 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         filters.put("Studying", true);
         filters.put("TV", true);
         filters.put("Working Out", true);
-
-
-        // this block might be redundant because we do it in ActivityMain. not sure...
-        ParseUser.registerSubclass(ImpromptuUser.class);
-        ParseObject.registerSubclass(Event.class);
-        ParseObject.registerSubclass(Group.class);
-        ParseObject.registerSubclass(FriendRequest.class);
-        Parse.initialize(this, "sP5YdlJxg1WiwfKgSXX4KdrgpZzAV5g69dV8ryY0", "houV8Brg8oIuBKSLheR7qAW4AJfGq1QZmH62Spgk");
 
         setHighlightedButton("Stream");
         updateLocationWithinApp("Stream");

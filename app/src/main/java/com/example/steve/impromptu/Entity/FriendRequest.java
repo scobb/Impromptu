@@ -17,8 +17,8 @@ import java.util.List;
  */
 @ParseClassName("FriendRequest")
 public class FriendRequest extends ParseObject {
-    private static String fromKey = "from";
-    private static String toKey = "to";
+    protected static String fromKey = "from";
+    protected static String toKey = "to";
 
     public FriendRequest() {
         super();

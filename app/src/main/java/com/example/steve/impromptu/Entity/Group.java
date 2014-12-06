@@ -23,6 +23,9 @@ public class Group extends ParseObject implements Comparable<Group> {
     private String friendsInGroupKey = "friendsInGroup";
     private String nameKey = "groupName";
 
+    private List<ImpromptuUser> friendsInGroup = null;
+    private String name = null;
+
     Boolean isSelected = false;
 
     public Group() {
@@ -35,22 +38,31 @@ public class Group extends ParseObject implements Comparable<Group> {
         clear();
     }
 
+    public void populate() {
+        getGroupName();
+        getFriendsInGroup();
+    }
+
 
     public void persist() {
         this.saveInBackground();
     }
 
     public void setGroupName(String name) {
+        this.name = name;
         put(nameKey, name);
     }
 
     public String getGroupName() {
-        try {
-            this.fetchIfNeeded();
-        } catch (ParseException exc) {
-            Log.e("Impromptu", "Error fetching Group:", exc);
+        if (this.name == null) {
+            try {
+                this.fetchIfNeeded();
+            } catch (ParseException exc) {
+                Log.e("Impromptu", "Error fetching Group:", exc);
+            }
+            this.name = getString(nameKey);
         }
-        return getString(nameKey);
+        return this.name;
     }
 
     @Override
@@ -62,19 +74,22 @@ public class Group extends ParseObject implements Comparable<Group> {
         /**
          * method - returns list of friends in group
          */
-        try {
-            this.fetchIfNeeded();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching Group:", exc);
+        if (friendsInGroup == null) {
+            try {
+                this.fetchIfNeeded();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching Group:", exc);
+            }
+            friendsInGroup = this.getList(friendsInGroupKey);
         }
-        List<ImpromptuUser> userList = this.getList(friendsInGroupKey);
-        return userList;
+        return friendsInGroup;
     }
 
     public void setFriendsInGroup(List<ImpromptuUser> list) {
         /**
          * method - sets friendsInGroup to arrayList list
          */
+        this.friendsInGroup = list;
         this.put(friendsInGroupKey, list);
     }
 

@@ -2,12 +2,16 @@ package com.example.steve.impromptu.Entity;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.test.InstrumentationTestCase;
 import android.util.Log;
 
+import com.example.steve.impromptu.Main.AsyncTasks.AsyncTaskPopulateFriends;
 import com.facebook.Request;
+import com.facebook.RequestAsyncTask;
 import com.facebook.Response;
 import com.google.android.gms.games.GamesMetadata;
+import com.parse.FindCallback;
 import com.parse.FunctionCallback;
 import com.parse.Parse;
 import com.parse.ParseCloud;
@@ -43,6 +47,13 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     private static String nameKey = "name";
     private static String facebookIdKey = "fbid";
 
+    private List<Group> groups = null;
+    private Bitmap picture = null;
+    private String name = null;
+    private List<FriendRequest> toRequests = null;
+    private List<ImpromptuUser> facebookFriends = null;
+    private List<ImpromptuUser> friends = null;
+
     public ImpromptuUser() {
         super();
     }
@@ -67,6 +78,42 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         this.clearGroups();
         this.clearFriends();
         this.clearStreamEvents();
+    }
+
+    public List<FriendRequest> getToRequests() {
+        if (toRequests != null) {
+            toRequests = FriendRequest.getPendingRequestToUser(this);
+        } else {
+            populatePendingToRequestsInBackground();
+        }
+        return toRequests;
+    }
+
+    public void populateFriendsInBackground() {
+        Log.d("Impromptu", "Populating friends in background.");
+        new AsyncTaskPopulateFriends().execute(this);
+    }
+
+
+    public void populateGroupsInBackground() {
+        List<Group> lGroups = getGroups();
+        for (Group g : lGroups) {
+            g.populate();
+        }
+        groups = lGroups;
+    }
+
+    public void populatePendingToRequestsInBackground() {
+        ParseQuery<FriendRequest> query = ParseQuery.getQuery("FriendRequest");
+        Log.d("Impromptu", "Trying to get pending requests for id " + this.getName());
+        query.whereEqualTo(FriendRequest.toKey, this);
+        final ImpromptuUser targ = this;
+        query.findInBackground(new FindCallback<FriendRequest>() {
+            @Override
+            public void done(List<FriendRequest> friendRequests, ParseException e) {
+                targ.toRequests = friendRequests;
+            }
+        });
     }
 
     public void clearStreamEvents() {
@@ -281,11 +328,12 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         this.setGroups(new ArrayList<Group>());
     }
 
-    public void setGroups(ArrayList<Group> groupList) {
+    public void setGroups(List<Group> groupList) {
+        this.groups = groupList;
         this.put(groupKey, groupList);
     }
 
-    public void setFriends(ArrayList<ImpromptuUser> friends) {
+    public void setFriends(List<ImpromptuUser> friends) {
         Collections.sort(friends);
         this.put(friendsKey, friends);
     }
@@ -311,15 +359,17 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     }
 
     public List<ImpromptuUser> getFriends() {
-        try {
-            this.fetchIfNeeded();
-            this.refresh();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching User:", exc);
+        if (friends == null) {
+            try {
+                this.fetchIfNeeded();
+                this.refresh();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching User:", exc);
+            }
+            friends = this.getList(friendsKey);
+            this.verifyFriends(friends);
+            Collections.sort(friends);
         }
-        List<ImpromptuUser> friends = this.getList(friendsKey);
-        this.verifyFriends(friends);
-        Collections.sort(friends);
         return friends;
     }
 
@@ -341,15 +391,17 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
 
 
     public List<Group> getGroups() {
-        try {
-            this.fetchIfNeeded();
-            this.refresh();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching User:", exc);
+        if (groups == null) {
+            try {
+                this.fetchIfNeeded();
+                this.refresh();
+            } catch (Exception exc) {
+                Log.e("Impromptu", "Error fetching User:", exc);
+            }
+            groups = getList(groupKey);
+            verifyGroups(groups);
+            Collections.sort(groups);
         }
-        List<Group> groups = getList(groupKey);
-        verifyGroups(groups);
-        Collections.sort(groups);
         return groups;
     }
 
@@ -378,50 +430,54 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     }
 
     public void setName(String name) {
+        this.name = name;
         this.put(this.nameKey, name);
     }
 
 
     public String getName() {
-        try {
-            this.fetchIfNeeded();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching User:", exc);
-        }
-        String name = this.getString(this.nameKey);
-        if (name != null) {
-            return name;
-        }
-        if (ParseFacebookUtils.isLinked(this)) {
-            // display facebook name
-            Request meReq = Request.newMeRequest(ParseFacebookUtils.getSession(), null);
-            List<Response> responses = null;
+        if (name == null) {
             try {
-                responses = meReq.executeAsync().get();
+                this.fetchIfNeeded();
             } catch (Exception exc) {
-                Log.e("Impromptu", "Error getting async result", exc);
+                Log.e("Impromptu", "Error fetching User:", exc);
             }
-            if (responses == null) {
-                Log.d("Impromptu", "reponses was null");
-                return "";
+            String name = this.getString(this.nameKey);
+            if (name != null) {
+                return name;
             }
-            for (Response resp : responses) {
+            if (ParseFacebookUtils.isLinked(this)) {
+                // display facebook name
+                Request meReq = Request.newMeRequest(ParseFacebookUtils.getSession(), null);
+                List<Response> responses = null;
                 try {
-                    JSONObject respJSON = new JSONObject(resp.getRawResponse());
-                    this.setName(respJSON.getString("name"));
-                    this.persist();
-                    return respJSON.getString("name");
+                    responses = meReq.executeAsync().get();
                 } catch (Exception exc) {
-                    Log.e("Impromptu", "json excpetion: ", exc);
+                    Log.e("Impromptu", "Error getting async result", exc);
                 }
+                if (responses == null) {
+                    Log.d("Impromptu", "reponses was null");
+                    return "";
+                }
+                for (Response resp : responses) {
+                    try {
+                        JSONObject respJSON = new JSONObject(resp.getRawResponse());
+                        this.setName(respJSON.getString("name"));
+                        this.persist();
+                        return respJSON.getString("name");
+                    } catch (Exception exc) {
+                        Log.e("Impromptu", "json excpetion: ", exc);
+                    }
 
+                }
+                return "";
+            } else {
+                this.setName(this.getUsername());
+                this.persist();
+                return this.getUsername();
             }
-            return "";
-        } else {
-            this.setName(this.getUsername());
-            this.persist();
-            return this.getUsername();
         }
+        return name;
     }
 
     /**
@@ -443,36 +499,36 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
      * method - getPicture - returns bitmap for profile picture, null if user doesn't have one.
      */
     public Bitmap getPicture() {
-        try {
-            this.fetchIfNeeded();
-        } catch (Exception exc) {
-            Log.e("Impromptu", "Error fetching User:", exc);
-        }
-        ParseFile picFile = (ParseFile) this.get("profilePic");
-        if (picFile != null) {
+        if (picture == null) {
             try {
-                byte[] picBlock = picFile.getData();
-                Log.d("Impromptu", "picBlock: " + picBlock);
-                return BitmapFactory.decodeByteArray(picBlock, 0, picBlock.length);
-            } catch (ParseException exc) {
-                Log.e("Impromptu", "exception in getPicture", exc);
-
-            }
-        } else if (getFacebookId() != null) {
-            Log.d("Impromptu", "Getting fb pic");
-            try {
-                URL imageURL = new URL("https://graph.facebook.com/" + getFacebookId() + "/picture?type=large");
-                Bitmap bitmap = BitmapFactory.decodeStream(imageURL.openConnection().getInputStream());
-                if (bitmap == null) {
-                    Log.e("Impromptu", "bitmap is null");
-                }
-                return bitmap;
+                this.fetchIfNeeded();
             } catch (Exception exc) {
-                Log.e("Impromptu", "malformed exception", exc);
+                Log.e("Impromptu", "Error fetching User:", exc);
+            }
+            ParseFile picFile = (ParseFile) this.get("profilePic");
+            if (picFile != null) {
+                try {
+                    byte[] picBlock = picFile.getData();
+                    Log.d("Impromptu", "picBlock: " + picBlock);
+                    picture = BitmapFactory.decodeByteArray(picBlock, 0, picBlock.length);
+                } catch (ParseException exc) {
+                    Log.e("Impromptu", "exception in getPicture", exc);
+                }
+            } else if (getFacebookId() != null) {
+                Log.d("Impromptu", "Getting fb pic");
+                try {
+                    URL imageURL = new URL("https://graph.facebook.com/" + getFacebookId() + "/picture?type=large");
+                    Bitmap bitmap = BitmapFactory.decodeStream(imageURL.openConnection().getInputStream());
+                    if (bitmap == null) {
+                        Log.e("Impromptu", "bitmap is null");
+                    }
+                    picture = bitmap;
+                } catch (Exception exc) {
+                    Log.e("Impromptu", "malformed exception", exc);
+                }
             }
         }
-        Log.e("Impromptu", "didn't get in either block.");
-        return null;
+        return picture;
     }
 
     // Returns the current user key
@@ -515,43 +571,84 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
 
     }
 
-    public ArrayList<ImpromptuUser> getFacebookFriends() {
-        ArrayList<ImpromptuUser> result = new ArrayList<>();
+    public void populateFacebookFriendsInBackground() {
         if (getFacebookId() != null) {
             Request friendReq = Request.newMyFriendsRequest(ParseFacebookUtils.getSession(), null);
-            List<Response> responses = null;
-            try {
-                responses = friendReq.executeAsync().get();
-            } catch (Exception exc) {
-                Log.e("Impromptu", "Error getting async result", exc);
-            }
-            if (responses == null) {
-                Log.d("Impromptu", "reponses was null");
-                return result;
-            }
-            for (Response resp : responses) {
-                Log.d("Impromptu", "Response: " + resp);
+            friendReq.setCallback(new Request.Callback() {
+                @Override
+                public void onCompleted(Response response) {
+                    if (response == null) {
+                        Log.d("Impromptu", "reponses was null");
+                    } else {
+                        Log.d("Impromptu", "Response: " + response);
 
-                try {
-                    JSONObject respJSON = new JSONObject(resp.getRawResponse());
-                    JSONArray data = respJSON.getJSONArray("data");
-                    Log.d("Impromptu", "Number of fb friends also using impromptu: " + data.length());
-                    for (int i = 0; i < data.length(); i++) {
-                        String id = data.getJSONObject(i).getString("id");
-                        ImpromptuUser user = ImpromptuUser.getUserByFacebookId(id);
-                        if (user != null) {
-                            result.add(user);
+                        try {
+                            JSONObject respJSON = new JSONObject(response.getRawResponse());
+                            JSONArray data = respJSON.getJSONArray("data");
+                            Log.d("Impromptu", "Number of fb friends also using impromptu: " + data.length());
+                            facebookFriends = new ArrayList<ImpromptuUser>();
+                            for (int i = 0; i < data.length(); i++) {
+                                String id = data.getJSONObject(i).getString("id");
+                                ImpromptuUser user = ImpromptuUser.getUserByFacebookId(id);
+                                if (user != null) {
+                                    facebookFriends.add(user);
+                                }
+                            }
+
+                        } catch (Exception exc) {
+                            Log.e("Impromptu", "json excpetion: ", exc);
                         }
+
+
                     }
 
-                } catch (Exception exc) {
-                    Log.e("Impromptu", "json excpetion: ", exc);
-                    return result;
                 }
+            });
+            friendReq.executeAsync();
 
-            }
         }
-        return result;
+    }
+
+    public ArrayList<ImpromptuUser> getFacebookFriends() {
+            if (facebookFriends == null) {
+                facebookFriends = new ArrayList<>();
+                if (getFacebookId() != null) {
+                    Request friendReq = Request.newMyFriendsRequest(ParseFacebookUtils.getSession(), null);
+                    List<Response> responses = null;
+                    try {
+                        responses = friendReq.executeAsync().get();
+                    } catch (Exception exc) {
+                        Log.e("Impromptu", "Error getting async result", exc);
+                    }
+                    if (responses == null) {
+                        Log.d("Impromptu", "reponses was null");
+                    } else {
+                        for (Response resp : responses) {
+                            Log.d("Impromptu", "Response: " + resp);
+
+                            try {
+                                JSONObject respJSON = new JSONObject(resp.getRawResponse());
+                                JSONArray data = respJSON.getJSONArray("data");
+                                Log.d("Impromptu", "Number of fb friends also using impromptu: " + data.length());
+                                for (int i = 0; i < data.length(); i++) {
+                                    String id = data.getJSONObject(i).getString("id");
+                                    ImpromptuUser user = ImpromptuUser.getUserByFacebookId(id);
+                                    if (user != null) {
+                                        facebookFriends.add(user);
+                                    }
+                                }
+
+                            } catch (Exception exc) {
+                                Log.e("Impromptu", "json excpetion: ", exc);
+                            }
+
+                        }
+                    }
+                }
+            } else {
+                populateFriendsInBackground();
+            }
+        return (ArrayList<ImpromptuUser>)facebookFriends;
     }
 
     @Override

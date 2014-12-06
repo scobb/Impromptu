@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,8 +73,11 @@ public class FragmentGroupsList extends Fragment {
         vAddToGroup = (ImageView) fragmentView.findViewById(R.id.fragGroupsList_imageView_addFriend);
 
         currentUser = (ImpromptuUser) ImpromptuUser.getCurrentUser();
+        Log.d("Impromptu", "getting Friends");
         friends = (ArrayList<ImpromptuUser>) currentUser.getFriends();
+        Log.d("Impromptu", "getting Groups");
         groups = (ArrayList<Group>) currentUser.getGroups();
+        Log.d("Impromptu", "done getting");
 
         FriendHolder holder;
         for (ImpromptuUser user : friends) {
