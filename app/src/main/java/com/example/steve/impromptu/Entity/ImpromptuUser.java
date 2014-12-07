@@ -369,6 +369,8 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
             friends = this.getList(friendsKey);
             this.verifyFriends(friends);
             Collections.sort(friends);
+        } else {
+            populateFriendsInBackground();
         }
         return friends;
     }
