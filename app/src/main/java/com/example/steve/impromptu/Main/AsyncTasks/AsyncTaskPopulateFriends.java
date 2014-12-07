@@ -17,7 +17,7 @@ public class AsyncTaskPopulateFriends extends AsyncTask<ImpromptuUser, Integer, 
         ImpromptuUser user = users[0];
 
         // get their friends' pictures.
-        List<ImpromptuUser> friends = user.getFriends();
+        List<ImpromptuUser> friends = user.getList("friends");
         for (ImpromptuUser friend: friends) {
             friend.getPicture();
             friend.getName();
