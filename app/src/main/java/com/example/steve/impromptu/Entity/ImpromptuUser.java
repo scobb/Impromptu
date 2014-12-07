@@ -13,13 +13,16 @@ import com.facebook.Response;
 import com.google.android.gms.games.GamesMetadata;
 import com.parse.FindCallback;
 import com.parse.FunctionCallback;
+import com.parse.GetCallback;
 import com.parse.Parse;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseFile;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.RefreshCallback;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -53,6 +56,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     private List<FriendRequest> toRequests = null;
     private List<ImpromptuUser> facebookFriends = null;
     private List<ImpromptuUser> friends = null;
+    private List<Event> streamEvents = new ArrayList<>();
 
     public ImpromptuUser() {
         super();
@@ -197,6 +201,60 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         Log.d("Impromptu", "List Size: " + events.size());
 
         return events;
+    }
+
+    public List<Event> getStreamEvents(final UpdateView updateView) {
+        final ImpromptuUser targ = this;
+        try {
+            this.fetchInBackground(new GetCallback<ParseObject>() {
+                @Override
+                public void done(ParseObject parseObject, ParseException e) {
+                    if (e != null) {
+                        Log.e("Impromptu", "Error fetching.", e);
+                    } else {
+                        Log.d("Impromptu", "Successful fetch in bg.");
+                        List<Event> events = targ.getList(visibleEventsKey);
+                        long nowMillis = System.currentTimeMillis();
+                        Iterator<Event> i = events.iterator();
+                        while (i.hasNext()) {
+                            Event event = i.next();
+                            HashMap<String, String> args = new HashMap<>();
+                            long endMillis = event.getEventTime().getTime() + event.getDurationHour() * 3600 * 1000 + event.getDurationMinute() * 60 * 1000;
+                            Log.d("Impromptu", "nowMillis: " + nowMillis + "\nendMillis: " + endMillis);
+                            if (endMillis < nowMillis) {
+                                Log.d("Impromptu", "Would remove " + event.getObjectId());
+                                args.clear();
+                                args.put("eventId", event.getObjectId());
+                                ParseCloud.callFunctionInBackground("eventCleanup", args, null);
+                                i.remove();
+                            }
+                        }
+                        targ.streamEvents = events;
+                        updateView.update(events);
+                    }
+                }
+            });
+        } catch (Exception exc) {
+            Log.e("Impromptu", "Error fetching User:", exc);
+        }
+        long nowMillis = System.currentTimeMillis();
+        Iterator<Event> i = streamEvents.iterator();
+        while (i.hasNext()){
+            Event event = i.next();
+            HashMap<String, String> args = new HashMap<>();
+            long endMillis = event.getEventTime().getTime() + event.getDurationHour() * 3600 * 1000 + event.getDurationMinute() * 60 * 1000;
+            Log.d("Impromptu", "nowMillis: " + nowMillis + "\nendMillis: " + endMillis);
+            if (endMillis < nowMillis){
+                Log.d("Impromptu", "Would remove " + event.getObjectId());
+                args.clear();
+                args.put("eventId", event.getObjectId());
+                ParseCloud.callFunctionInBackground("eventCleanup", args, null);
+                i.remove();
+            }
+        }
+        Log.d("Impromptu", "List Size: " + streamEvents.size());
+
+        return streamEvents;
     }
 
 

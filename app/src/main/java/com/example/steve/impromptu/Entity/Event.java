@@ -73,7 +73,7 @@ public class Event extends ParseObject implements Comparable<Event> {
     private List<ImpromptuUser> localUsersGoing = new ArrayList<ImpromptuUser>();
     private List<Group> localPushGroups = new ArrayList<Group>();
     private List<Group> localStreamGroups = new ArrayList<Group>();
-
+    private HashMap<String, String> hashMap = null;
 
 
 //    public void setStreamFriends(ArrayList<ImpromptuUser> streamFriends) {
@@ -280,27 +280,29 @@ public class Event extends ParseObject implements Comparable<Event> {
 
 
     public HashMap<String, String> getHashMap() {
-        HashMap<String, String> map = new HashMap<String, String>();
+        if (hashMap == null) {
+            hashMap = new HashMap<String, String>();
 
-        map.put("user", this.getOwner().getName());
-        map.put("picture", getPicture());
+            hashMap.put("user", this.getOwner().getName());
+            hashMap.put("picture", getPicture());
 
-        Date currentDate = new Date();
-        Date eventDate = this.getDate(eventTimeKey);
+            Date currentDate = new Date();
+            Date eventDate = this.getDate(eventTimeKey);
 
-        Log.d("Impromptu", "Event " + eventDate);
-        Log.d("Impromptu", "Current " + currentDate);
+            Log.d("Impromptu", "Event " + eventDate);
+            Log.d("Impromptu", "Current " + currentDate);
 
 
-        long timeDifference = eventDate.getTime() - currentDate.getTime();
-        long hourDifference = TimeUnit.MILLISECONDS.toHours(timeDifference);
+            long timeDifference = eventDate.getTime() - currentDate.getTime();
+            long hourDifference = TimeUnit.MILLISECONDS.toHours(timeDifference);
 
-        int difference = (int) Math.ceil(hourDifference);
+            int difference = (int) Math.ceil(hourDifference);
 
-        map.put("date", "In about " + difference + " hours");
-        map.put("title", this.getTitle());
-        map.put("content", this.getDescription());
-        return map;
+            hashMap.put("date", "In about " + difference + " hours");
+            hashMap.put("title", this.getTitle());
+            hashMap.put("content", this.getDescription());
+        }
+        return hashMap;
     }
 
     public String getPicture(){

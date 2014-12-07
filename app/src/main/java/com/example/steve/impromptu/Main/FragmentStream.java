@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.app.FragmentTransaction;
 import android.app.ListFragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import android.widget.SimpleAdapter;
 
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
+import com.example.steve.impromptu.Entity.UpdateView;
 import com.example.steve.impromptu.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -58,9 +60,40 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
     private List<Event> posts;
     private LinearLayout mapStream;
 
+    public class UpdateStreamView extends UpdateView {
+        public void update(List<Event> events) {
+            // Create the HashMap List
+            List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
+            for (Event post : events) {
+
+                // Check for the filters
+                if (ActivityMain.getFiltersMap().get(post.getType()) != null) {
+                    if (ActivityMain.getFiltersMap().get(post.getType())) {
+
+                        aList.add(post.getHashMap());
+
+                    }
+                }
+            }
+
+            // Initialize the adapter
+            SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList,
+                    R.layout.template_stream_event_item, from, to);
+
+
+            // Setting the list adapter for the ListFragment
+            setListAdapter(adapter);
+
+            // Update the list adapter
+            adapter.notifyDataSetChanged();
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        UpdateView myUpdateView = new UpdateStreamView();
 
         // Get the root view
         final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_stream, container, false);
@@ -68,62 +101,11 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
 
         // Gets query for the event streams
         ImpromptuUser currentUser = (ImpromptuUser) ParseUser.getCurrentUser();
-        List<Event> events = currentUser.getStreamEvents();
-
-//        mapStream = (LinearLayout) rootView.findViewById(R.id.map_bar);
-//
-//        mapStream.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                FragmentMap nextFrag = new FragmentMap();
-//                getFragmentManager().beginTransaction().replace(R.id.activityMain_frameLayout_shell, nextFrag).addToBackStack(null).commit();
-//            }
-//        });
-
-
-        ParseObject.fetchAllIfNeededInBackground(events, new FindCallback<Event>() {
-
-            @Override
-            public void done(List<Event> postsObjects, ParseException e) {
-                if (e == null) {
-                    posts = new ArrayList<Event>(postsObjects);
-
-
-                    // Create the HashMap List
-                    List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
-                    for (Event post : posts) {
-
-                        // Check for the filters
-                        if (ActivityMain.getFiltersMap().get(post.getType()) != null) {
-                            if (ActivityMain.getFiltersMap().get(post.getType())) {
-
-                                // Check the time if it has passed already
-//                                if (new Date().after(post.getEventDate())) {
-                                    aList.add(post.getHashMap());
-//                                }
-
-                            }
-                        }
-                    }
-
-                    // Initialize the adapter
-                    SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList,
-                            R.layout.template_stream_event_item, from, to);
-
-
-                    // Setting the list adapter for the ListFragment
-                    setListAdapter(adapter);
-
-                    // Update the list adapter
-                    adapter.notifyDataSetChanged();
-
-                } else {
-                    // Error in query
-                    e.printStackTrace();
-                }
-            }
-        });
+        Log.d("Impromptu", "Getting events");
+        posts = currentUser.getStreamEvents(myUpdateView);
+        Log.d("Impromptu", "Updating events");
+        myUpdateView.update(posts);
+        Log.d("Impromptu", "Done getting");
 
 
         // Customize the stream layout
