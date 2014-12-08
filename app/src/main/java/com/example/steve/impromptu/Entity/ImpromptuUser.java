@@ -229,6 +229,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
                                 i.remove();
                             }
                         }
+                        Collections.sort(events);
                         targ.streamEvents = events;
                         updateView.update(events);
                     }
