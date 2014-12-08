@@ -35,6 +35,7 @@ import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.R;
 import com.example.steve.impromptu.UI.ObservableScrollView;
 import com.parse.FindCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -130,6 +131,19 @@ public class FragmentProfile extends ListFragment{
                 if (e == null) {
                     posts = new ArrayList<>(events);
                     // Create the HashMap List
+                    Iterator<Event> i = posts.iterator();
+                    HashMap<String, String> args = new HashMap<>();
+                    while (i.hasNext()) {
+                        Event event = i.next();
+                        long endMillis = event.getEventTime().getTime() + event.getDurationHour() * 3600 * 1000 + event.getDurationMinute() * 60 * 1000;
+                        long nowMillis = new Date().getTime();
+                        if (nowMillis > endMillis) {
+                            args.clear();
+                            args.put("eventId", event.getObjectId());
+                            ParseCloud.callFunctionInBackground("eventCleanup", args, null);
+                            i.remove();
+                        }
+                    }
                     List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
                     for (Event post : posts) {
                         // Check for the filters
