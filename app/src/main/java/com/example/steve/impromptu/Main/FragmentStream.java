@@ -80,7 +80,7 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
                 }
             }
             // TODO - turn off loading icon?
-            
+
             // Update the list adapter
             adapter.notifyDataSetChanged();
         }

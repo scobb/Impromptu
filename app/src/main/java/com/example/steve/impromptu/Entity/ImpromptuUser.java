@@ -56,7 +56,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     private String name = null;
     private List<FriendRequest> toRequests = null;
     private List<ImpromptuUser> facebookFriends = null;
-    private List<ImpromptuUser> friends = null;
+    public List<ImpromptuUser> friends = null;
     public List<Event> streamEvents = new ArrayList<>();
     public HashMap<String, ImpromptuUser> friendMap = new HashMap<>();
     public HashMap<String, Event> eventMap = new HashMap<>();

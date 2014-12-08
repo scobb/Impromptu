@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.example.steve.impromptu.Entity.ImpromptuUser;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -17,9 +18,17 @@ public class AsyncTaskPopulateFriends extends AsyncTask<ImpromptuUser, Integer, 
         // grab user to populate
         ImpromptuUser user = users[0];
 
-        // get their friends' pictures.
+        // preload the picture, save it for use with profile page
+        user.getPicture();
+        user.friendMap.put(user.getObjectId(), user);
+
         List<ImpromptuUser> friends = user.getList("friends");
-        for (ImpromptuUser friend: friends) {
+        user.verifyFriends(friends);
+        Collections.sort(friends);
+        user.friends = friends;
+
+        // get their friends' pictures.
+        for (ImpromptuUser friend: user.friends) {
             friend.getPicture();
             friend.getName();
             user.friendMap.put(friend.getObjectId(), friend);
