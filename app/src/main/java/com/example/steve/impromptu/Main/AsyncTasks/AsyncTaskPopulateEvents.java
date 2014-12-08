@@ -41,6 +41,7 @@ public class AsyncTaskPopulateEvents extends AsyncTask<ImpromptuUser, Void, List
         Log.d("Impromptu", "num events before validation: " + events.size());
         long nowMillis = System.currentTimeMillis();
         Iterator<Event> i = events.iterator();
+        user.eventMap.clear();
         while (i.hasNext()) {
             Event event = i.next();
             HashMap<String, String> args = new HashMap<>();
@@ -52,6 +53,11 @@ public class AsyncTaskPopulateEvents extends AsyncTask<ImpromptuUser, Void, List
                 args.put("eventId", event.getObjectId());
                 ParseCloud.callFunctionInBackground("eventCleanup", args, null);
                 i.remove();
+            } else {
+                // load this list for use later
+                event.getUsersGoing();
+                event.getLocationName();
+                user.eventMap.put(event.getObjectId(), event);
             }
         }
         Collections.sort(events);

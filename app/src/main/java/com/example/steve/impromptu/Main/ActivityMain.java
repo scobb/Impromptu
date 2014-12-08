@@ -52,6 +52,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
 
 
     Event composeEvent;
+    public ImpromptuUser currentUser;
     public Dialog progressDialog;
 
     String locationWithinApp = "Stream";
@@ -72,7 +73,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ImpromptuUser currentUser = (ImpromptuUser)ImpromptuUser.getCurrentUser();
+        currentUser = (ImpromptuUser)ImpromptuUser.getCurrentUser();
         currentUser.populateGroupsInBackground();
         currentUser.populatePendingToRequestsInBackground();
         currentUser.populateFriendsInBackground();

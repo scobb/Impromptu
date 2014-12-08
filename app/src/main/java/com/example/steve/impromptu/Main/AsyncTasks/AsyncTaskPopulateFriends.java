@@ -1,6 +1,7 @@
 package com.example.steve.impromptu.Main.AsyncTasks;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.example.steve.impromptu.Entity.ImpromptuUser;
 
@@ -21,6 +22,7 @@ public class AsyncTaskPopulateFriends extends AsyncTask<ImpromptuUser, Integer, 
         for (ImpromptuUser friend: friends) {
             friend.getPicture();
             friend.getName();
+            user.friendMap.put(friend.getObjectId(), friend);
         }
 
         return null;

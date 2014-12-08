@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Group;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
+import com.example.steve.impromptu.Main.ActivityMain;
 import com.example.steve.impromptu.Main.Compose.ArrayAdapters.ArrayAdapterEditGroup;
 import com.example.steve.impromptu.Main.Compose.ArrayAdapters.ArrayAdapterGroupsList;
 import com.example.steve.impromptu.R;
@@ -72,7 +73,7 @@ public class FragmentGroupsList extends Fragment {
         vEdit = (ImageView) fragmentView.findViewById(R.id.fragGroupsList_imageView_edit);
         vAddToGroup = (ImageView) fragmentView.findViewById(R.id.fragGroupsList_imageView_addFriend);
 
-        currentUser = (ImpromptuUser) ImpromptuUser.getCurrentUser();
+        currentUser = ((ActivityMain)getActivity()).currentUser;
         Log.d("Impromptu", "getting Friends");
         friends = (ArrayList<ImpromptuUser>) currentUser.getFriends();
         Log.d("Impromptu", "getting Groups");

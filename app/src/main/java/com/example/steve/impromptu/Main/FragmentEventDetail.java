@@ -10,6 +10,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,9 +19,11 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.example.steve.impromptu.Entity.Event;
+import com.example.steve.impromptu.Entity.FriendRequest;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.Main.Compose.ArrayAdapters.ArrayAdapterPeopleAttending;
 import com.example.steve.impromptu.Main.Profile.FragmentProfile;
@@ -65,8 +68,9 @@ public class FragmentEventDetail extends Fragment{
     // Variables for people attending
     private ArrayAdapterPeopleAttending userAdapter = null;
     private ListView userAttendingList;
-    private ArrayList<ImpromptuUser> usersAttending;
+    private ArrayList<ImpromptuUser> usersAttending = new ArrayList<>();
     private boolean currentUserAttending;
+    private ImpromptuUser currentUser;
     TextView joinTextView;
 
 
@@ -111,20 +115,35 @@ public class FragmentEventDetail extends Fragment{
         mObservableScrollView = (ObservableScrollView) myInflatedView.findViewById(R.id.scroll_view);
 
 
+        currentUser = ((ActivityMain)getActivity()).currentUser;
         // Get the owner and event
-        owner = ImpromptuUser.getUserById(eventData.getString("ownerKey"));
-        event = Event.getEventById(eventData.getString("eventKey"));
+        String ownerKey = eventData.getString("ownerKey");
+        String eventKey = eventData.getString("eventKey");
+        Log.d("Impromptu", "ownerKey: " + ownerKey);
+        if (currentUser.friendMap.containsKey(ownerKey)) {
+            Log.d("Impromptu", "Found the owner.");
+            owner = currentUser.friendMap.get(ownerKey);
+        } else {
+            Log.d("Impromptu", "Didn't find the owner");
+            owner = ImpromptuUser.getUserById(ownerKey);
+        }
+
+        if (currentUser.eventMap.containsKey(eventKey)) {
+            event = currentUser.eventMap.get(eventKey);
+        } else {
+            event = Event.getEventById(eventKey);
+        }
 
         // Sets the data fields and picture
         titleTextView.setText(event.getTitle());
         ownerTextView.setText(owner.getName());
         descriptionTextView.setText(event.getDescription());
         profilePictureView.setImageBitmap(owner.getPicture());
+        Log.d("Impromptu", "Got owner's pic.");
         timeTextView.setText(event.getEventDate().toString());
         locationTextView.setText(event.getLocationName());
 
         // Is the current user attending the event?
-        ImpromptuUser currentUser = (ImpromptuUser) ParseUser.getCurrentUser();
         currentUserAttending = event.userIsGoing(currentUser);
 
         // Initialize the join button
@@ -317,24 +336,32 @@ public class FragmentEventDetail extends Fragment{
 
     private void refreshPeopleAttendingList(){
         // Set up the people attending the event
-
+        Log.d("Impromptu", "Getting users going");
         List<ImpromptuUser> users = event.getUsersGoing();
-
+        Log.d("Impromptu", "Starting fetch all if needed");
         // Parse query shit
         ParseObject.fetchAllIfNeededInBackground(users, new FindCallback<ImpromptuUser>() {
 
             @Override
             public void done(List<ImpromptuUser> users, ParseException e) {
                 if (e == null) {
-
-                    // set the arraylist
+                    usersAttending = new ArrayList<>();
+                    for (ImpromptuUser user: users) {
+                        if (currentUser.friendMap.containsKey(user.getObjectId())){
+                            // get version with picture already fetched.
+                            Log.d("Impromptu", "attendee is in the map.");
+                            usersAttending.add(currentUser.friendMap.get(user.getObjectId()));
+                        } else {
+                            Log.d("Impromptu", "attendee not in the map.");
+                            usersAttending.add(user);
+                        }
+                    }
                     usersAttending = new ArrayList<ImpromptuUser>(users);
-
                     userAdapter = new ArrayAdapterPeopleAttending(getActivity(),
                             R.layout.template_friend_attending_item, users);
                     userAttendingList.setAdapter(userAdapter);
 
-
+                    Log.d("Impromptu", "notifying that data set has changed");
                     // Update the list adapter
                     userAdapter.notifyDataSetChanged();
 
@@ -344,6 +371,7 @@ public class FragmentEventDetail extends Fragment{
                 }
             }
         });
+        Log.d("Impromptu", "Done with this method.");
     }
 
 }

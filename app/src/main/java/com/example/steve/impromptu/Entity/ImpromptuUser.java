@@ -58,6 +58,8 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     private List<ImpromptuUser> facebookFriends = null;
     private List<ImpromptuUser> friends = null;
     public List<Event> streamEvents = new ArrayList<>();
+    public HashMap<String, ImpromptuUser> friendMap = new HashMap<>();
+    public HashMap<String, Event> eventMap = new HashMap<>();
 
     public ImpromptuUser() {
         super();
@@ -400,6 +402,9 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
             friends = this.getList(friendsKey);
             this.verifyFriends(friends);
             Collections.sort(friends);
+            for (ImpromptuUser friend: friends) {
+                friendMap.put(friend.getObjectId(), friend);
+            }
         } else {
             populateFriendsInBackground();
         }

@@ -66,6 +66,7 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
     public class UpdateStreamView extends UpdateView {
         public void update(List<Event> events) {
             // Create the HashMap List
+            posts = events;
             eventList.clear();
             for (Event post : events) {
 
@@ -78,7 +79,8 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
                     }
                 }
             }
-
+            // TODO - turn off loading icon?
+            
             // Update the list adapter
             adapter.notifyDataSetChanged();
         }
@@ -109,6 +111,7 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
         myUpdateView.update(posts);
         Log.d("Impromptu", "Done getting");
 
+        //TODO - add a loading icon? Something small and spinny in a corner? or up by the plus?
 
         // Customize the stream layout
 

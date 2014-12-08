@@ -37,6 +37,7 @@ import com.example.steve.impromptu.UI.ObservableScrollView;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -79,6 +80,7 @@ public class FragmentProfile extends ListFragment{
 
     List<Event> posts;
     ListView eventsList;
+    ImpromptuUser currentUser;
     // Keys used in HashMap
     private String[] from = {"picture", "user", "content", "date"};
 
@@ -94,6 +96,7 @@ public class FragmentProfile extends ListFragment{
         // Receive data passed in
         Bundle userData = getArguments();
 
+        currentUser = ((ActivityMain)getActivity()).currentUser;
 
         // Get Views
         final View myInflatedView = inflater.inflate(R.layout.fragment_profile, container, false);
@@ -103,51 +106,36 @@ public class FragmentProfile extends ListFragment{
 
         eventsList = (ListView) myInflatedView.findViewById(android.R.id.list);
 
-
+        final ImpromptuUser targetUser;
         // Get the user
-        final ImpromptuUser targetUser = ImpromptuUser.getUserById(userData.getString("ownerId"));
-
-        List<Event> events = targetUser.getStreamEvents();
-
-        if (targetUser == null) {
-            //TODO - test this
-            Log.e("Impromptu", "Current user is null");
-            Intent intent = new Intent(getActivity(), ActivityLogin.class);
-            startActivity(intent);
-            getActivity().finish();
+        String ownerId = userData.getString("ownerId");
+        if (currentUser.friendMap.containsKey(ownerId)) {
+            Log.d("Impromptu", "User in map.");
+            targetUser = currentUser.friendMap.get(ownerId);
+        } else {
+            targetUser = ImpromptuUser.getUserById(userData.getString("ownerId"));
         }
-
-        if (targetUser.getUsername() == null)
-            Log.e("Impromptu", "Current user's username is null");
-        if (targetUser.getEmail() == null)
-            Log.e("Impromptu", "Current user's email is null");
 
         // Fill in the fields
         nameView.setText(targetUser.getName());
         emailView.setText(targetUser.getEmail());
         profileView.setImageBitmap(targetUser.getPicture());
-        ParseObject.fetchAllIfNeededInBackground(events, new FindCallback<Event>() {
 
+        ParseQuery<Event> query = new ParseQuery<>("Event");
+        query.whereEqualTo("owner", targetUser);
+        // TODO - add some loading icon where events will be? Also, if we change this to only be the current user, we can cache these.
+        query.findInBackground(new FindCallback<Event>() {
             @Override
-            public void done(List<Event> postsObjects, ParseException e) {
+            public void done(List<Event> events, ParseException e) {
                 if (e == null) {
-                    posts = new ArrayList<Event>(postsObjects);
+                    posts = new ArrayList<>(events);
                     // Create the HashMap List
                     List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
-                    Iterator<Event> i = posts.iterator();
-                    while (i.hasNext()){
-                        Event post = i.next();
-                        if(post.getOwner() != targetUser) {
-                            i.remove();
-                        }
+                    for (Event post : posts) {
                         // Check for the filters
-                        if(ActivityMain.getFiltersMap().get(post.getType()) != null) {
+                        if (ActivityMain.getFiltersMap().get(post.getType()) != null) {
                             if (ActivityMain.getFiltersMap().get(post.getType())) {
-
-                                // Check the time if it has passed already
-                                if(new Date().after(post.getEventDate())){
-                                    aList.add(post.getHashMap());
-                                }
+                                aList.add(post.getHashMap());
 
                             }
                         }
@@ -168,10 +156,9 @@ public class FragmentProfile extends ListFragment{
                     // Error in query
                     e.printStackTrace();
                 }
+
             }
         });
-
-        events = targetUser.getOwnedEvents();
 
 
         return myInflatedView;
