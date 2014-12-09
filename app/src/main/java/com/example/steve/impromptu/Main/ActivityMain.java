@@ -78,6 +78,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         currentUser.populatePendingToRequestsInBackground();
         currentUser.populateFriendsInBackground();
         currentUser.populateFacebookFriendsInBackground();
+        currentUser.getOwnedEvents();
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);

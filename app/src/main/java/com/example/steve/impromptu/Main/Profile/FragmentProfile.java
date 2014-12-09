@@ -32,6 +32,8 @@ import android.widget.SimpleAdapter;
 
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
+import com.example.steve.impromptu.Entity.UpdateView;
+import com.example.steve.impromptu.Main.AsyncTasks.AsyncTaskPopulateOwnedEvents;
 import com.example.steve.impromptu.R;
 import com.example.steve.impromptu.UI.ObservableScrollView;
 import com.parse.FindCallback;
@@ -78,9 +80,31 @@ import java.util.List;
  * Created by jonreynolds on 10/16/14.
  */
 public class FragmentProfile extends ListFragment{
-
-    List<Event> posts;
     ListView eventsList;
+
+    public class ProfileUpdateView extends UpdateView {
+        @Override
+        public void update(List<Event> events) {
+            List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
+            for (Event post : events) {
+                aList.add(post.getHashMap());
+
+            }
+
+            // Initialize the adapter
+            SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList,
+                    R.layout.template_stream_event_item, from, to);
+
+
+            // Setting the list adapter for the ListFragment
+            eventsList.setAdapter(adapter);
+
+            // Update the list adapter
+            adapter.notifyDataSetChanged();
+            Log.d("Impromptu", "Profile view updated.");
+        }
+    }
+    List<Event> posts;
     ImpromptuUser currentUser;
     // Keys used in HashMap
     private String[] from = {"picture", "user", "content", "date"};
@@ -110,10 +134,13 @@ public class FragmentProfile extends ListFragment{
         final ImpromptuUser targetUser;
         // Get the user
         String ownerId = userData.getString("ownerId");
-        if (currentUser.friendMap.containsKey(ownerId)) {
+        if (ownerId.equals(currentUser.getObjectId())) {
+            Log.d("Impromptu", "Looking at current user's profile.");
+            targetUser = currentUser;
+        } else if (currentUser.friendMap.containsKey(ownerId)) {
             Log.d("Impromptu", "User in map.");
             targetUser = currentUser.friendMap.get(ownerId);
-        } else {
+        } else  {
             targetUser = ImpromptuUser.getUserById(userData.getString("ownerId"));
         }
 
@@ -125,46 +152,59 @@ public class FragmentProfile extends ListFragment{
         ParseQuery<Event> query = new ParseQuery<>("Event");
         query.whereEqualTo("owner", targetUser);
         // TODO - add some loading icon where events will be? Also, if we change this to only be the current user, we can cache these.
+        // Initialize the adapter
+        if (targetUser.ownedEventsHashList.isEmpty()) {
+            // cache for later
+            Log.d("Impromptu", "DAT list is empty");
+            targetUser.getOwnedEvents();
+        }
+        SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), targetUser.ownedEventsHashList,
+                R.layout.template_stream_event_item, from, to);
+
+
+        // Setting the list adapter for the ListFragment
+        eventsList.setAdapter(adapter);
+
+        // Update the list adapter
+        adapter.notifyDataSetChanged();
         query.findInBackground(new FindCallback<Event>() {
             @Override
             public void done(List<Event> events, ParseException e) {
                 if (e == null) {
                     posts = new ArrayList<>(events);
                     // Create the HashMap List
-                    Iterator<Event> i = posts.iterator();
-                    HashMap<String, String> args = new HashMap<>();
-                    while (i.hasNext()) {
-                        Event event = i.next();
-                        long endMillis = event.getEventTime().getTime() + event.getDurationHour() * 3600 * 1000 + event.getDurationMinute() * 60 * 1000;
-                        long nowMillis = new Date().getTime();
-                        if (nowMillis > endMillis) {
-                            args.clear();
-                            args.put("eventId", event.getObjectId());
-                            ParseCloud.callFunctionInBackground("eventCleanup", args, null);
-                            i.remove();
-                        }
-                    }
-                    List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
-                    for (Event post : posts) {
-                        // Check for the filters
-                        if (ActivityMain.getFiltersMap().get(post.getType()) != null) {
-                            if (ActivityMain.getFiltersMap().get(post.getType())) {
-                                aList.add(post.getHashMap());
-
-                            }
-                        }
-                    }
-
-                    // Initialize the adapter
-                    SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList,
-                            R.layout.template_stream_event_item, from, to);
-
-
-                    // Setting the list adapter for the ListFragment
-                    eventsList.setAdapter(adapter);
-
-                    // Update the list adapter
-                    adapter.notifyDataSetChanged();
+                    AsyncTaskPopulateOwnedEvents task = new AsyncTaskPopulateOwnedEvents();
+                    task.setUpdateView(new ProfileUpdateView());
+                    task.execute(posts);
+//                    Iterator<Event> i = posts.iterator();
+//                    HashMap<String, String> args = new HashMap<>();
+//                    while (i.hasNext()) {
+//                        Event event = i.next();
+//                        long endMillis = event.getEventTime().getTime() + event.getDurationHour() * 3600 * 1000 + event.getDurationMinute() * 60 * 1000;
+//                        long nowMillis = new Date().getTime();
+//                        if (nowMillis > endMillis) {
+//                            args.clear();
+//                            args.put("eventId", event.getObjectId());
+//                            ParseCloud.callFunctionInBackground("eventCleanup", args, null);
+//                            i.remove();
+//                        }
+//                    }
+//                    List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
+//                    for (Event post : posts) {
+//                        aList.add(post.getHashMap());
+//
+//                    }
+//
+//                    // Initialize the adapter
+//                    SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList,
+//                            R.layout.template_stream_event_item, from, to);
+//
+//
+//                    // Setting the list adapter for the ListFragment
+//                    eventsList.setAdapter(adapter);
+//
+//                    // Update the list adapter
+//                    adapter.notifyDataSetChanged();
 
                 } else {
                     // Error in query

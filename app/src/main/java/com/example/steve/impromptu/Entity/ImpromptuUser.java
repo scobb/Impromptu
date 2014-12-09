@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.test.InstrumentationTestCase;
 import android.util.Log;
 
+import com.example.steve.impromptu.Main.ActivityMain;
 import com.example.steve.impromptu.Main.AsyncTasks.AsyncTaskPopulateEvents;
 import com.example.steve.impromptu.Main.AsyncTasks.AsyncTaskPopulateFriends;
 import com.facebook.Request;
@@ -60,6 +61,8 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     public List<Event> streamEvents = new ArrayList<>();
     public HashMap<String, ImpromptuUser> friendMap = new HashMap<>();
     public HashMap<String, Event> eventMap = new HashMap<>();
+    public List<Event> ownedEvents = new ArrayList<>();
+    public List<HashMap<String, String>> ownedEventsHashList = new ArrayList<>();
 
     public ImpromptuUser() {
         super();
@@ -139,12 +142,18 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     public List<Event> getOwnedEvents() {
         ParseQuery<Event> q = new ParseQuery<>(Event.class);
         q.whereEqualTo("owner", this);
-        try {
-            return q.find();
-        } catch (ParseException e) {
-            Log.e("Impromptu", "Exception getting owned events: ", e);
-        }
-        return new ArrayList<>();
+        q.findInBackground(new FindCallback<Event>() {
+            @Override
+            public void done(List<Event> events, ParseException e) {
+                // update in background for next go-round
+                ownedEvents = events;
+                for (Event event: events) {
+                    Log.d("Impromptu", "Updating hash list.");
+                    ownedEventsHashList.add(event.getHashMap());
+                }
+            }
+        });
+        return ownedEvents;
     }
 
     /**
