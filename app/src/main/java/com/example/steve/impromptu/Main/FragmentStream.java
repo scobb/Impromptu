@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -59,34 +60,31 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
 
     private List<Event> posts;
     private LinearLayout mapStream;
+    private List<HashMap<String, String>> eventList = new ArrayList<>();
+    private SimpleAdapter adapter;
 
     public class UpdateStreamView extends UpdateView {
         public void update(List<Event> events) {
             // Create the HashMap List
-            List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
+            posts = events;
+            eventList.clear();
             for (Event post : events) {
 
                 // Check for the filters
                 if (ActivityMain.getFiltersMap().get(post.getType()) != null) {
                     if (ActivityMain.getFiltersMap().get(post.getType())) {
 
-                        aList.add(post.getHashMap());
+                        eventList.add(post.getHashMap());
 
                     }
                 }
             }
-
-            // Initialize the adapter
-            SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList,
-                    R.layout.template_stream_event_item, from, to);
-
-
-            // Setting the list adapter for the ListFragment
-            setListAdapter(adapter);
+            // TODO - turn off loading icon?
 
             // Update the list adapter
             adapter.notifyDataSetChanged();
         }
+
     }
 
     @Override
@@ -94,6 +92,12 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
                              Bundle savedInstanceState) {
 
         UpdateView myUpdateView = new UpdateStreamView();
+
+        if (getListAdapter() == null) {
+            adapter = new SimpleAdapter(getActivity().getBaseContext(), eventList,
+                    R.layout.template_stream_event_item, from, to);
+            setListAdapter(adapter);
+        }
 
         // Get the root view
         final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_stream, container, false);
@@ -107,6 +111,7 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
         myUpdateView.update(posts);
         Log.d("Impromptu", "Done getting");
 
+        //TODO - add a loading icon? Something small and spinny in a corner? or up by the plus?
 
         // Customize the stream layout
 

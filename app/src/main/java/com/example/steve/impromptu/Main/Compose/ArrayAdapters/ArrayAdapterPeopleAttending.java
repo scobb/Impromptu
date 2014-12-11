@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
+import com.example.steve.impromptu.Main.ActivityMain;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeType;
 import com.example.steve.impromptu.R;
 
@@ -26,6 +27,7 @@ public class ArrayAdapterPeopleAttending extends ArrayAdapter<ImpromptuUser> {
 
     private ArrayList<ImpromptuUser> userList;
     private Context context;
+    private ImpromptuUser currentUser;
 
     private LayoutInflater l_Inflater;
 
@@ -37,6 +39,7 @@ public class ArrayAdapterPeopleAttending extends ArrayAdapter<ImpromptuUser> {
         this.userList = new ArrayList<ImpromptuUser>();
         this.userList.addAll(users);
         l_Inflater = LayoutInflater.from(context);
+        currentUser = ((ActivityMain)context).currentUser;
 
     }
 
@@ -69,8 +72,13 @@ public class ArrayAdapterPeopleAttending extends ArrayAdapter<ImpromptuUser> {
             ImageView vImage = (ImageView) view.findViewById(R.id.templateFriendAttendingItem_imageView_profilePic);
             TextView vText = (TextView) view.findViewById(R.id.templateFriendAttendingItem_textView_name);
 
-            vImage.setImageBitmap(getItem(position).getPicture());
-            vText.setText(userList.get(position).getName());
+            Log.d("Impromptu", "getting pic in adapter");
+            ImpromptuUser user = userList.get(position);
+            if (currentUser.friendMap.containsKey(user.getObjectId())) {
+                user = currentUser.friendMap.get(user.getObjectId());
+            }
+            vImage.setImageBitmap(user.getPicture());
+            vText.setText(user.getName());
         }
         else {
             view = convertView;

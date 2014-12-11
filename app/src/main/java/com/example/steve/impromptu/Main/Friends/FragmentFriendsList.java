@@ -15,6 +15,7 @@ import android.widget.ListView;
 
 import com.example.steve.impromptu.Entity.FriendRequest;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
+import com.example.steve.impromptu.Main.ActivityMain;
 import com.example.steve.impromptu.Main.Compose.ArrayAdapters.ArrayAdapterFriendsList;
 import com.example.steve.impromptu.R;
 
@@ -53,7 +54,7 @@ public class FragmentFriendsList extends Fragment {
         vSearchBar = (EditText) fragmentView.findViewById(R.id.fragFriendsList_editText_search);
         vSearch = (ImageView) fragmentView.findViewById(R.id.fragFriendsList_imageView_search);
 
-        currentUser = (ImpromptuUser) ImpromptuUser.getCurrentUser();
+        currentUser = ((ActivityMain)getActivity()).currentUser;
 
 //        new LoadData().execute();
         // TODO *****

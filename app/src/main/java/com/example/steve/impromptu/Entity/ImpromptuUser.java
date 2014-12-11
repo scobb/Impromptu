@@ -6,6 +6,8 @@ import android.os.AsyncTask;
 import android.test.InstrumentationTestCase;
 import android.util.Log;
 
+import com.example.steve.impromptu.Main.ActivityMain;
+import com.example.steve.impromptu.Main.AsyncTasks.AsyncTaskPopulateEvents;
 import com.example.steve.impromptu.Main.AsyncTasks.AsyncTaskPopulateFriends;
 import com.facebook.Request;
 import com.facebook.RequestAsyncTask;
@@ -55,8 +57,12 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     private String name = null;
     private List<FriendRequest> toRequests = null;
     private List<ImpromptuUser> facebookFriends = null;
-    private List<ImpromptuUser> friends = null;
-    private List<Event> streamEvents = new ArrayList<>();
+    public List<ImpromptuUser> friends = null;
+    public List<Event> streamEvents = new ArrayList<>();
+    public HashMap<String, ImpromptuUser> friendMap = new HashMap<>();
+    public HashMap<String, Event> eventMap = new HashMap<>();
+    public List<Event> ownedEvents = new ArrayList<>();
+    public List<HashMap<String, String>> ownedEventsHashList = new ArrayList<>();
 
     public ImpromptuUser() {
         super();
@@ -125,6 +131,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     }
 
     public void setStreamEvents(List<Event> events) {
+        streamEvents = events;
         this.put(visibleEventsKey, events);
     }
 
@@ -135,12 +142,18 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     public List<Event> getOwnedEvents() {
         ParseQuery<Event> q = new ParseQuery<>(Event.class);
         q.whereEqualTo("owner", this);
-        try {
-            return q.find();
-        } catch (ParseException e) {
-            Log.e("Impromptu", "Exception getting owned events: ", e);
-        }
-        return new ArrayList<>();
+        q.findInBackground(new FindCallback<Event>() {
+            @Override
+            public void done(List<Event> events, ParseException e) {
+                // update in background for next go-round
+                ownedEvents = events;
+                for (Event event: events) {
+                    Log.d("Impromptu", "Updating hash list.");
+                    ownedEventsHashList.add(event.getHashMap());
+                }
+            }
+        });
+        return ownedEvents;
     }
 
     /**
@@ -213,45 +226,15 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
                         Log.e("Impromptu", "Error fetching.", e);
                     } else {
                         Log.d("Impromptu", "Successful fetch in bg.");
-                        List<Event> events = targ.getList(visibleEventsKey);
-                        long nowMillis = System.currentTimeMillis();
-                        Iterator<Event> i = events.iterator();
-                        while (i.hasNext()) {
-                            Event event = i.next();
-                            HashMap<String, String> args = new HashMap<>();
-                            long endMillis = event.getEventTime().getTime() + event.getDurationHour() * 3600 * 1000 + event.getDurationMinute() * 60 * 1000;
-                            Log.d("Impromptu", "nowMillis: " + nowMillis + "\nendMillis: " + endMillis);
-                            if (endMillis < nowMillis) {
-                                Log.d("Impromptu", "Would remove " + event.getObjectId());
-                                args.clear();
-                                args.put("eventId", event.getObjectId());
-                                ParseCloud.callFunctionInBackground("eventCleanup", args, null);
-                                i.remove();
-                            }
-                        }
-                        Collections.sort(events);
-                        targ.streamEvents = events;
-                        updateView.update(events);
+                        AsyncTaskPopulateEvents task = new AsyncTaskPopulateEvents();
+                        task.setUpdateView(updateView);
+                        task.execute(targ);
+                        // updateView.update(targ.get(str));
                     }
                 }
             });
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching User:", exc);
-        }
-        long nowMillis = System.currentTimeMillis();
-        Iterator<Event> i = streamEvents.iterator();
-        while (i.hasNext()){
-            Event event = i.next();
-            HashMap<String, String> args = new HashMap<>();
-            long endMillis = event.getEventTime().getTime() + event.getDurationHour() * 3600 * 1000 + event.getDurationMinute() * 60 * 1000;
-            Log.d("Impromptu", "nowMillis: " + nowMillis + "\nendMillis: " + endMillis);
-            if (endMillis < nowMillis){
-                Log.d("Impromptu", "Would remove " + event.getObjectId());
-                args.clear();
-                args.put("eventId", event.getObjectId());
-                ParseCloud.callFunctionInBackground("eventCleanup", args, null);
-                i.remove();
-            }
         }
         Log.d("Impromptu", "List Size: " + streamEvents.size());
 
@@ -428,6 +411,9 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
             friends = this.getList(friendsKey);
             this.verifyFriends(friends);
             Collections.sort(friends);
+            for (ImpromptuUser friend: friends) {
+                friendMap.put(friend.getObjectId(), friend);
+            }
         } else {
             populateFriendsInBackground();
         }

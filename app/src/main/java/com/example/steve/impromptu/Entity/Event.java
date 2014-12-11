@@ -292,13 +292,20 @@ public class Event extends ParseObject implements Comparable<Event> {
             Log.d("Impromptu", "Event " + eventDate);
             Log.d("Impromptu", "Current " + currentDate);
 
-
             long timeDifference = eventDate.getTime() - currentDate.getTime();
-            long hourDifference = TimeUnit.MILLISECONDS.toHours(timeDifference);
+            long hourDifference = (int) timeDifference / (60 * 60 * 1000) % 24;
+            int minuteDifference = (int) timeDifference / (60 * 1000) % 60;
 
-            int difference = (int) Math.ceil(hourDifference);
+            if(hourDifference == 0){
+                hashMap.put("date", "In about " + minuteDifference + " minutes");
+            }
+            else if(hourDifference < 0){
+                hashMap.put("date", "Occurring now");
+            }
+            else{
+                hashMap.put("date", "In about " + hourDifference + " hours");
+            }
 
-            hashMap.put("date", "In about " + difference + " hours");
             hashMap.put("title", this.getTitle());
             hashMap.put("content", this.getDescription());
         }
