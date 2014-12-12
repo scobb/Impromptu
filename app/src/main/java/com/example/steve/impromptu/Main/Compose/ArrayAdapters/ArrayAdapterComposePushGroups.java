@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.steve.impromptu.Entity.Group;
@@ -33,6 +34,7 @@ public class ArrayAdapterComposePushGroups extends ArrayAdapter<Group> {
 
     static class ViewHolder {
         protected TextView text;
+        protected ImageView image;
         protected CheckBox checkbox;
     }
 
@@ -49,6 +51,7 @@ public class ArrayAdapterComposePushGroups extends ArrayAdapter<Group> {
             view = inflater.inflate(R.layout.template_friend_item, null);
             final ViewHolder viewHolder = new ViewHolder();
             viewHolder.text = (TextView) view.findViewById(R.id.templateFriendItem_textView_friendName);
+            viewHolder.image = (ImageView) view.findViewById(R.id.templateFriendItem_imageView_picture);
             viewHolder.checkbox = (CheckBox) view.findViewById(R.id.templateFriendItem_checkBox_check);
             viewHolder.checkbox
                     .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -70,6 +73,7 @@ public class ArrayAdapterComposePushGroups extends ArrayAdapter<Group> {
         }
         ViewHolder holder = (ViewHolder) view.getTag();
         holder.text.setText(groupList.get(position).getGroupName());
+        holder.image.setVisibility(View.GONE);
         holder.checkbox.setChecked(groupList.get(position).isSelected());
         return view;
     }
