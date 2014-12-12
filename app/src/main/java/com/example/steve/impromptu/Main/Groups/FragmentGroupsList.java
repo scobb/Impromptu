@@ -52,8 +52,8 @@ public class FragmentGroupsList extends Fragment {
     ImageView vAddGroup;
     EditText vSearchBar;
     ImageView vSearch;
-    EditText vEditName;
-    ImageView vEdit;
+    EditText vCancelName;
+    ImageView vCancel;
     ImageView vAddToGroup;
 
     //TODO: add done & cancel, demolishFriendship() to remove friend and me from groups, add cancel to compose type
@@ -69,8 +69,8 @@ public class FragmentGroupsList extends Fragment {
         vAddGroup = (ImageView) fragmentView.findViewById(R.id.fragGroupsList_imageView_addGroup);
         vSearchBar = (EditText) fragmentView.findViewById(R.id.fragGroupsList_editText_search);
         vSearch = (ImageView) fragmentView.findViewById(R.id.fragGroupsList_imageView_search);
-        vEditName = (EditText) fragmentView.findViewById(R.id.fragGroupsList_editText_name);
-        vEdit = (ImageView) fragmentView.findViewById(R.id.fragGroupsList_imageView_edit);
+        vCancelName = (EditText) fragmentView.findViewById(R.id.fragGroupsList_editText_name);
+        vCancel = (ImageView) fragmentView.findViewById(R.id.fragGroupsList_imageView_cancel);
         vAddToGroup = (ImageView) fragmentView.findViewById(R.id.fragGroupsList_imageView_addFriend);
 
         currentUser = ((ActivityMain)getActivity()).currentUser;
@@ -110,9 +110,11 @@ public class FragmentGroupsList extends Fragment {
 
                 if (addToGroup) { // searching through masterFriendsList
                     for (FriendHolder holder : masterFriendsList) {
-                        if (textLength <= holder.getName().length()) {
-                            if (holder.getName().toLowerCase().contains(text)) {
-                                filteredFriendsList.add(holder);
+                        if (!currentGroup.getFriendsInGroup().contains(holder.getUser())) {
+                            if (textLength <= holder.getName().length()) {
+                                if (holder.getName().toLowerCase().contains(text)) {
+                                    filteredFriendsList.add(holder);
+                                }
                             }
                         }
                     }
@@ -142,9 +144,10 @@ public class FragmentGroupsList extends Fragment {
                 if (!addingOrEditingGroups) { // transition to finding FB friends on impromptu
                     switchToAddOrEditGroup();
                 } else { // transition to current groups
-                    currentGroup.setGroupName(vEditName.getText().toString());
+                    currentGroup.setGroupName(vCancelName.getText().toString());
                     if (currentGroup.getGroupName() != null && !currentGroup.getGroupName().isEmpty() && currentGroup.getFriendsInGroup() != null && !currentGroup.getFriendsInGroup().isEmpty()) {
 
+                        // TODO: remove this and replace with original code
                         new SaveNewGroup().execute();
 
                     } else {
@@ -159,6 +162,15 @@ public class FragmentGroupsList extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 currentGroup = groups.get(i);
                 switchToAddOrEditGroup();
+            }
+        });
+
+        vCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                switchToAllGroups();
+
             }
         });
 
@@ -182,6 +194,8 @@ public class FragmentGroupsList extends Fragment {
                 vFriendsInGroupList.setAdapter(editGroupAdapter);
             }
         });
+        
+        
 
         return fragmentView;
     }
@@ -193,8 +207,8 @@ public class FragmentGroupsList extends Fragment {
         vAddToGroup.setVisibility(View.GONE);
         vSearch.setVisibility(View.GONE);
         vSearchBar.setVisibility(View.GONE);
-        vEditName.setVisibility(View.GONE);
-        vEdit.setVisibility(View.GONE);
+        vCancelName.setVisibility(View.GONE);
+        vCancel.setVisibility(View.GONE);
         vGroupsList.setVisibility(View.VISIBLE);
         vFriendsInGroupList.setVisibility(View.GONE);
         vFriendsInGroupList.setAdapter(null);
@@ -209,17 +223,17 @@ public class FragmentGroupsList extends Fragment {
         filteredFriendsList.addAll(masterFriendsInGroupList);
         editGroupAdapter = new ArrayAdapterEditGroup(getActivity(), R.layout.template_add_to_group_item, filteredFriendsList, addToGroup, currentGroup);
         vFriendsInGroupList.setAdapter(editGroupAdapter);
-        vAddGroup.setImageResource(R.drawable.ic_action_previous_item);
+        vAddGroup.setImageResource(R.drawable.ic_action_accept);
         addingOrEditingGroups = true;
         vAddToGroup.setVisibility(View.VISIBLE);
         vSearch.setVisibility(View.VISIBLE);
         vSearchBar.setVisibility(View.VISIBLE);
-        vEditName.setVisibility(View.VISIBLE);
-        vEdit.setVisibility(View.VISIBLE);
+        vCancelName.setVisibility(View.VISIBLE);
+        vCancel.setVisibility(View.VISIBLE);
         vGroupsList.setVisibility(View.GONE);
         vGroupsList.setAdapter(null);
         vFriendsInGroupList.setVisibility(View.VISIBLE);
-        vEditName.setText(currentGroup.getGroupName());
+        vCancelName.setText(currentGroup.getGroupName());
     }
 
     @Override
