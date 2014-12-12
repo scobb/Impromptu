@@ -91,17 +91,19 @@ public class FragmentProfile extends ListFragment{
 
             }
 
-            // Initialize the adapter
-            SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList,
-                    R.layout.template_stream_event_item, from, to);
+            if (getActivity() != null) {
+                // If view is still active, initialize the adapter
+                SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList,
+                        R.layout.template_stream_event_item, from, to);
 
 
-            // Setting the list adapter for the ListFragment
-            eventsList.setAdapter(adapter);
+                // Setting the list adapter for the ListFragment
+                eventsList.setAdapter(adapter);
 
-            // Update the list adapter
-            adapter.notifyDataSetChanged();
-            Log.d("Impromptu", "Profile view updated.");
+                // Update the list adapter
+                adapter.notifyDataSetChanged();
+                Log.d("Impromptu", "Profile view updated.");
+            }
         }
     }
     List<Event> posts;
