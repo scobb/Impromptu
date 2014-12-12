@@ -23,15 +23,17 @@ import java.util.ArrayList;
 */
 public class ArrayAdapterEditGroup extends ArrayAdapter<FragmentGroupsList.FriendHolder> {
 
+    private ArrayList<FragmentGroupsList.FriendHolder> filteredList;
     private ArrayList<FragmentGroupsList.FriendHolder> masterList;
     private Context context;
     private Boolean isAddingToGroup = false;
     Group currentGroup = null;
 
     public ArrayAdapterEditGroup (Context context, int textViewResourceId,
-                                  ArrayList<FragmentGroupsList.FriendHolder> masterList, Boolean isAddingToGroup, Group currentGroup) {
-        super(context, textViewResourceId, masterList);
+                                  ArrayList<FragmentGroupsList.FriendHolder> filteredList/*, ArrayList<FragmentGroupsList.FriendHolder> masterList*/, Boolean isAddingToGroup, Group currentGroup) {
+        super(context, textViewResourceId, filteredList);
         this.context = context;
+        this.filteredList = filteredList;
         this.masterList = masterList;
         this.isAddingToGroup = isAddingToGroup;
         this.currentGroup = currentGroup;
@@ -39,12 +41,12 @@ public class ArrayAdapterEditGroup extends ArrayAdapter<FragmentGroupsList.Frien
 
     @Override
     public int getCount() {
-        return masterList.size();
+        return filteredList.size();
     }
 
     @Override
     public FragmentGroupsList.FriendHolder getItem(int position) {
-        return masterList.get(position);
+        return filteredList.get(position);
     }
 
     @Override
@@ -61,7 +63,7 @@ public class ArrayAdapterEditGroup extends ArrayAdapter<FragmentGroupsList.Frien
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(
                     Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.template_add_to_group_item, null);
-            FragmentGroupsList.FriendHolder holder = masterList.get(position);
+            FragmentGroupsList.FriendHolder holder = filteredList.get(position);
             ImageView vPicture = (ImageView) view.findViewById(R.id.templateAddToGroupItem_imageView_picture);
             final ImageView vChange = (ImageView) view.findViewById(R.id.templateAddToGroupItem_imageView_change);
             TextView vName = (TextView) view.findViewById(R.id.templateAddToGroupItem_textView_name);
@@ -83,11 +85,12 @@ public class ArrayAdapterEditGroup extends ArrayAdapter<FragmentGroupsList.Frien
                     @Override
                     public void onClick(View view) {
 
-                        ImpromptuUser newGroupMember = masterList.get(position).getUser();
+                        ImpromptuUser newGroupMember = filteredList.get(position).getUser();
                         ArrayList<ImpromptuUser> friendsInGroup = (ArrayList<ImpromptuUser>) currentGroup.getFriendsInGroup();
                         if (!friendsInGroup.isEmpty()) {
                             if (!currentGroup.getFriendsInGroup().contains(newGroupMember)) {
                                 currentGroup.add(newGroupMember);
+//                                masterList.add(filteredList.get(position));
 
                                 int color = context.getResources().getColor(R.color.impromptu_add_green);
                                 View parent = (View) view.getParent();
@@ -115,7 +118,7 @@ public class ArrayAdapterEditGroup extends ArrayAdapter<FragmentGroupsList.Frien
                     @Override
                     public void onClick(View view) {
 
-                        ImpromptuUser removeGroupMember = masterList.get(position).getUser();
+                        ImpromptuUser removeGroupMember = filteredList.get(position).getUser();
                         currentGroup.remove(removeGroupMember);
 
                         int color = context.getResources().getColor(R.color.impromptu_remove_red);

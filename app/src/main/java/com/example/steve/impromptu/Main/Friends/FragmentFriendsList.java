@@ -132,16 +132,18 @@ public class FragmentFriendsList extends Fragment {
                 String text = charSequence.toString().toLowerCase();
                 filteredList.clear();
 
-                ArrayList<FriendAndRequestHolder> useThisList = new ArrayList<>();
+                ArrayList<FriendAndRequestHolder> useThisList;
                 if (addingFriends) {
                     useThisList = masterFacebookFriendsList;
                 } else {
                     useThisList = masterFriendsList;
                 }
                 for (FriendAndRequestHolder holder : useThisList) {
-                    if (textLength <= holder.getName().length()) {
-                        if (holder.getName().toLowerCase().contains(text)) {
-                            filteredList.add(holder);
+                    if (currentUser.getFriends().contains(holder.getUser())) {
+                        if (textLength <= holder.getName().length()) {
+                            if (holder.getName().toLowerCase().contains(text)) {
+                                filteredList.add(holder);
+                            }
                         }
                     }
                 }

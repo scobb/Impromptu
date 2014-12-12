@@ -110,9 +110,11 @@ public class FragmentGroupsList extends Fragment {
 
                 if (addToGroup) { // searching through masterFriendsList
                     for (FriendHolder holder : masterFriendsList) {
-                        if (textLength <= holder.getName().length()) {
-                            if (holder.getName().toLowerCase().contains(text)) {
-                                filteredFriendsList.add(holder);
+                        if (!currentGroup.getFriendsInGroup().contains(holder.getUser())) {
+                            if (textLength <= holder.getName().length()) {
+                                if (holder.getName().toLowerCase().contains(text)) {
+                                    filteredFriendsList.add(holder);
+                                }
                             }
                         }
                     }
