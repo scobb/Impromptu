@@ -353,7 +353,7 @@ public class FragmentEventDetail extends Fragment{
                     for (ImpromptuUser user: users) {
                         if (currentUser.friendMap.containsKey(user.getObjectId())){
                             // get version with picture already fetched.
-                            Log.d("Impromptu", "attendee is in the map.");
+                            Log.d("Impromptu", "attendee " + user.getName() + " is in the map.");
                             usersAttending.add(currentUser.friendMap.get(user.getObjectId()));
                         } else {
                             Log.d("Impromptu", "attendee not in the map.");
