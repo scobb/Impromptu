@@ -87,6 +87,7 @@ public class FragmentProfile extends ListFragment{
         public void update(List<Event> events) {
             List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
             for (Event post : events) {
+                // TODO - why are these titles not displaying properly?
                 aList.add(post.getHashMap());
 
             }
@@ -109,10 +110,10 @@ public class FragmentProfile extends ListFragment{
     List<Event> posts;
     ImpromptuUser currentUser;
     // Keys used in HashMap
-    private String[] from = {"picture", "user", "content", "date"};
+    private String[] from = {"picture", "user", "title", "content", "date"};
 
     // Ids of views in listview layout
-    private int[] to ={R.id.fragStream_imageView_picture, R.id.fragStream_textView_user,
+    private int[] to ={R.id.fragStream_imageView_picture, R.id.fragStream_textView_user, R.id.fragStream_textView_title,
             R.id.fragStream_textView_content, R.id.fragStream_textView_date};
 
 
@@ -145,6 +146,8 @@ public class FragmentProfile extends ListFragment{
         } else  {
             targetUser = ImpromptuUser.getUserById(userData.getString("ownerId"));
         }
+        // fill cache
+        targetUser.getOwnedEvents();
 
         // Fill in the fields
         nameView.setText(targetUser.getName());
@@ -155,11 +158,7 @@ public class FragmentProfile extends ListFragment{
         query.whereEqualTo("owner", targetUser);
         // TODO - add some loading icon where events will be? Also, if we change this to only be the current user, we can cache these.
         // Initialize the adapter
-        if (targetUser.ownedEventsHashList.isEmpty()) {
-            // cache for later
-            Log.d("Impromptu", "DAT list is empty");
-            targetUser.getOwnedEvents();
-        }
+
         SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), targetUser.ownedEventsHashList,
                 R.layout.template_stream_event_item, from, to);
 
@@ -178,35 +177,6 @@ public class FragmentProfile extends ListFragment{
                     AsyncTaskPopulateOwnedEvents task = new AsyncTaskPopulateOwnedEvents();
                     task.setUpdateView(new ProfileUpdateView());
                     task.execute(posts);
-//                    Iterator<Event> i = posts.iterator();
-//                    HashMap<String, String> args = new HashMap<>();
-//                    while (i.hasNext()) {
-//                        Event event = i.next();
-//                        long endMillis = event.getEventTime().getTime() + event.getDurationHour() * 3600 * 1000 + event.getDurationMinute() * 60 * 1000;
-//                        long nowMillis = new Date().getTime();
-//                        if (nowMillis > endMillis) {
-//                            args.clear();
-//                            args.put("eventId", event.getObjectId());
-//                            ParseCloud.callFunctionInBackground("eventCleanup", args, null);
-//                            i.remove();
-//                        }
-//                    }
-//                    List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
-//                    for (Event post : posts) {
-//                        aList.add(post.getHashMap());
-//
-//                    }
-//
-//                    // Initialize the adapter
-//                    SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList,
-//                            R.layout.template_stream_event_item, from, to);
-//
-//
-//                    // Setting the list adapter for the ListFragment
-//                    eventsList.setAdapter(adapter);
-//
-//                    // Update the list adapter
-//                    adapter.notifyDataSetChanged();
 
                 } else {
                     // Error in query

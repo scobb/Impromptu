@@ -142,14 +142,20 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     public List<Event> getOwnedEvents() {
         ParseQuery<Event> q = new ParseQuery<>(Event.class);
         q.whereEqualTo("owner", this);
+        final ImpromptuUser targ = this;
         q.findInBackground(new FindCallback<Event>() {
             @Override
             public void done(List<Event> events, ParseException e) {
                 // update in background for next go-round
-                ownedEvents = events;
-                for (Event event: events) {
-                    Log.d("Impromptu", "Updating hash list.");
-                    ownedEventsHashList.add(event.getHashMap());
+                if (e != null) {
+                    Log.e("Impromptu", "Erorr finding", e);
+                } else {
+                    targ.ownedEvents = events;
+                    Log.d("Impromptu", "cached owned events length: " + targ.ownedEvents.size());
+                    for (Event event : events) {
+                        Log.d("Impromptu", "Updating hash list.");
+                        ownedEventsHashList.add(event.getHashMap());
+                    }
                 }
             }
         });
