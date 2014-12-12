@@ -33,6 +33,7 @@ import com.example.steve.impromptu.Main.Friends.FragmentFriendsList;
 import com.example.steve.impromptu.Main.Groups.FragmentGroupsList;
 import com.example.steve.impromptu.Main.Profile.FragmentProfile;
 import com.example.steve.impromptu.R;
+import com.google.android.gms.maps.model.LatLng;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParsePush;

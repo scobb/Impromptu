@@ -2,6 +2,7 @@ package com.example.steve.impromptu.Main;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -45,13 +46,9 @@ public class FragmentEventDetail extends Fragment{
     private FragmentActivity myContext;
     private ImageView vBack;
 
-    ScrollableMapFragment mf;
-//    private GoogleMap vMap;
-//    private boolean mapVisibility = false;
 
     private ImpromptuUser owner;
     private Event event;
-//    private Marker marker;
     private LinearLayout vOpenInGMaps;
 
     private static final LatLng defaultLocation = new LatLng(30.2864802, -97.74116620000001); //UT Austin ^___^
@@ -150,8 +147,6 @@ public class FragmentEventDetail extends Fragment{
             joinTextView.setText("Join");
         }
 
-
-//        initiateMap();
         refreshPeopleAttendingList();
 
 
@@ -177,24 +172,17 @@ public class FragmentEventDetail extends Fragment{
             @Override
             public void onClick(View v) {
 
-                // TODO: open new fragment
-//                if(!mapVisibility){
-//                    // if not visibile
-//                    // Sets the map location
-//                    vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(event.getLatitude(), event.getLongitude()), 16.0f));
-//
-//                    // Show map
-//                    mf.getView().setVisibility(View.VISIBLE);
-//                    vOpenInGMaps.setVisibility(View.VISIBLE);
-//
-//                    mapVisibility = true;
-//                }
-//                else{
-//                    // Hide map
-//                    mf.getView().setVisibility(View.GONE);
-//                    vOpenInGMaps.setVisibility(View.GONE);
-//                    mapVisibility = false;
-//                }
+
+                FragmentMapDetail fmd = new FragmentMapDetail();
+                FragmentTransaction transaction = getActivity().getFragmentManager().beginTransaction();
+
+                Bundle eventData = new Bundle();
+                eventData.putString("eventKey", event.getObjectId());
+                fmd.setArguments(eventData);
+
+                transaction.addToBackStack(null);
+                transaction.replace(R.id.activityMain_frameLayout_shell, fmd);
+                transaction.commit();
 
             }
         });
@@ -202,7 +190,7 @@ public class FragmentEventDetail extends Fragment{
         vOpenInGMaps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: implement
+                //TODO: refactor get location code
 
                 LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
                 String locationProvider = LocationManager.NETWORK_PROVIDER;
@@ -297,45 +285,6 @@ public class FragmentEventDetail extends Fragment{
             throw new ClassCastException(activity.toString()
                     + " must implement all listeners");
         }
-    }
-
-
-
-//    public void initiateMap(){
-//
-//        // Replace map
-//        mf = (ScrollableMapFragment) myContext.getSupportFragmentManager()
-//                .findFragmentById(R.id.fragEventDetail_location_map);
-//        vMap = mf.getMap();
-//
-//        mf.getView().setVisibility(View.GONE);
-//
-//        ((ScrollableMapFragment) myContext.getSupportFragmentManager().findFragmentById(R.id.fragEventDetail_location_map))
-//                .setListener(new ScrollableMapFragment.OnTouchListener() {
-//
-//                    @Override
-//                    public void onTouch() {
-//                        mObservableScrollView.requestDisallowInterceptTouchEvent(true);
-//                    }
-//                });
-//    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-//        marker.remove();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        boolean flag = true;
-
-            // Places marker
-//            marker = vMap.addMarker(new MarkerOptions().position(new LatLng(event.getLatitude(), event.getLongitude()))
-//                    .title(event.getTitle()).snippet(event.getDescription()));
     }
 
     private void refreshPeopleAttendingList(){
