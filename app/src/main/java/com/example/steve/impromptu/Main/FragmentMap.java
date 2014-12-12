@@ -18,6 +18,8 @@ import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
+import com.example.steve.impromptu.Entity.UpdateView;
+import com.example.steve.impromptu.Main.AsyncTasks.AsyncTaskPopulateEvents;
 import com.example.steve.impromptu.R;
 import com.example.steve.impromptu.UI.ScrollableMapFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -52,10 +54,26 @@ public class FragmentMap extends Fragment {
 
     private static View myInflatedView;
     private boolean markersDisplayed;
+    private LinearLayout progressLayout;
+    public MapUpdateView myMapUpdateView;
+
+    public class MapUpdateView extends UpdateView {
+        @Override
+        public void update(List<Event> events) {
+            addEventsToMap(events);
+        }
+
+        @Override
+        public void clearLoad() {
+            progressLayout.setVisibility(View.INVISIBLE);
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        myMapUpdateView = new MapUpdateView();
+        progressLayout = (LinearLayout)getActivity().findViewById(R.id.activityMain_linearLayout_progressContainer);
         // Get Views
         if (myInflatedView != null) {
             ViewGroup parent = (ViewGroup) myInflatedView.getParent();
@@ -97,9 +115,10 @@ public class FragmentMap extends Fragment {
         });
 
         ImpromptuUser currentUser = (ImpromptuUser) ParseUser.getCurrentUser();
-        List<Event> events = currentUser.getStreamEvents();
+        progressLayout.setVisibility(View.VISIBLE);
+        List<Event> events = currentUser.getStreamEvents(myMapUpdateView);
+        myMapUpdateView.update(events);
         markersDisplayed = false;
-        addEventsToMap(events);
         vScrollView = (ScrollView) myInflatedView.findViewById(R.id.fragMap_scrollView);
         vEventDetail = (LinearLayout) myInflatedView.findViewById(R.id.fragMap_linearLayout_eventDetail);
 
