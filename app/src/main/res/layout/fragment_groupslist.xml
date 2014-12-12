@@ -34,11 +34,12 @@
             android:maxLines="1" />
 
         <ImageView
-            android:id="@+id/fragGroupsList_imageView_edit"
+            android:id="@+id/fragGroupsList_imageView_cancel"
             android:visibility="gone"
+            android:layout_marginLeft="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_edit" />
+            android:src="@drawable/ic_action_remove" />
     </LinearLayout>
 
     <LinearLayout
@@ -68,6 +69,7 @@
         <ImageView
             android:id="@+id/fragGroupsList_imageView_search"
             android:visibility="gone"
+            android:layout_marginLeft="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_action_search" />
