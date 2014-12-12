@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.text.format.Time;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +13,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import java.util.Date;
 
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.Main.ActivityMain;
 import com.example.steve.impromptu.R;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -118,12 +117,12 @@ public class FragmentComposeMain extends Fragment {
 
 
         }
-//how do I get it to go to the select type page?
+
         vType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Toast.makeText(getActivity(), "Select type", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), "Select type", Toast.LENGTH_SHORT).show();
                 String attribute = "type";
                 attributeSelectedListenerCallback.OnAttributeSelected(attribute);
 

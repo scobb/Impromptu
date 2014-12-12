@@ -1,29 +1,30 @@
-<com.example.steve.impromptu.UI.ObservableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/scroll_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_weight="1">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
-        android:orientation="vertical"
-        tools:context="com.example.steve.impromptu.Main.FragmentEventDetail">
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:gravity="center_vertical"
             android:layout_marginTop="8dp">
 
             <ImageView
                 android:id="@+id/fragEventDetail_imageView_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:src="@drawable/ic_action_previous_item" />
 
             <Space
@@ -31,17 +32,42 @@
                 android:layout_weight="1"
                 android:layout_height="match_parent" />
 
-        </LinearLayout>
+            <TextView
+                android:id="@+id/fragEventDetail_textView_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="@dimen/text_padding_event_detail"
+                android:text="Event Title"
+                android:textSize="24sp"
+                android:fontFamily="sans-serif-light" />
 
-        <TextView
-            android:id="@+id/fragEventDetail_textView_title"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:padding="@dimen/text_padding_event_detail"
-            android:text="Event Title"
-            android:textSize="24sp"
-            android:fontFamily="sans-serif-light" />
+            <Space
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent" />
+
+            <LinearLayout
+                android:id="@+id/fragEventDetail_linearLayout_join"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:background="@drawable/gray_round_background">
+
+                <TextView
+                    android:id="@+id/fragEventDetail_textView_join"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:fontFamily="sans-serif"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:text="Join" />
+
+
+            </LinearLayout>
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/fragEventDetail_linearLayout_owner"
@@ -164,14 +190,14 @@
             </LinearLayout>
 
 
-            <fragment
-                android:layout_marginTop="16dp"
-                android:id="@+id/fragEventDetail_location_map"
-                android:layout_width="match_parent"
-                android:layout_height="350dp"
-                android:scaleType="fitCenter"
-                android:visibility="gone"
-                class="com.example.steve.impromptu.UI.ScrollableMapFragment" />
+            <!--<fragment-->
+                <!--android:layout_marginTop="16dp"-->
+                <!--android:id="@+id/fragEventDetail_location_map"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="350dp"-->
+                <!--android:scaleType="fitCenter"-->
+                <!--android:visibility="gone"-->
+                <!--class="com.example.steve.impromptu.UI.ScrollableMapFragment" />-->
 
             <LinearLayout
                 android:id="@+id/fragEventDetail_linearLayout_openInGMaps"
@@ -209,27 +235,6 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/fragEventDetail_linearLayout_join"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="16sp"
-            android:background="@drawable/gray_round_background">
-
-            <TextView
-                android:id="@+id/fragEventDetail_textView_join"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:fontFamily="sans-serif"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:text="Join" />
-
-
-        </LinearLayout>
-
-        <LinearLayout
             android:id="@+id/fragEventDetail_linearLayout_peopleInvited"
             android:orientation="vertical"
             android:layout_height="wrap_content"
@@ -260,5 +265,5 @@
     </LinearLayout>
 
 
-</com.example.steve.impromptu.UI.ObservableScrollView>
+</ScrollView>
 

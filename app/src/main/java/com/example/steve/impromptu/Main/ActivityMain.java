@@ -17,11 +17,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.steve.impromptu.Entity.Event;
-import com.example.steve.impromptu.Entity.FriendRequest;
-import com.example.steve.impromptu.Entity.Group;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.Login.ActivityLogin;
 import com.example.steve.impromptu.Main.Compose.FragmentComposeLocation;
@@ -36,10 +33,8 @@ import com.example.steve.impromptu.Main.Friends.FragmentFriendsList;
 import com.example.steve.impromptu.Main.Groups.FragmentGroupsList;
 import com.example.steve.impromptu.Main.Profile.FragmentProfile;
 import com.example.steve.impromptu.R;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
-import com.parse.ParseObject;
 import com.parse.ParsePush;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -48,7 +43,7 @@ import java.util.Hashtable;
 
 public class ActivityMain extends FragmentActivity implements FragmentComposeTime.OnComposeTimeFinishedListener, FragmentComposeMain.OnAttributeSelectedListener,
         FragmentComposeMain.OnComposeMainFinishedListener, FragmentComposeLocation.OnComposeLocationFinishedListener, FragmentComposePush.OnComposePushFinishedListener, FragmentComposePush.OnComposePushChooseGroupsListener
-        , FragmentComposePushGroups.OnComposePushChooseGroupsFinishedListener, FragmentComposeStream.OnComposeStreamChooseGroupsListener, FragmentComposeStream.OnComposeStreamFinishedListener, FragmentComposeStreamGroups.OnComposeStreamChooseGroupsFinishedListener, FragmentComposeType.OnComposeTypeFinishedListener {
+        , FragmentComposePushGroups.OnComposePushChooseGroupsFinishedListener, FragmentComposeStream.OnComposeStreamChooseGroupsListener, FragmentComposeStream.OnComposeStreamFinishedListener, FragmentComposeStreamGroups.OnComposeStreamChooseGroupsFinishedListener, FragmentComposeType.OnComposeTypeFinishedListener, FragmentEventDetail.OnBackToStreamListener {
 
 
     Event composeEvent;
@@ -337,6 +332,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     @Override
     public void OnAttributeSelected(String attribute) {
 
+//        InputMethodManager imm = (InputMethodManager) this.getSystemService(Service.INPUT_METHOD_SERVICE);
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         Fragment frag;
@@ -353,6 +349,8 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
                 break;
             case "type":
                 frag = new FragmentComposeType();
+                // TODO: hide keyboard for convenience
+//                imm.hideSoftInputFromWindow(, 0);
                 break;
             case "stream":
                 frag = new FragmentComposeStream();
@@ -370,7 +368,7 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
     public void onComposeMainFinished(Boolean create) {
         if (create) {
 
-            Toast.makeText(this, "create new event", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "create new event", Toast.LENGTH_SHORT).show();
 
             Event myEvent = getComposeEvent();
             myEvent.addUserGoing((ImpromptuUser) ImpromptuUser.getCurrentUser());
@@ -448,6 +446,27 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         FragmentComposeMain fragment = new FragmentComposeMain();
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment);
+        fragmentTransaction.commit();
+    }
+
+    @Override
+    public void OnBackToStream() {
+        // TODO: maybe just pop fragment off the backstack?
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        Fragment fragment;
+
+        if (locationWithinApp.equals("Stream")) {
+            fragment = new FragmentStream();
+        }
+        else if (locationWithinApp.equals("Map")) {
+            fragment = new FragmentMap();
+        }
+        else {
+            // default return location
+            fragment = new FragmentStream();
+        }
         fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment);
         fragmentTransaction.commit();
     }

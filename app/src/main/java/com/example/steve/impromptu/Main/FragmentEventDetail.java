@@ -2,7 +2,6 @@ package com.example.steve.impromptu.Main;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -15,26 +14,18 @@ import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.example.steve.impromptu.Entity.Event;
-import com.example.steve.impromptu.Entity.FriendRequest;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.Main.Compose.ArrayAdapters.ArrayAdapterPeopleAttending;
-import com.example.steve.impromptu.Main.Profile.FragmentProfile;
 import com.example.steve.impromptu.R;
 import com.example.steve.impromptu.UI.ObservableScrollView;
 import com.example.steve.impromptu.UI.ScrollableMapFragment;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -55,12 +46,12 @@ public class FragmentEventDetail extends Fragment{
     private ImageView vBack;
 
     ScrollableMapFragment mf;
-    private GoogleMap vMap;
-    private boolean mapVisibility = false;
+//    private GoogleMap vMap;
+//    private boolean mapVisibility = false;
 
     private ImpromptuUser owner;
     private Event event;
-    private Marker marker;
+//    private Marker marker;
     private LinearLayout vOpenInGMaps;
 
     private static final LatLng defaultLocation = new LatLng(30.2864802, -97.74116620000001); //UT Austin ^___^
@@ -73,6 +64,11 @@ public class FragmentEventDetail extends Fragment{
     private ImpromptuUser currentUser;
     TextView joinTextView;
 
+    OnBackToStreamListener mCallback;
+
+    public interface OnBackToStreamListener {
+        public void OnBackToStream();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -94,7 +90,7 @@ public class FragmentEventDetail extends Fragment{
         }
 
 
-        LinearLayout ownerLayout = (LinearLayout) myInflatedView.findViewById(R.id.fragEventDetail_linearLayout_owner);
+//        LinearLayout ownerLayout = (LinearLayout) myInflatedView.findViewById(R.id.fragEventDetail_linearLayout_owner);
         TextView titleTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_title);
         TextView ownerTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_owner);
         TextView descriptionTextView = (TextView) myInflatedView.findViewById(R.id.fragEventDetail_textView_description);
@@ -112,7 +108,7 @@ public class FragmentEventDetail extends Fragment{
         LinearLayout locationLayout = (LinearLayout) myInflatedView.findViewById(R.id.fragEventDetail_linearLayout_location);
 
         // Set up the quick return layout bar
-        mObservableScrollView = (ObservableScrollView) myInflatedView.findViewById(R.id.scroll_view);
+//        mObservableScrollView = (ObservableScrollView) myInflatedView.findViewById(R.id.scroll_view);
 
 
         currentUser = ((ActivityMain)getActivity()).currentUser;
@@ -155,49 +151,50 @@ public class FragmentEventDetail extends Fragment{
         }
 
 
-        initiateMap();
+//        initiateMap();
         refreshPeopleAttendingList();
 
 
-        ownerLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                // Bundle up the data getting passed
-                Bundle userData = new Bundle();
-                userData.putString("ownerId", owner.getObjectId());
-
-
-                // Set up the fragment transaction
-                FragmentTransaction transaction = getActivity().getFragmentManager().beginTransaction();
-                FragmentProfile fragment = new FragmentProfile();
-                fragment.setArguments(userData);
-                transaction.replace(R.id.activityMain_frameLayout_shell, fragment);
-                transaction.addToBackStack(null).commit();
-            }
-        });
+//        ownerLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                // Bundle up the data getting passed
+//                Bundle userData = new Bundle();
+//                userData.putString("ownerId", owner.getObjectId());
+//
+//
+//                // Set up the fragment transaction
+//                FragmentTransaction transaction = getActivity().getFragmentManager().beginTransaction();
+//                FragmentProfile fragment = new FragmentProfile();
+//                fragment.setArguments(userData);
+//                transaction.replace(R.id.activityMain_frameLayout_shell, fragment);
+//                transaction.addToBackStack(null).commit();
+//            }
+//        });
 
         locationLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if(!mapVisibility){
-                    // if not visibile
-                    // Sets the map location
-                    vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(event.getLatitude(), event.getLongitude()), 16.0f));
-
-                    // Show map
-                    mf.getView().setVisibility(View.VISIBLE);
-                    vOpenInGMaps.setVisibility(View.VISIBLE);
-
-                    mapVisibility = true;
-                }
-                else{
-                    // Hide map
-                    mf.getView().setVisibility(View.GONE);
-                    vOpenInGMaps.setVisibility(View.GONE);
-                    mapVisibility = false;
-                }
+                // TODO: open new fragment
+//                if(!mapVisibility){
+//                    // if not visibile
+//                    // Sets the map location
+//                    vMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(event.getLatitude(), event.getLongitude()), 16.0f));
+//
+//                    // Show map
+//                    mf.getView().setVisibility(View.VISIBLE);
+//                    vOpenInGMaps.setVisibility(View.VISIBLE);
+//
+//                    mapVisibility = true;
+//                }
+//                else{
+//                    // Hide map
+//                    mf.getView().setVisibility(View.GONE);
+//                    vOpenInGMaps.setVisibility(View.GONE);
+//                    mapVisibility = false;
+//                }
 
             }
         });
@@ -234,31 +231,31 @@ public class FragmentEventDetail extends Fragment{
             @Override
             public void onClick(View view) {
 
-                // TODO implement!!!!
+                mCallback.OnBackToStream();
 
             }
         });
 
-        userAttendingList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                // Bundle up the data getting passed
-                Bundle userData = new Bundle();
-
-                // TODO need to make this check if it is the current user
-                userData.putString("ownerId", usersAttending.get(i).getObjectId());
-
-
-                // Set up the fragment transaction
-                FragmentTransaction transaction = getActivity().getFragmentManager().beginTransaction();
-                FragmentProfile fragment = new FragmentProfile();
-                fragment.setArguments(userData);
-                transaction.replace(R.id.activityMain_frameLayout_shell, fragment);
-                transaction.addToBackStack(null).commit();
-
-            }
-        });
+//        userAttendingList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//
+//                // Bundle up the data getting passed
+//                Bundle userData = new Bundle();
+//
+//                // TODO need to make this check if it is the current user
+//                userData.putString("ownerId", usersAttending.get(i).getObjectId());
+//
+//
+//                // Set up the fragment transaction
+//                FragmentTransaction transaction = getActivity().getFragmentManager().beginTransaction();
+//                FragmentProfile fragment = new FragmentProfile();
+//                fragment.setArguments(userData);
+//                transaction.replace(R.id.activityMain_frameLayout_shell, fragment);
+//                transaction.addToBackStack(null).commit();
+//
+//            }
+//        });
 
 
 
@@ -293,34 +290,41 @@ public class FragmentEventDetail extends Fragment{
     public void onAttach(Activity activity) {
         myContext=(FragmentActivity) activity;
         super.onAttach(activity);
+
+        try {
+            mCallback = (OnBackToStreamListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement all listeners");
+        }
     }
 
 
 
-    public void initiateMap(){
-
-        // Replace map
-        mf = (ScrollableMapFragment) myContext.getSupportFragmentManager()
-                .findFragmentById(R.id.fragEventDetail_location_map);
-        vMap = mf.getMap();
-
-        mf.getView().setVisibility(View.GONE);
-
-        ((ScrollableMapFragment) myContext.getSupportFragmentManager().findFragmentById(R.id.fragEventDetail_location_map))
-                .setListener(new ScrollableMapFragment.OnTouchListener() {
-
-                    @Override
-                    public void onTouch() {
-                        mObservableScrollView.requestDisallowInterceptTouchEvent(true);
-                    }
-                });
-    }
+//    public void initiateMap(){
+//
+//        // Replace map
+//        mf = (ScrollableMapFragment) myContext.getSupportFragmentManager()
+//                .findFragmentById(R.id.fragEventDetail_location_map);
+//        vMap = mf.getMap();
+//
+//        mf.getView().setVisibility(View.GONE);
+//
+//        ((ScrollableMapFragment) myContext.getSupportFragmentManager().findFragmentById(R.id.fragEventDetail_location_map))
+//                .setListener(new ScrollableMapFragment.OnTouchListener() {
+//
+//                    @Override
+//                    public void onTouch() {
+//                        mObservableScrollView.requestDisallowInterceptTouchEvent(true);
+//                    }
+//                });
+//    }
 
     @Override
     public void onPause() {
         super.onPause();
 
-        marker.remove();
+//        marker.remove();
     }
 
     @Override
@@ -330,8 +334,8 @@ public class FragmentEventDetail extends Fragment{
         boolean flag = true;
 
             // Places marker
-            marker = vMap.addMarker(new MarkerOptions().position(new LatLng(event.getLatitude(), event.getLongitude()))
-                    .title(event.getTitle()).snippet(event.getDescription()));
+//            marker = vMap.addMarker(new MarkerOptions().position(new LatLng(event.getLatitude(), event.getLongitude()))
+//                    .title(event.getTitle()).snippet(event.getDescription()));
     }
 
     private void refreshPeopleAttendingList(){
