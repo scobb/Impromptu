@@ -19,7 +19,6 @@ import android.widget.Toast;
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.Entity.UpdateView;
-import com.example.steve.impromptu.Main.AsyncTasks.AsyncTaskPopulateEvents;
 import com.example.steve.impromptu.R;
 import com.example.steve.impromptu.UI.ScrollableMapFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -218,10 +217,13 @@ public class FragmentMap extends Fragment {
                     .position(new LatLng(event.getLatitude(), event.getLongitude()))));
         }
 
-        LocationManager locationManager = (LocationManager) this.getActivity().getSystemService(Context.LOCATION_SERVICE);
-        String locationProvider = LocationManager.NETWORK_PROVIDER;
-        //Or use LocationManager.GPS_PROVIDER
-        Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
+        Location lastKnownLocation = null;
+        if (this.isVisible()) {
+            LocationManager locationManager = (LocationManager) this.getActivity().getSystemService(Context.LOCATION_SERVICE);
+            String locationProvider = LocationManager.NETWORK_PROVIDER;
+            //Or use LocationManager.GPS_PROVIDER
+            lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
+        }
 
         if(lastKnownLocation == null)
         {
