@@ -35,8 +35,17 @@ public class FragmentProfile extends ListFragment{
     ListView eventsList;
     private LinearLayout progressContainer;
 
+
+    List<Event> posts;
+    ImpromptuUser currentUser;
+    // Keys used in HashMap
+    private String[] from = {"picture", "user", "title", "content", "date"};
+
+    // Ids of views in listview layout
+    private int[] to ={R.id.fragStream_imageView_picture, R.id.fragStream_textView_user, R.id.fragStream_textView_title,
+            R.id.fragStream_textView_content, R.id.fragStream_textView_date};
+
     public class ProfileUpdateView extends UpdateView {
-        @Override
         public void update(List<Event> events) {
             List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
             for (Event post : events) {
@@ -66,14 +75,6 @@ public class FragmentProfile extends ListFragment{
         }
 
     }
-    List<Event> posts;
-    ImpromptuUser currentUser;
-    // Keys used in HashMap
-    private String[] from = {"picture", "user", "title", "content", "date"};
-
-    // Ids of views in listview layout
-    private int[] to ={R.id.fragStream_imageView_picture, R.id.fragStream_textView_user, R.id.fragStream_textView_title,
-            R.id.fragStream_textView_content, R.id.fragStream_textView_date};
 
 
     @Override
@@ -87,8 +88,8 @@ public class FragmentProfile extends ListFragment{
 
         // Get Views
         final View myInflatedView = inflater.inflate(R.layout.fragment_profile, container, false);
+        final LinearLayout vLogOut = (LinearLayout) myInflatedView.findViewById(R.id.fragProfile_linearLayout_logout);
         final TextView nameView = (TextView) myInflatedView.findViewById(R.id.fragProfile_textView_name);
-        final TextView emailView = (TextView) myInflatedView.findViewById(R.id.fragProfile_textView_email);
         final ImageView profileView = (ImageView) myInflatedView.findViewById(R.id.fragProfile_imageView_profilePic);
 
         eventsList = (ListView) myInflatedView.findViewById(android.R.id.list);
@@ -113,7 +114,6 @@ public class FragmentProfile extends ListFragment{
 
         // Fill in the fields
         nameView.setText(targetUser.getName());
-        emailView.setText(targetUser.getEmail());
         profileView.setImageBitmap(targetUser.getPicture());
 
         ParseQuery<Event> query = new ParseQuery<>("Event");
@@ -145,6 +145,13 @@ public class FragmentProfile extends ListFragment{
                     e.printStackTrace();
                 }
 
+            }
+        });
+
+        vLogOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((ActivityMain) getActivity()).onLogoutClicked(view);
             }
         });
 

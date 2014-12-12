@@ -4,11 +4,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.steve.impromptu.Entity.Event;
-import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.Entity.UpdateView;
 import com.parse.ParseCloud;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -50,6 +48,6 @@ public class AsyncTaskPopulateOwnedEvents extends AsyncTask<List<Event>, Void, L
     protected void onPostExecute(List<Event> events) {
         Log.d("Impromptu", "Updating dat view");
         updateView.update(events);
-
+        updateView.clearLoad();
     }
 }
