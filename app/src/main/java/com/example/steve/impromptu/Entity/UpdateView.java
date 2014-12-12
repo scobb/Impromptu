@@ -8,4 +8,7 @@ import java.util.List;
 public abstract class UpdateView {
     public UpdateView() {}
     public abstract void update(List<Event> events);
+    public void clearLoad() {
+        // optional implementation
+    }
 }

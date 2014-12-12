@@ -51,7 +51,22 @@
             android:id="@+id/activityMain_space_extra_2.5"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"></Space>
+            android:layout_weight=".7"></Space>
+        <LinearLayout
+            android:id="@+id/activityMain_linearLayout_progressContainer"
+            android:layout_width="0dp"
+            android:visibility="visible"
+            android:layout_weight=".3"
+            android:layout_height="match_parent"
+            android:gravity="center" >
+
+            <ProgressBar
+                android:id="@+id/activityMain_progressBar_progress"
+                android:visibility="visible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true" />
+        </LinearLayout>
 
 
         <LinearLayout

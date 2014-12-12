@@ -69,7 +69,7 @@ public class AsyncTaskPopulateEvents extends AsyncTask<ImpromptuUser, Void, List
     protected void onPostExecute(List<Event> events) {
         Log.d("Impromptu", "Updating dat view");
         updateView.update(events);
-
+        updateView.clearLoad();
     }
 
 }

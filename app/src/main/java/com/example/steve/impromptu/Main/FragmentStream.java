@@ -13,6 +13,7 @@ import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 
 import com.example.steve.impromptu.Entity.Event;
@@ -62,6 +63,7 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
     private LinearLayout mapStream;
     private List<HashMap<String, String>> eventList = new ArrayList<>();
     private SimpleAdapter adapter;
+    private LinearLayout progressContainer;
 
     public class UpdateStreamView extends UpdateView {
         public void update(List<Event> events) {
@@ -79,10 +81,15 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
                     }
                 }
             }
-            // TODO - turn off loading icon?
-
+            // turn off loading icon?
+            Log.d("Impromptu", "Setting progress invisible.");
             // Update the list adapter
             adapter.notifyDataSetChanged();
+        }
+
+        public void clearLoad() {
+            progressContainer.setVisibility(View.INVISIBLE);
+
         }
 
     }
@@ -102,11 +109,13 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
         // Get the root view
         final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_stream, container, false);
 
-
         // Gets query for the event streams
         ImpromptuUser currentUser = (ImpromptuUser) ParseUser.getCurrentUser();
         Log.d("Impromptu", "Getting events");
         posts = currentUser.getStreamEvents(myUpdateView);
+        progressContainer = (LinearLayout)getActivity().findViewById(R.id.activityMain_linearLayout_progressContainer);
+        progressContainer.setVisibility(View.VISIBLE);
+        Log.d("Impromptu", "Setting progress bar visible");
         Log.d("Impromptu", "Updating events");
         myUpdateView.update(posts);
         Log.d("Impromptu", "Done getting");
