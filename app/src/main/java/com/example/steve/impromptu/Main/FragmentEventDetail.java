@@ -25,7 +25,6 @@ import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.Main.Compose.ArrayAdapters.ArrayAdapterPeopleAttending;
 import com.example.steve.impromptu.R;
 import com.example.steve.impromptu.UI.ObservableScrollView;
-import com.example.steve.impromptu.UI.ScrollableMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -180,7 +179,6 @@ public class FragmentEventDetail extends Fragment{
                 eventData.putString("eventKey", event.getObjectId());
                 fmd.setArguments(eventData);
 
-                transaction.addToBackStack(null);
                 transaction.replace(R.id.activityMain_frameLayout_shell, fmd);
                 transaction.commit();
 

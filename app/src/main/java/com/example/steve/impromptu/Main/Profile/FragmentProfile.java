@@ -1,23 +1,5 @@
 package com.example.steve.impromptu.Main.Profile;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
-import android.app.ProgressDialog;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.SimpleAdapter;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
-import android.app.DialogFragment;
 import android.app.FragmentTransaction;
 import android.app.ListFragment;
 import android.os.Bundle;
@@ -25,54 +7,24 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.Entity.UpdateView;
-import com.example.steve.impromptu.Main.AsyncTasks.AsyncTaskPopulateOwnedEvents;
-import com.example.steve.impromptu.R;
-import com.example.steve.impromptu.UI.ObservableScrollView;
-import com.parse.FindCallback;
-import com.parse.ParseCloud;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import android.widget.ListView;
-
-import com.example.steve.impromptu.Entity.Event;
-
-import com.example.steve.impromptu.Entity.ImpromptuUser;
-import com.example.steve.impromptu.Login.ActivityLogin;
 import com.example.steve.impromptu.Main.ActivityMain;
+import com.example.steve.impromptu.Main.AsyncTasks.AsyncTaskPopulateOwnedEvents;
 import com.example.steve.impromptu.Main.FragmentEventDetail;
 import com.example.steve.impromptu.R;
-import com.facebook.Request;
-import com.facebook.Response;
-import com.facebook.model.GraphUser;
-import com.facebook.widget.ProfilePictureView;
-import com.google.android.gms.games.GamesMetadata;
 import com.parse.FindCallback;
 import com.parse.ParseException;
-import com.parse.ParseFacebookUtils;
-import com.parse.ParseObject;
-import com.parse.ParseUser;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.parse.ParseQuery;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -81,6 +33,7 @@ import java.util.List;
  */
 public class FragmentProfile extends ListFragment{
     ListView eventsList;
+    private LinearLayout progressContainer;
 
     public class ProfileUpdateView extends UpdateView {
         @Override
@@ -106,6 +59,12 @@ public class FragmentProfile extends ListFragment{
                 Log.d("Impromptu", "Profile view updated.");
             }
         }
+
+        public void clearLoad() {
+            progressContainer.setVisibility(View.INVISIBLE);
+
+        }
+
     }
     List<Event> posts;
     ImpromptuUser currentUser;
@@ -133,6 +92,9 @@ public class FragmentProfile extends ListFragment{
         final ImageView profileView = (ImageView) myInflatedView.findViewById(R.id.fragProfile_imageView_profilePic);
 
         eventsList = (ListView) myInflatedView.findViewById(android.R.id.list);
+
+        progressContainer = (LinearLayout)getActivity().findViewById(R.id.activityMain_linearLayout_progressContainer);
+        progressContainer.setVisibility(View.VISIBLE);
 
         final ImpromptuUser targetUser;
         // Get the user
