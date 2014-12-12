@@ -179,7 +179,9 @@ public class FragmentComposeLocation extends Fragment {
         vMyLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                centerMapMyLocation();
+
+                centerMapMyLocation(); //also includes a call to updateLocation()
+                
             }
         });
 
@@ -459,8 +461,6 @@ public class FragmentComposeLocation extends Fragment {
                 Marker m = oldMarkers.get(i);
                 searchResultMarkers.add(vMap.addMarker(new MarkerOptions().title(m.getTitle())
                         .snippet(m.getSnippet()).position(m.getPosition())));
-
-                //TODO: possible add way to "reclick" on previously selected marker?
             }
         }
     }
