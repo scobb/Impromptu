@@ -3,7 +3,11 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
 
     <ImageView
         android:id="@+id/templateFriendAttendingItem_imageView_profilePic"
@@ -15,10 +19,11 @@
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="match_parent"
-        android:textSize="18sp"
-        android:layout_marginLeft="24dp"
+        android:textSize="16sp"
+        android:layout_marginLeft="8dp"
         android:gravity="center_vertical"
         android:text="Untitled"
+        android:textColor="@color/impromptu_list_gray"
         android:id="@+id/templateFriendAttendingItem_textView_name"/>
 
 </LinearLayout>

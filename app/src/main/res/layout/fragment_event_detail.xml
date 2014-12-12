@@ -1,10 +1,9 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/scroll_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_weight="1">
+    android:fillViewport="true">
 
-    <LinearLayout
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="16dp"
@@ -17,8 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginTop="8dp">
+            android:gravity="center_vertical">
 
             <ImageView
                 android:id="@+id/fragEventDetail_imageView_back"
@@ -47,30 +45,19 @@
                 android:layout_weight="1"
                 android:layout_height="match_parent" />
 
-            <LinearLayout
-                android:id="@+id/fragEventDetail_linearLayout_join"
+            <ImageView
+                android:id="@+id/spaceFiller"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="center"
-                android:background="@drawable/gray_round_background">
-
-                <TextView
-                    android:id="@+id/fragEventDetail_textView_join"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:fontFamily="sans-serif"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:text="Join" />
-
-
-            </LinearLayout>
+                android:visibility="invisible"
+                android:src="@drawable/ic_action_previous_item" />
 
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/fragEventDetail_linearLayout_owner"
+            android:layout_marginTop="8dp"
             android:orientation="horizontal"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
@@ -87,6 +74,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
+                android:textColor="@color/impromptu_list_gray"
                 android:textSize="16sp"
                 android:text="name here" />
 
@@ -98,8 +86,7 @@
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:layout_marginTop="16dp"
-            android:gravity="center_vertical"
-            android:background="@drawable/gray_round_background">
+            android:gravity="center_vertical">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -110,38 +97,43 @@
                 android:text="Description" />
 
             <TextView
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="4dp"
                 android:id="@+id/fragEventDetail_textView_description"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
                 android:textColor="@color/impromptu_list_gray"
+                android:text="description here..."
                 android:textSize="16sp" />
 
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/fragEventDetail_linearLayout_time"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:layout_marginTop="16dp"
-            android:gravity="center_vertical"
-            android:background="@drawable/gray_round_background">
+            android:gravity="center_vertical">
 
-            <ImageView
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_action_time"
-                android:id="@+id/fragEventDetail_imageView_time" />
+                android:text="Time"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/fragEventDetail_textView_time"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/impromptu_list_gray"
-                android:layout_marginLeft="8dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:layout_marginTop="4dp"
                 android:textSize="16sp"
+                android:textColor="@color/impromptu_list_gray"
                 android:text="time" />
 
         </LinearLayout>
@@ -160,11 +152,12 @@
                 android:gravity="center_vertical"
                 android:background="@drawable/gray_round_background">
 
-                <ImageView
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_action_directions"
-                    android:id="@+id/fragEventDetail_imageView_location" />
+                    android:text="Location"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/fragEventDetail_textView_location"
@@ -191,13 +184,13 @@
 
 
             <!--<fragment-->
-                <!--android:layout_marginTop="16dp"-->
-                <!--android:id="@+id/fragEventDetail_location_map"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="350dp"-->
-                <!--android:scaleType="fitCenter"-->
-                <!--android:visibility="gone"-->
-                <!--class="com.example.steve.impromptu.UI.ScrollableMapFragment" />-->
+            <!--android:layout_marginTop="16dp"-->
+            <!--android:id="@+id/fragEventDetail_location_map"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="350dp"-->
+            <!--android:scaleType="fitCenter"-->
+            <!--android:visibility="gone"-->
+            <!--class="com.example.steve.impromptu.UI.ScrollableMapFragment" />-->
 
             <LinearLayout
                 android:id="@+id/fragEventDetail_linearLayout_openInGMaps"
@@ -227,7 +220,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_action_next_item"/>
+                    android:src="@drawable/ic_action_next_item" />
 
 
             </LinearLayout>
@@ -237,33 +230,61 @@
         <LinearLayout
             android:id="@+id/fragEventDetail_linearLayout_peopleInvited"
             android:orientation="vertical"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_width="match_parent"
-            android:layout_marginTop="16sp"
-            android:gravity="center_vertical"
-            android:background="@drawable/gray_round_background">
+            android:layout_marginTop="16sp">
 
-
-            <TextView
-                android:id="@+id/fragEventDetail_textView_peopleAttending"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:text="Attending" />
-
-            <ListView
-                android:layout_marginTop="8dp"
-                android:id="@+id/fragEventDetail_listView_peopleAttending"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/fragEventDetail_textView_peopleAttending"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:text="Attending" />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent" />
+
+                <LinearLayout
+                    android:id="@+id/fragEventDetail_linearLayout_join"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:background="@drawable/gray_round_background">
+
+                    <TextView
+                        android:id="@+id/fragEventDetail_textView_join"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:fontFamily="sans-serif"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:text="Join" />
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <ListView
+                android:layout_marginTop="4dp"
+                android:id="@+id/fragEventDetail_listView_peopleAttending"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_gravity="center" />
 
         </LinearLayout>
 
     </LinearLayout>
 
-
 </ScrollView>
-
