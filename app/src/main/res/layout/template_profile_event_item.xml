@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/picture_width_and_height"
+    android:padding="8dp"
+    android:gravity="center_vertical">
+
+    <ImageView
+        android:id="@+id/templateProfileEventItem_imageView_picture"
+        android:layout_width="@dimen/picture_width_and_height"
+        android:layout_height="@dimen/picture_width_and_height"
+        android:src="@drawable/sport_icon"
+        android:gravity="center_vertical" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:textSize="16sp"
+        android:layout_marginLeft="8dp"
+        android:gravity="center_vertical"
+        android:text="hello"
+        android:id="@+id/templateProfileEventItem_textView_eventTitle"/>
+
+    <ImageView
+        android:id="@+id/templateProfileEventItem_imageView_discard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_action_discard"/>
+
+</LinearLayout>

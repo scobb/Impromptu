@@ -31,8 +31,7 @@
             android:src="@drawable/drinking"
             android:layout_margin="8dp"
             android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:scaleType="center" />
+            android:layout_height="40dp" />
 
         <Space
             android:layout_width="0dp"
@@ -44,8 +43,7 @@
             android:src="@drawable/food"
             android:layout_margin="8dp"
             android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:scaleType="center" />
+            android:layout_height="40dp" />
 
         <Space
             android:layout_width="0dp"
@@ -57,8 +55,7 @@
             android:src="@drawable/sport_icon"
             android:layout_margin="8dp"
             android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:scaleType="center" />
+            android:layout_height="40dp" />
 
         <Space
             android:layout_width="0dp"
@@ -83,8 +80,7 @@
             android:src="@drawable/studying"
             android:layout_margin="8dp"
             android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:scaleType="center" />
+            android:layout_height="40dp" />
 
         <Space
             android:layout_width="0dp"
@@ -96,8 +92,7 @@
             android:src="@drawable/tv"
             android:layout_margin="8dp"
             android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:scaleType="center" />
+            android:layout_height="40dp" />
 
         <Space
             android:layout_width="0dp"
@@ -109,8 +104,7 @@
             android:src="@drawable/working_out"
             android:layout_margin="8dp"
             android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:scaleType="center" />
+            android:layout_height="40dp" />
 
         <Space
             android:layout_width="0dp"
