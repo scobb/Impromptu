@@ -181,7 +181,9 @@ public class FragmentComposeLocation extends Fragment {
             public void onClick(View v) {
 
                 centerMapMyLocation(); //also includes a call to updateLocation()
-                
+
+                //TODO: reverse geocoding !!!!!
+
             }
         });
 

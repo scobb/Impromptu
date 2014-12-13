@@ -177,11 +177,11 @@ public class FragmentEventDetail extends Fragment{
 
                 Bundle eventData = new Bundle();
                 eventData.putString("eventKey", event.getObjectId());
+                eventData.putString("ownerKey", owner.getObjectId());
                 fmd.setArguments(eventData);
 
                 transaction.replace(R.id.activityMain_frameLayout_shell, fmd);
                 transaction.commit();
-
             }
         });
 

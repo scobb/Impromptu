@@ -2,6 +2,7 @@ package com.example.steve.impromptu.Main;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -41,6 +42,7 @@ public class FragmentMapDetail extends Fragment {
 
     private static View myInflatedView;
     private FragmentActivity myContext;
+    private String ownerKey;
 
 
     @Override
@@ -66,9 +68,23 @@ public class FragmentMapDetail extends Fragment {
         //get event from bundle:
 
         Bundle eventData = getArguments();
-        String eventKey = eventData.getString("eventKey");
+        final String eventKey = eventData.getString("eventKey");
         event = Event.getEventById(eventKey);
+        ownerKey = eventData.getString("ownerKey");
 
+
+        /*
+                String ownerKey = eventData.getString("ownerKey");
+        String eventKey = eventData.getString("eventKey");
+        Log.d("Impromptu", "ownerKey: " + ownerKey);
+        if (currentUser.friendMap.containsKey(ownerKey)) {
+//            Log.d("Impromptu", "Found the owner.");
+            owner = currentUser.friendMap.get(ownerKey);
+        } else {
+//            Log.d("Impromptu", "Didn't find the owner");
+            owner = ImpromptuUser.getUserById(ownerKey);
+        }
+         */
 
         //get references to everything:
 
@@ -85,8 +101,16 @@ public class FragmentMapDetail extends Fragment {
             @Override
             public void onClick(View v) {
                 //Toast.makeText(getActivity(), "Entered OnClick.", Toast.LENGTH_SHORT).show();
-
-                getFragmentManager().popBackStack();
+        // Set up the fragment transaction
+        FragmentTransaction transaction = getActivity().getFragmentManager().beginTransaction();
+        FragmentEventDetail fragment = new FragmentEventDetail();
+                //eventKey
+                Bundle eventData = new Bundle();
+                eventData.putString("eventKey", event.getObjectId());
+                eventData.putString("ownerKey", ownerKey);
+                fragment.setArguments(eventData);
+        transaction.replace(R.id.activityMain_frameLayout_shell, fragment);
+        transaction.commit();
             }
         });
 
