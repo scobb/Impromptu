@@ -77,7 +77,7 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
                 }
             }
             // turn off loading icon?
-            Log.d("Impromptu", "Setting progress invisible.");
+//            Log.d("Impromptu", "Setting progress invisible.");
             // Update the list adapter
             adapter.notifyDataSetChanged();
         }
@@ -106,14 +106,14 @@ public class FragmentStream extends ListFragment implements AbsListView.OnScroll
 
         // Gets query for the event streams
         ImpromptuUser currentUser = (ImpromptuUser) ParseUser.getCurrentUser();
-        Log.d("Impromptu", "Getting events");
+//        Log.d("Impromptu", "Getting events");
         posts = currentUser.getStreamEvents(myUpdateView);
         progressContainer = (LinearLayout)getActivity().findViewById(R.id.activityMain_linearLayout_progressContainer);
         progressContainer.setVisibility(View.VISIBLE);
-        Log.d("Impromptu", "Setting progress bar visible");
-        Log.d("Impromptu", "Updating events");
+//        Log.d("Impromptu", "Setting progress bar visible");
+//        Log.d("Impromptu", "Updating events");
         myUpdateView.update(posts);
-        Log.d("Impromptu", "Done getting");
+//        Log.d("Impromptu", "Done getting");
 
         //TODO - add a loading icon? Something small and spinny in a corner? or up by the plus?
 

@@ -33,7 +33,6 @@ public class AsyncTaskPopulateEvents extends AsyncTask<ImpromptuUser, Void, List
         Log.d("Impromptu", "User id: " + user.getObjectId());
         try {
             user.fetch();
-            Log.d("Impromptu", "Fetch successful.");
         } catch (ParseException exc) {
             Log.e("Impromptu", "Parse exception refreshing.", exc);
         }
@@ -46,9 +45,7 @@ public class AsyncTaskPopulateEvents extends AsyncTask<ImpromptuUser, Void, List
             Event event = i.next();
             HashMap<String, String> args = new HashMap<>();
             long endMillis = event.getEventTime().getTime() + event.getDurationHour() * 3600 * 1000 + event.getDurationMinute() * 60 * 1000;
-            Log.d("Impromptu", "nowMillis: " + nowMillis + "\nendMillis: " + endMillis);
             if (endMillis < nowMillis) {
-                Log.d("Impromptu", "Would remove " + event.getObjectId());
                 args.clear();
                 args.put("eventId", event.getObjectId());
                 ParseCloud.callFunctionInBackground("eventCleanup", args, null);
@@ -62,12 +59,10 @@ public class AsyncTaskPopulateEvents extends AsyncTask<ImpromptuUser, Void, List
         }
         Collections.sort(events);
         user.streamEvents = events;
-        Log.d("Impromptu", "num events: " + events.size());
         return events;
 
     }
     protected void onPostExecute(List<Event> events) {
-        Log.d("Impromptu", "Updating dat view");
         updateView.update(events);
         updateView.clearLoad();
     }

@@ -100,7 +100,6 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     }
 
     public void populateFriendsInBackground() {
-        Log.d("Impromptu", "Populating friends in background.");
         new AsyncTaskPopulateFriends().execute(this);
     }
 
@@ -115,7 +114,6 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
 
     public void populatePendingToRequestsInBackground() {
         ParseQuery<FriendRequest> query = ParseQuery.getQuery("FriendRequest");
-        Log.d("Impromptu", "Trying to get pending requests for id " + this.getName());
         query.whereEqualTo(FriendRequest.toKey, this);
         final ImpromptuUser targ = this;
         query.findInBackground(new FindCallback<FriendRequest>() {
@@ -151,9 +149,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
                     Log.e("Impromptu", "Erorr finding", e);
                 } else {
                     targ.ownedEvents = events;
-                    Log.d("Impromptu", "cached owned events length: " + targ.ownedEvents.size());
                     for (Event event : events) {
-                        Log.d("Impromptu", "Updating hash list.");
                         ownedEventsHashList.add(event.getHashMap());
                     }
                 }
@@ -174,21 +170,17 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         try {
             List<FriendRequest> result = q.find();
             if (result.size() > 0) {
-                Log.d("Impromptu", "Friend request already exists.");
                 return false;
             } else if (getFriends().contains(friend)) {
-                Log.d("Impromptu", "User already in friends list.");
                 return false;
             } else {
                 FriendRequest fr = new FriendRequest();
                 fr.setFrom(this);
                 fr.setTo(friend);
                 fr.persist();
-                Log.d("Impromptu", "Adding friend request.");
                 return true;
             }
         } catch (ParseException e ) {
-            Log.e("Impromptu", "Error finding friend request:", e);
             return false;
         }
     }
@@ -207,9 +199,7 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
             Event event = i.next();
             HashMap<String, String> args = new HashMap<>();
             long endMillis = event.getEventTime().getTime() + event.getDurationHour() * 3600 * 1000 + event.getDurationMinute() * 60 * 1000;
-            Log.d("Impromptu", "nowMillis: " + nowMillis + "\nendMillis: " + endMillis);
             if (endMillis < nowMillis){
-                Log.d("Impromptu", "Would remove " + event.getObjectId());
                 args.clear();
                 args.put("eventId", event.getObjectId());
                 ParseCloud.callFunctionInBackground("eventCleanup", args, null);
@@ -217,7 +207,6 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
             }
         }
 //        verifyEvents(events);
-        Log.d("Impromptu", "List Size: " + events.size());
 
         return events;
     }
@@ -231,7 +220,6 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
                     if (e != null) {
                         Log.e("Impromptu", "Error fetching.", e);
                     } else {
-                        Log.d("Impromptu", "Successful fetch in bg.");
                         AsyncTaskPopulateEvents task = new AsyncTaskPopulateEvents();
                         task.setUpdateView(updateView);
                         task.execute(targ);
@@ -242,7 +230,6 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         } catch (Exception exc) {
             Log.e("Impromptu", "Error fetching User:", exc);
         }
-        Log.d("Impromptu", "List Size: " + streamEvents.size());
 
         return streamEvents;
     }
@@ -292,7 +279,6 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         ParseQuery<ParseUser> query = ParseQuery.getQuery("_User");
         ParseUser user = null;
         try {
-            Log.d("Impromptu", "Trying to get user for id " + id);
             user = query.get(id);
         } catch (Exception exc) {
             Log.e("Impromptu", "Exception querying...", exc);
@@ -309,7 +295,6 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         ParseQuery<ImpromptuUser> query = ParseQuery.getQuery("_User");
         query.whereContains(ImpromptuUser.nameKey, name);
         try {
-            Log.d("Impromptu", "Trying to get user " + name);
             return query.find();
         } catch (Exception exc) {
             Log.e("Impromptu", "Exception querying...", exc);
@@ -333,7 +318,6 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
                 Log.e("Impromptu", "Error getting async result", exc);
             }
             if (responses == null) {
-                Log.d("Impromptu", "reponses was null");
                 return null;
             }
             for (Response resp : responses) {
@@ -366,8 +350,6 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         if (!(friends.contains(friend))) {
             friends.add(friend);
             Collections.sort(friends);
-        } else {
-            Log.d("Impromptu", "friend was already in friends list");
         }
     }
 
@@ -463,8 +445,6 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
         if (!groups.contains(group)) {
             groups.add(group);
             Collections.sort(groups);
-        } else {
-            Log.d("Impromptu", group + " was already in groups.");
         }
     }
 
@@ -509,7 +489,6 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
                     Log.e("Impromptu", "Error getting async result", exc);
                 }
                 if (responses == null) {
-                    Log.d("Impromptu", "reponses was null");
                     return "";
                 }
                 for (Response resp : responses) {
@@ -562,13 +541,11 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
             if (picFile != null) {
                 try {
                     byte[] picBlock = picFile.getData();
-                    Log.d("Impromptu", "picBlock: " + picBlock);
                     picture = BitmapFactory.decodeByteArray(picBlock, 0, picBlock.length);
                 } catch (ParseException exc) {
                     Log.e("Impromptu", "exception in getPicture", exc);
                 }
             } else if (getFacebookId() != null) {
-                Log.d("Impromptu", "Getting fb pic");
                 try {
                     URL imageURL = new URL("https://graph.facebook.com/" + getFacebookId() + "/picture?type=large");
                     Bitmap bitmap = BitmapFactory.decodeStream(imageURL.openConnection().getInputStream());
@@ -608,13 +585,10 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
     public static ImpromptuUser getUserByFacebookId(String fbid) {
         ParseQuery<ParseUser> query = ParseQuery.getQuery("_User");
         try {
-            Log.d("Impromptu", "Trying to get user for id " + fbid);
             query.whereEqualTo(ImpromptuUser.facebookIdKey, fbid);
             List<ParseUser> users = query.find();
             if (!users.isEmpty()) {
                 return (ImpromptuUser) users.get(0);
-            } else {
-                Log.d("Impromptu", "Users was empty.");
             }
         } catch (Exception exc) {
             Log.e("Impromptu", "Exception querying...", exc);
@@ -631,14 +605,12 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
                 @Override
                 public void onCompleted(Response response) {
                     if (response == null) {
-                        Log.d("Impromptu", "reponses was null");
+                        Log.e("Impromptu", "reponses was null");
                     } else {
-                        Log.d("Impromptu", "Response: " + response);
 
                         try {
                             JSONObject respJSON = new JSONObject(response.getRawResponse());
                             JSONArray data = respJSON.getJSONArray("data");
-                            Log.d("Impromptu", "Number of fb friends also using impromptu: " + data.length());
                             facebookFriends = new ArrayList<ImpromptuUser>();
                             for (int i = 0; i < data.length(); i++) {
                                 String id = data.getJSONObject(i).getString("id");
@@ -674,15 +646,13 @@ public class ImpromptuUser extends ParseUser implements Comparable<ImpromptuUser
                         Log.e("Impromptu", "Error getting async result", exc);
                     }
                     if (responses == null) {
-                        Log.d("Impromptu", "reponses was null");
+                        Log.e("Impromptu", "reponses was null");
                     } else {
                         for (Response resp : responses) {
-                            Log.d("Impromptu", "Response: " + resp);
 
                             try {
                                 JSONObject respJSON = new JSONObject(resp.getRawResponse());
                                 JSONArray data = respJSON.getJSONArray("data");
-                                Log.d("Impromptu", "Number of fb friends also using impromptu: " + data.length());
                                 for (int i = 0; i < data.length(); i++) {
                                     String id = data.getJSONObject(i).getString("id");
                                     ImpromptuUser user = ImpromptuUser.getUserByFacebookId(id);

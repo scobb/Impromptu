@@ -74,11 +74,8 @@ public class FragmentGroupsList extends Fragment {
         vAddToGroup = (ImageView) fragmentView.findViewById(R.id.fragGroupsList_imageView_addFriend);
 
         currentUser = ((ActivityMain)getActivity()).currentUser;
-        Log.d("Impromptu", "getting Friends");
         friends = (ArrayList<ImpromptuUser>) currentUser.getFriends();
-        Log.d("Impromptu", "getting Groups");
         groups = (ArrayList<Group>) currentUser.getGroups();
-        Log.d("Impromptu", "done getting");
 
         FriendHolder holder;
         for (ImpromptuUser user : friends) {

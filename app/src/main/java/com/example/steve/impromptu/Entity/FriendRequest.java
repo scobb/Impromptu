@@ -54,7 +54,6 @@ public class FriendRequest extends ParseObject {
     public static List<FriendRequest> getPendingRequestFromUser(ImpromptuUser user) {
         ParseQuery<FriendRequest> query = ParseQuery.getQuery("FriendRequest");
         try {
-            Log.d("Impromptu", "Trying to get pending requests for " + user.getName());
             query.whereEqualTo(FriendRequest.fromKey, user);
             return query.find();
         }
@@ -67,7 +66,6 @@ public class FriendRequest extends ParseObject {
     public static List<FriendRequest> getPendingRequestToUser(ImpromptuUser user) {
         ParseQuery<FriendRequest> query = ParseQuery.getQuery("FriendRequest");
         try {
-            Log.d("Impromptu", "Trying to get pending requests for id " + user.getName());
             query.whereEqualTo(FriendRequest.toKey, user);
             return query.find();
         }
@@ -80,7 +78,6 @@ public class FriendRequest extends ParseObject {
     public static FriendRequest getFriendRequest(ImpromptuUser from, ImpromptuUser to) {
         ParseQuery<FriendRequest> query = ParseQuery.getQuery("FriendRequest");
         try {
-            Log.d("Impromptu", "Trying to get pending requests from " + from.getName() + " to " + to.getName());
             query.whereEqualTo(FriendRequest.fromKey, from);
             query.whereEqualTo(FriendRequest.toKey, to);
             List<FriendRequest> result = query.find();

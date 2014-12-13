@@ -165,100 +165,10 @@ public class ActivityMain extends FragmentActivity implements FragmentComposeTim
             e.printStackTrace();
         }
 
-//        ImpromptuUser currentUser = (ImpromptuUser)ParseUser.getCurrentUser();
-//        Bitmap profilePic = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
-//        currentUser.setPicture(profilePic);
-        Log.d("Impromptu", "In debug.");
         ImpromptuUser currentUser = (ImpromptuUser) ParseUser.getCurrentUser();
         ImpromptuUser lala = ImpromptuUser.getUserById("CEEe8UEHBx");
         ImpromptuUser stephen = ImpromptuUser.getUserById("mQMe4SHJNe");
         ImpromptuUser jon = ImpromptuUser.getUserById("tqaTgngvn2");
-//        currentUser.createFriendRequest(stephen);
-//        currentUser.createFriendRequest(jon);
-//        List<Event> myOwnedEvents = currentUser.getOwnedEvents();
-//        for (Event e: myOwnedEvents) {
-//            Log.d("Impromptu", e.getTitle());
-//        }
-        currentUser.destroyFriendship(lala);
-//        Event e = new Event();
-//        e.getStreamFriends();
-//        e.addStreamFriend(currentUser);
-//        e.addPushFriend(currentUser);
-//        e.getPushFriends();
-//        e.removeStreamFriend(currentUser);
-//        e.removePushFriend(currentUser);
-//        e.removePushFriend(currentUser);
-//        currentUser.clearFriends();
-
-//        Bitmap profilePic = currentUser.getPicture();
-//        ImageView picView = (ImageView)findViewById(R.id.fragProfile_imageView_profilePic);
-//        picView.setImageBitmap(profilePic);
-//
-//        ImpromptuUser lala = ImpromptuUser.getUserById("CEEe8UEHBx");
-//        if (lala == null) {
-//            Log.d("Impromptu", "lala is null");
-//        }
-//        else {
-//            Log.d("Impromptu", "lala's username: " + lala.getName());
-//        }
-//        currentUser.addFriend(lala);
-//        List<ImpromptuUser> friends = currentUser.getFriends();
-//        for (ImpromptuUser friend: friends) {
-//            Log.d("Impromptu", "Friend: " + friend.getName());
-//        }
-//        currentUser.persist();
-
-//        ArrayList<ImpromptuUser> friends = currentUser.getFacebookFriends();
-//        Log.d("Impromptu", "Friends...");
-//        for (ImpromptuUser friend : friends) {
-//            Log.d("Impromptu", friend.getName());
-//        }
-//        List<ImpromptuUser> results = ImpromptuUser.getUserByName("bob");
-//        Log.d("Impromptu", "num results: " + results.size());
-//        for (ImpromptuUser user : results) {
-//            Log.d("Impromptu", user.getName());
-//        }
-//        Event event = new Event();
-//        event.test();
-//        event.persist();
-//        currentUser.clearStreamEvents();
-//        currentUser.addStreamEvent(event);
-//        currentUser.persist();
-//        ImageView pic = (ImageView)v.findViewById(R.id.fragProfile_imageView_pic);
-//        Bitmap bmp = currentUser.getPicture();
-//        if (bmp != null) {
-//            pic.setImageBitmap(bmp);
-//        }
-
-//        for (Event innerEvent: currentUser.getStreamEvents()){
-//            Log.d("Impromptu", "Event: " + innerEvent.getDescription());
-//        }
-//
-//        Group group = new Group("moreAwesomeGroup");
-//        group.add(lala);
-//        group.add(lala);
-//        group.remove(lala);
-//        group.add(lala);
-//        TreeSet<ImpromptuUser> list = group.getFriendsInGroup();
-//        for (ImpromptuUser friend: list) {
-//            Log.d("Impromptu", "Friend in group: " + friend.getName());
-//        }
-//        group.persist();
-//        currentUser.addGroup(group);
-//        currentUser.persist();
-//        for (Group innerGroup: currentUser.getGroups()) {
-//            Log.d("Impromptu", "Group name: " + innerGroup.getGroupName());
-//
-//            for (ImpromptuUser user: innerGroup.getFriendsInGroup()){
-//                Log.d("Impromptu", "Member in group: " + user.getName());
-//            }
-//        }
-        //ImpromptuUser currentUser = (ImpromptuUser)ParseUser.getCurrentUser();
-//        group = currentUser.getGroup("moreAwesomeGroup");
-//        Log.d("Impromptu", group.getGroupName());
-//        for (ImpromptuUser user: group.getFriendsInGroup()){
-//            Log.d("Impromptu", "user in " + group.getGroupName() +": " + user.getName());
-//        }
     }
 
 

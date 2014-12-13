@@ -26,7 +26,6 @@ public class AsyncTaskPopulateOwnedEvents extends AsyncTask<List<Event>, Void, L
 
     @Override
     protected List<Event> doInBackground(List<Event>... events) {
-        Log.d("Impromptu", "In doInBackground");
         List<Event> posts = events[0];
 
         Iterator<Event> i = posts.iterator();
@@ -42,11 +41,9 @@ public class AsyncTaskPopulateOwnedEvents extends AsyncTask<List<Event>, Void, L
                 i.remove();
             }
         }
-        Log.d("Impromptu", "Done with doInBackground");
         return posts;
     }
     protected void onPostExecute(List<Event> events) {
-        Log.d("Impromptu", "Updating dat view");
         updateView.update(events);
         updateView.clearLoad();
     }

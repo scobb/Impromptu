@@ -58,22 +58,20 @@ public class FragmentFriendsList extends Fragment {
 
 //        new LoadData().execute();
         // TODO *****
-
-        Log.d("Impromptu", "Getting friends");
+//
+//        Log.d("Impromptu", "Getting friends");
         friends = (ArrayList<ImpromptuUser>) currentUser.getFriends();
 
         currentUser.populateFriendsInBackground();
         currentUser.populatePendingToRequestsInBackground();
-
-        Log.d("Impromptu", "Getting requests");
+//
+//        Log.d("Impromptu", "Getting requests");
         requests = (ArrayList<FriendRequest>)currentUser.getToRequests();
         // requests = (ArrayList<FriendRequest>) FriendRequest.getPendingRequestToUser(currentUser);
 
 
-        Log.d("Impromptu", "Getting fb friends");
         fBFriends = currentUser.getFacebookFriends();
 
-        Log.d("Impromptu", "Done getting.");
         // ******
 
         FriendAndRequestHolder holder;

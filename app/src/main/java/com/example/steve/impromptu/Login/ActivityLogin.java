@@ -75,17 +75,14 @@ public class ActivityLogin extends FragmentActivity {
 
     public void facebookOnClick(View v) {
         // attempt to log in with facebook credentials
-        Log.d("Impromptu", "Dat facebookOnClick");
         ActivityLogin.this.progressDialog = ProgressDialog.show(
                 ActivityLogin.this, "", "Logging in...", true);
         List<String> permissions = Arrays.asList("public_profile", "email", "user_friends");
-        Log.d("Impromptu", "Sending off to facebookland...");
         ParseFacebookUtils.logIn(permissions, this, new LogInCallback() {
             @Override
             public void done(ParseUser user, ParseException err) {
-                Log.d("Impromptu", "dat CALLBACK");
                 if (err != null) {
-                    Log.d("Impromptu", "fb error: ", err);
+                    Log.e("Impromptu", "fb error: ", err);
                 }
                 ActivityLogin.this.progressDialog.dismiss();
                 if (user == null) {
@@ -110,25 +107,8 @@ public class ActivityLogin extends FragmentActivity {
                     ((ImpromptuUser)user).clearStreamEvents();
                     ((ImpromptuUser)user).persist();
 
-                    Log.d("Impromptu",
-                            "User signed up and logged in through Facebook!");
                     forwardToMainActivity();
                 } else {
-//                    Request req = Request.newMeRequest(ParseFacebookUtils.getSession(),
-//                            new Request.GraphUserCallback() {
-//                                @Override
-//                                public void onCompleted(GraphUser user, Response response) {
-//                                    if (user != null) {
-//                                        ImpromptuUser currentUser = (ImpromptuUser) ParseUser.getCurrentUser();
-//                                        currentUser.setFacebookId(user.getId());
-//                                        currentUser.setName(user.getName());
-//                                        currentUser.persist();
-//                                    }
-//                                }
-//                            });
-//                    req.executeAsync();
-                    Log.d("Impromptu",
-                            "User logged in through Facebook!");
                     forwardToMainActivity();
                 }
             }

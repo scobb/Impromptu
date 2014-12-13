@@ -104,8 +104,6 @@ public class Group extends ParseObject implements Comparable<Group> {
             friends.add(friend);
             Collections.sort(friends);
             setFriendsInGroup(friends);
-        } else {
-            Log.d("Impromptu", "friend was already in");
         }
     }
 
@@ -117,8 +115,6 @@ public class Group extends ParseObject implements Comparable<Group> {
         if (friends.contains(friend)) {
             friends.remove(friend);
             setFriendsInGroup(friends);
-        } else {
-            Log.d("Impromptu", "friend was not in");
         }
     }
 

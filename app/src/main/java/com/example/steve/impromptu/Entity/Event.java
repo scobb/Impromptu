@@ -289,9 +289,6 @@ public class Event extends ParseObject implements Comparable<Event> {
             Date currentDate = new Date();
             Date eventDate = this.getDate(eventTimeKey);
 
-            Log.d("Impromptu", "Event " + eventDate);
-            Log.d("Impromptu", "Current " + currentDate);
-
             long timeDifference = eventDate.getTime() - currentDate.getTime();
             long hourDifference = (int) timeDifference / (60 * 60 * 1000) % 24;
             int minuteDifference = (int) timeDifference / (60 * 1000) % 60;
@@ -359,7 +356,6 @@ public class Event extends ParseObject implements Comparable<Event> {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
         ParseObject event = null;
         try {
-            Log.d("Impromptu", "Trying to get event for id " + id);
             event = query.get(id);
         } catch (Exception exc) {
             Log.e("Impromptu", "Exception querying...", exc);
@@ -370,9 +366,7 @@ public class Event extends ParseObject implements Comparable<Event> {
 
 
     public void persist() {
-        Log.d("Impromptu", "Persisting event");
         if (!getPushed()) {
-            Log.d("Impromptu", "Saving all data to parse object in preparation for save.");
             localPushed = true;
             setTitle(localTitle);
             setCreationTime(localCreationTime);
@@ -416,7 +410,6 @@ public class Event extends ParseObject implements Comparable<Event> {
                     String objectId = ref.getObjectId();
                     HashMap<String, String> params = new HashMap<String, String>();
                     params.put("eventId", objectId);
-                    Log.d("Impromptu", "Object id: " + objectId);
                     ParseCloud.callFunctionInBackground("addNewEvent", params, null);
                 } else {
                     Log.e("Impromptu", "Exception when persisting event: ", e);
@@ -430,7 +423,6 @@ public class Event extends ParseObject implements Comparable<Event> {
         if (localPushed || getPushed()) {
             this.put(ownerKey, owner);
         } else {
-            Log.d("Impromptu", "Local setOwner");
             localOwner = owner;
         }
     }
@@ -440,7 +432,6 @@ public class Event extends ParseObject implements Comparable<Event> {
         if (localPushed || getPushed()) {
             this.put(typeKey, type);
         } else {
-            Log.d("Impromptu", "Local setType");
             localType = type;
         }
     }
@@ -450,7 +441,6 @@ public class Event extends ParseObject implements Comparable<Event> {
         if (localPushed || getPushed()) {
             this.put(titleKey, title);
         } else {
-            Log.d("Impromptu", "local setTitle");
             localTitle = title;
         }
     }
@@ -878,13 +868,11 @@ public class Event extends ParseObject implements Comparable<Event> {
             try {
                 it.next().fetchIfNeeded();
             } catch (ParseException exc) {
-                Log.d("Impromptu", "Problem fetching a user in verifyUsers: ", exc);
                 it.remove();
                 needPersist = true;
             }
         }
         if (needPersist) {
-            Log.d("Impromptu", "Verify Users in event needed to persist.");
             this.saveInBackground();
 
         }

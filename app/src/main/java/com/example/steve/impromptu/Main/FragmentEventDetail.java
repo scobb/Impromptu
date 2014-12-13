@@ -113,10 +113,10 @@ public class FragmentEventDetail extends Fragment{
         String eventKey = eventData.getString("eventKey");
         Log.d("Impromptu", "ownerKey: " + ownerKey);
         if (currentUser.friendMap.containsKey(ownerKey)) {
-            Log.d("Impromptu", "Found the owner.");
+//            Log.d("Impromptu", "Found the owner.");
             owner = currentUser.friendMap.get(ownerKey);
         } else {
-            Log.d("Impromptu", "Didn't find the owner");
+//            Log.d("Impromptu", "Didn't find the owner");
             owner = ImpromptuUser.getUserById(ownerKey);
         }
 
@@ -131,7 +131,7 @@ public class FragmentEventDetail extends Fragment{
         ownerTextView.setText(owner.getName());
         descriptionTextView.setText(event.getDescription());
         profilePictureView.setImageBitmap(owner.getPicture());
-        Log.d("Impromptu", "Got owner's pic.");
+//        Log.d("Impromptu", "Got owner's pic.");
         timeTextView.setText(event.getEventDate().toString());
         locationTextView.setText(event.getLocationName());
 
@@ -287,9 +287,9 @@ public class FragmentEventDetail extends Fragment{
 
     private void refreshPeopleAttendingList(){
         // Set up the people attending the event
-        Log.d("Impromptu", "Getting users going");
+//        Log.d("Impromptu", "Getting users going");
         List<ImpromptuUser> users = event.getUsersGoing();
-        Log.d("Impromptu", "Starting fetch all if needed");
+//        Log.d("Impromptu", "Starting fetch all if needed");
         // Parse query shit
         ParseObject.fetchAllIfNeededInBackground(users, new FindCallback<ImpromptuUser>() {
 
@@ -300,10 +300,10 @@ public class FragmentEventDetail extends Fragment{
                     for (ImpromptuUser user: users) {
                         if (currentUser.friendMap.containsKey(user.getObjectId())){
                             // get version with picture already fetched.
-                            Log.d("Impromptu", "attendee " + user.getName() + " is in the map.");
+//                            Log.d("Impromptu", "attendee " + user.getName() + " is in the map.");
                             usersAttending.add(currentUser.friendMap.get(user.getObjectId()));
                         } else {
-                            Log.d("Impromptu", "attendee not in the map.");
+//                            Log.d("Impromptu", "attendee not in the map.");
                             usersAttending.add(user);
                         }
                     }
@@ -312,7 +312,7 @@ public class FragmentEventDetail extends Fragment{
                             R.layout.template_friend_attending_item, users);
                     userAttendingList.setAdapter(userAdapter);
 
-                    Log.d("Impromptu", "notifying that data set has changed");
+//                    Log.d("Impromptu", "notifying that data set has changed");
                     // Update the list adapter
                     userAdapter.notifyDataSetChanged();
 
@@ -322,7 +322,7 @@ public class FragmentEventDetail extends Fragment{
                 }
             }
         });
-        Log.d("Impromptu", "Done with this method.");
+//        Log.d("Impromptu", "Done with this method.");
     }
 
 }
