@@ -1,10 +1,13 @@
 package com.example.steve.impromptu.Main.Profile;
 
-import android.app.ListFragment;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -14,6 +17,7 @@ import com.example.steve.impromptu.Entity.Event;
 import com.example.steve.impromptu.Entity.ImpromptuUser;
 import com.example.steve.impromptu.Main.ActivityMain;
 import com.example.steve.impromptu.Main.Compose.ArrayAdapters.ArrayAdapterProfileEventsList;
+import com.example.steve.impromptu.Main.Compose.FragmentComposeMain;
 import com.example.steve.impromptu.R;
 
 import java.util.ArrayList;
@@ -21,8 +25,8 @@ import java.util.ArrayList;
 /**
  * Created by jonreynolds on 10/16/14.
  */
-public class FragmentProfile extends ListFragment{
-    ListView eventsList;
+public class FragmentProfile extends Fragment {
+    ListView vEventsList;
     private LinearLayout progressContainer;
 
 
@@ -51,7 +55,7 @@ public class FragmentProfile extends ListFragment{
 //
 //
 //                // Setting the list adapter for the ListFragment
-//                eventsList.setAdapter(adapter);
+//                vEventsList.setAdapter(adapter);
 //
 //                // Update the list adapter
 //                adapter.notifyDataSetChanged();
@@ -74,7 +78,7 @@ public class FragmentProfile extends ListFragment{
         // Receive data passed in
 //        Bundle userData = getArguments();
 
-        currentUser = ((ActivityMain)getActivity()).currentUser;
+        currentUser = ((ActivityMain) getActivity()).currentUser;
 
         // Get Views
         final View myInflatedView = inflater.inflate(R.layout.fragment_profile, container, false);
@@ -82,7 +86,7 @@ public class FragmentProfile extends ListFragment{
         final TextView nameView = (TextView) myInflatedView.findViewById(R.id.fragProfile_textView_name);
         final ImageView profileView = (ImageView) myInflatedView.findViewById(R.id.fragProfile_imageView_profilePic);
 
-        eventsList = (ListView) myInflatedView.findViewById(android.R.id.list);
+        vEventsList = (ListView) myInflatedView.findViewById(R.id.fragProfile_listView_list);
 
 //
 
@@ -101,7 +105,7 @@ public class FragmentProfile extends ListFragment{
         // fill cache
 //        targetUser.getOwnedEvents();
 
-        events = (ArrayList<Event>)currentUser.getOwnedEvents();
+        events = (ArrayList<Event>) currentUser.getOwnedEvents();
 
         // Fill in the fields
         nameView.setText(currentUser.getName());
@@ -119,7 +123,7 @@ public class FragmentProfile extends ListFragment{
         ArrayAdapterProfileEventsList adapter = new ArrayAdapterProfileEventsList(getActivity(), R.layout.template_profile_event_item, events, currentUser);
 
         // Setting the list adapter for the ListFragment
-        eventsList.setAdapter(adapter);
+        vEventsList.setAdapter(adapter);
 
         // Update the list adapter
         adapter.notifyDataSetChanged();
@@ -148,6 +152,16 @@ public class FragmentProfile extends ListFragment{
             }
         });
 
+//        vEventsList.setVisibility(View.VISIBLE);
+        vEventsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                Event editEvent = events.get(i);
+                goToEditEvent(editEvent);
+
+            }
+        });
 
         return myInflatedView;
     }
@@ -175,5 +189,22 @@ public class FragmentProfile extends ListFragment{
 //        transaction.addToBackStack(null).commit();
 //    }
 
+    public void goToEditEvent(Event event) {
+
+        ActivityMain main = (ActivityMain) getActivity();
+        main.setHighlightedButton("Compose");
+        main.updateLocationWithinApp("Compose");
+
+        main.composeEvent = event;
+
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        FragmentComposeMain fragment = new FragmentComposeMain();
+        fragmentTransaction.replace(R.id.activityMain_frameLayout_shell, fragment);
+        fragmentTransaction.commit();
+
+
+    }
 
 }
